@@ -1,0 +1,6 @@
+[package]
+name = "superfilter"
+version = "0.1.0"
+authors = ["Stefan Kaufhold <cere@fastmail.fm>"]
+
+[dependencies]
