@@ -62,11 +62,11 @@ StrLiteral: String = {
     Constant => String::from(<>),
 };
 
-Condition: ast::Condition = {
+Condition : ast::Condition = {
     <op:ComparisonOperator> <v:Value> => ast::Condition { value: v, operator: op }
 };
 
-ComparisonOperator: ast::ComparisonOperator = {
+ComparisonOperator : ast::ComparisonOperator = {
     ">=" => ast::ComparisonOperator::Gte,
     ">" => ast::ComparisonOperator::Gt,
     "<=" => ast::ComparisonOperator::Lte,
@@ -75,7 +75,20 @@ ComparisonOperator: ast::ComparisonOperator = {
 };
 
 NumExpression : ast::NumberExpression = {
-    Num => ast::NumberExpression::Number(<>)
+    <l:NumExpression> "+" <r:NumFactor> => ast::NumberExpression::Op(Box::new(l), ast::NumberOperation::Add, Box::new(r)),
+    <l:NumExpression> "-" <r:NumFactor> => ast::NumberExpression::Op(Box::new(l), ast::NumberOperation::Sub, Box::new(r)),
+    NumFactor
+};
+
+NumFactor : ast::NumberExpression = {
+    <l:NumFactor> "*" <r:NumTerm> => ast::NumberExpression::Op(Box::new(l), ast::NumberOperation::Mul, Box::new(r)),
+    <l:NumFactor> "/" <r:NumTerm> => ast::NumberExpression::Op(Box::new(l), ast::NumberOperation::Div, Box::new(r)),
+    NumTerm
+};
+
+NumTerm : ast::NumberExpression = {
+    Num => ast::NumberExpression::Number(<>),
+    "(" <NumExpression> ")" => <>
 };
 
 Color: ast::Color = {

@@ -50,5 +50,14 @@ pub enum ComparisonOperator {
 
 #[derive(Debug)]
 pub enum NumberExpression {
-    Number(i32)
+    Number(i32),
+    Op(Box<NumberExpression>, NumberOperation, Box<NumberExpression>)
+}
+
+#[derive(Debug)]
+pub enum NumberOperation {
+    Mul,
+    Div,
+    Add,
+    Sub
 }
