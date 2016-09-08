@@ -4,6 +4,7 @@ use std::str::FromStr;
 use tok::Location as TokenLocation;
 use tok::Tok;
 
+#[LALR]
 grammar;
 
 extern {

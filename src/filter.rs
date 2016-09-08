@@ -1,10 +1,8 @@
-#![allow(unused_imports)]
 use ast;
 use std::str::FromStr;
 use tok::Location as TokenLocation;
 use tok::Tok;
 extern crate lalrpop_util as __lalrpop_util;
-use self::__lalrpop_util::ParseError as __ParseError;
 
 mod __parse__Filter {
     #![allow(non_snake_case, non_camel_case_types, unused_mut, unused_variables, unused_imports)]
@@ -14,1354 +12,1936 @@ mod __parse__Filter {
     use tok::Location as TokenLocation;
     use tok::Tok;
     extern crate lalrpop_util as __lalrpop_util;
-    use self::__lalrpop_util::ParseError as __ParseError;
     use super::__ToTriple;
+    #[allow(dead_code)]
+    pub enum __Symbol<> {
+        Term_22_28_22(Tok),
+        Term_22_29_22(Tok),
+        Term_22_2a_22(Tok),
+        Term_22_2b_22(Tok),
+        Term_22_2d_22(Tok),
+        Term_22_2f_22(Tok),
+        Term_22_3c_22(Tok),
+        Term_22_3c_3d_22(Tok),
+        Term_22_3d_22(Tok),
+        Term_22_3e_22(Tok),
+        Term_22_3e_3d_22(Tok),
+        Term_22Hide_22(Tok),
+        Term_22Show_22(Tok),
+        Term_22_5c_5cn_22(Tok),
+        TermIdent(String),
+        TermNum(i32),
+        NtBlock(ast::Block),
+        NtBlock_2a(::std::vec::Vec<ast::Block>),
+        NtBlock_2b(::std::vec::Vec<ast::Block>),
+        NtColor(ast::Color),
+        NtComparisonOperator(ast::ComparisonOperator),
+        NtCondition(ast::Condition),
+        NtFilter(Box<Vec<ast::Block>>),
+        NtIdent_2b(::std::vec::Vec<String>),
+        NtLine(ast::Instruction),
+        NtLine_2a(::std::vec::Vec<ast::Instruction>),
+        NtLine_2b(::std::vec::Vec<ast::Instruction>),
+        NtNumExpression(ast::NumberExpression),
+        NtNumExpression_2b(::std::vec::Vec<ast::NumberExpression>),
+        NtValue(ast::Value),
+        Nt____Filter(Box<Vec<ast::Block>>),
+    }
+    const __ACTION: &'static [i32] = &[
+        // State 0
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        5, // on "Hide", goto 4
+        6, // on "Show", goto 5
+        0, // on "\\n", error
+        0, // on Ident, error
+        0, // on Num, error
+        // State 1
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        -7, // on "Hide", reduce `Block+ = Block => ActionFn(25);`
+        -7, // on "Show", reduce `Block+ = Block => ActionFn(25);`
+        0, // on "\\n", error
+        0, // on Ident, error
+        0, // on Num, error
+        // State 2
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        5, // on "Hide", goto 4
+        6, // on "Show", goto 5
+        0, // on "\\n", error
+        0, // on Ident, error
+        0, // on Num, error
+        // State 3
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        0, // on "Hide", error
+        0, // on "Show", error
+        0, // on "\\n", error
+        0, // on Ident, error
+        0, // on Num, error
+        // State 4
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        0, // on "Hide", error
+        0, // on "Show", error
+        8, // on "\\n", goto 7
+        0, // on Ident, error
+        0, // on Num, error
+        // State 5
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        0, // on "Hide", error
+        0, // on "Show", error
+        9, // on "\\n", goto 8
+        0, // on Ident, error
+        0, // on Num, error
+        // State 6
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        -8, // on "Hide", reduce `Block+ = Block+, Block => ActionFn(26);`
+        -8, // on "Show", reduce `Block+ = Block+, Block => ActionFn(26);`
+        0, // on "\\n", error
+        0, // on Ident, error
+        0, // on Num, error
+        // State 7
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        -3, // on "Hide", reduce `Block = "Hide", "\\n" => ActionFn(33);`
+        -3, // on "Show", reduce `Block = "Hide", "\\n" => ActionFn(33);`
+        0, // on "\\n", error
+        12, // on Ident, goto 11
+        0, // on Num, error
+        // State 8
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        -1, // on "Hide", reduce `Block = "Show", "\\n" => ActionFn(31);`
+        -1, // on "Show", reduce `Block = "Show", "\\n" => ActionFn(31);`
+        0, // on "\\n", error
+        12, // on Ident, goto 11
+        0, // on Num, error
+        // State 9
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        -25, // on "Hide", reduce `Line+ = Line => ActionFn(27);`
+        -25, // on "Show", reduce `Line+ = Line => ActionFn(27);`
+        0, // on "\\n", error
+        -25, // on Ident, reduce `Line+ = Line => ActionFn(27);`
+        0, // on Num, error
+        // State 10
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        -4, // on "Hide", reduce `Block = "Hide", "\\n", Line+ => ActionFn(34);`
+        -4, // on "Show", reduce `Block = "Hide", "\\n", Line+ => ActionFn(34);`
+        0, // on "\\n", error
+        12, // on Ident, goto 11
+        0, // on Num, error
+        // State 11
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        21, // on "<", goto 20
+        22, // on "<=", goto 21
+        23, // on "=", goto 22
+        24, // on ">", goto 23
+        25, // on ">=", goto 24
+        0, // on "Hide", error
+        0, // on "Show", error
+        0, // on "\\n", error
+        26, // on Ident, goto 25
+        27, // on Num, goto 26
+        // State 12
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        -2, // on "Hide", reduce `Block = "Show", "\\n", Line+ => ActionFn(32);`
+        -2, // on "Show", reduce `Block = "Show", "\\n", Line+ => ActionFn(32);`
+        0, // on "\\n", error
+        12, // on Ident, goto 11
+        0, // on Num, error
+        // State 13
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        -26, // on "Hide", reduce `Line+ = Line+, Line => ActionFn(28);`
+        -26, // on "Show", reduce `Line+ = Line+, Line => ActionFn(28);`
+        0, // on "\\n", error
+        -26, // on Ident, reduce `Line+ = Line+, Line => ActionFn(28);`
+        0, // on Num, error
+        // State 14
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        0, // on "Hide", error
+        0, // on "Show", error
+        0, // on "\\n", error
+        26, // on Ident, goto 25
+        27, // on Num, goto 26
+        // State 15
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        0, // on "Hide", error
+        0, // on "Show", error
+        29, // on "\\n", goto 28
+        0, // on Ident, error
+        0, // on Num, error
+        // State 16
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        0, // on "Hide", error
+        0, // on "Show", error
+        -31, // on "\\n", reduce `Value = Ident+ => ActionFn(7);`
+        30, // on Ident, goto 29
+        0, // on Num, error
+        // State 17
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        0, // on "Hide", error
+        0, // on "Show", error
+        -28, // on "\\n", reduce `NumExpression+ = NumExpression => ActionFn(19);`
+        0, // on Ident, error
+        -28, // on Num, reduce `NumExpression+ = NumExpression => ActionFn(19);`
+        // State 18
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        0, // on "Hide", error
+        0, // on "Show", error
+        -30, // on "\\n", reduce `Value = NumExpression+ => ActionFn(6);`
+        0, // on Ident, error
+        27, // on Num, goto 26
+        // State 19
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        0, // on "Hide", error
+        0, // on "Show", error
+        32, // on "\\n", goto 31
+        0, // on Ident, error
+        0, // on Num, error
+        // State 20
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        0, // on "Hide", error
+        0, // on "Show", error
+        0, // on "\\n", error
+        -14, // on Ident, reduce `ComparisonOperator = "<" => ActionFn(12);`
+        -14, // on Num, reduce `ComparisonOperator = "<" => ActionFn(12);`
+        // State 21
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        0, // on "Hide", error
+        0, // on "Show", error
+        0, // on "\\n", error
+        -13, // on Ident, reduce `ComparisonOperator = "<=" => ActionFn(11);`
+        -13, // on Num, reduce `ComparisonOperator = "<=" => ActionFn(11);`
+        // State 22
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        0, // on "Hide", error
+        0, // on "Show", error
+        0, // on "\\n", error
+        -15, // on Ident, reduce `ComparisonOperator = "=" => ActionFn(13);`
+        -15, // on Num, reduce `ComparisonOperator = "=" => ActionFn(13);`
+        // State 23
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        0, // on "Hide", error
+        0, // on "Show", error
+        0, // on "\\n", error
+        -12, // on Ident, reduce `ComparisonOperator = ">" => ActionFn(10);`
+        -12, // on Num, reduce `ComparisonOperator = ">" => ActionFn(10);`
+        // State 24
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        0, // on "Hide", error
+        0, // on "Show", error
+        0, // on "\\n", error
+        -11, // on Ident, reduce `ComparisonOperator = ">=" => ActionFn(9);`
+        -11, // on Num, reduce `ComparisonOperator = ">=" => ActionFn(9);`
+        // State 25
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        0, // on "Hide", error
+        0, // on "Show", error
+        -19, // on "\\n", reduce `Ident+ = Ident => ActionFn(17);`
+        -19, // on Ident, reduce `Ident+ = Ident => ActionFn(17);`
+        0, // on Num, error
+        // State 26
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        0, // on "Hide", error
+        0, // on "Show", error
+        -27, // on "\\n", reduce `NumExpression = Num => ActionFn(14);`
+        0, // on Ident, error
+        -27, // on Num, reduce `NumExpression = Num => ActionFn(14);`
+        // State 27
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        0, // on "Hide", error
+        0, // on "Show", error
+        -16, // on "\\n", reduce `Condition = ComparisonOperator, Value => ActionFn(8);`
+        0, // on Ident, error
+        0, // on Num, error
+        // State 28
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        -22, // on "Hide", reduce `Line = Ident, Condition, "\\n" => ActionFn(5);`
+        -22, // on "Show", reduce `Line = Ident, Condition, "\\n" => ActionFn(5);`
+        0, // on "\\n", error
+        -22, // on Ident, reduce `Line = Ident, Condition, "\\n" => ActionFn(5);`
+        0, // on Num, error
+        // State 29
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        0, // on "Hide", error
+        0, // on "Show", error
+        -20, // on "\\n", reduce `Ident+ = Ident+, Ident => ActionFn(18);`
+        -20, // on Ident, reduce `Ident+ = Ident+, Ident => ActionFn(18);`
+        0, // on Num, error
+        // State 30
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        0, // on "Hide", error
+        0, // on "Show", error
+        -29, // on "\\n", reduce `NumExpression+ = NumExpression+, NumExpression => ActionFn(20);`
+        0, // on Ident, error
+        -29, // on Num, reduce `NumExpression+ = NumExpression+, NumExpression => ActionFn(20);`
+        // State 31
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        -21, // on "Hide", reduce `Line = Ident, Value, "\\n" => ActionFn(4);`
+        -21, // on "Show", reduce `Line = Ident, Value, "\\n" => ActionFn(4);`
+        0, // on "\\n", error
+        -21, // on Ident, reduce `Line = Ident, Value, "\\n" => ActionFn(4);`
+        0, // on Num, error
+    ];
+    const __EOF_ACTION: &'static [i32] = &[
+        -17, // on EOF, reduce `Filter =  => ActionFn(29);`
+        -7, // on EOF, reduce `Block+ = Block => ActionFn(25);`
+        -18, // on EOF, reduce `Filter = Block+ => ActionFn(30);`
+        -32, // on EOF, reduce `__Filter = Filter => ActionFn(0);`
+        0, // on EOF, error
+        0, // on EOF, error
+        -8, // on EOF, reduce `Block+ = Block+, Block => ActionFn(26);`
+        -3, // on EOF, reduce `Block = "Hide", "\\n" => ActionFn(33);`
+        -1, // on EOF, reduce `Block = "Show", "\\n" => ActionFn(31);`
+        -25, // on EOF, reduce `Line+ = Line => ActionFn(27);`
+        -4, // on EOF, reduce `Block = "Hide", "\\n", Line+ => ActionFn(34);`
+        0, // on EOF, error
+        -2, // on EOF, reduce `Block = "Show", "\\n", Line+ => ActionFn(32);`
+        -26, // on EOF, reduce `Line+ = Line+, Line => ActionFn(28);`
+        0, // on EOF, error
+        0, // on EOF, error
+        0, // on EOF, error
+        0, // on EOF, error
+        0, // on EOF, error
+        0, // on EOF, error
+        0, // on EOF, error
+        0, // on EOF, error
+        0, // on EOF, error
+        0, // on EOF, error
+        0, // on EOF, error
+        0, // on EOF, error
+        0, // on EOF, error
+        0, // on EOF, error
+        -22, // on EOF, reduce `Line = Ident, Condition, "\\n" => ActionFn(5);`
+        0, // on EOF, error
+        0, // on EOF, error
+        -21, // on EOF, reduce `Line = Ident, Value, "\\n" => ActionFn(4);`
+    ];
+    const __GOTO: &'static [i32] = &[
+        // State 0
+        2, // on Block, goto 1
+        0, // on Block*, error
+        3, // on Block+, goto 2
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        4, // on Filter, goto 3
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 1
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 2
+        7, // on Block, goto 6
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 3
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 4
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 5
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 6
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 7
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        10, // on Line, goto 9
+        0, // on Line*, error
+        11, // on Line+, goto 10
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 8
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        10, // on Line, goto 9
+        0, // on Line*, error
+        13, // on Line+, goto 12
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 9
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 10
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        14, // on Line, goto 13
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 11
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        15, // on ComparisonOperator, goto 14
+        16, // on Condition, goto 15
+        0, // on Filter, error
+        17, // on Ident+, goto 16
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        18, // on NumExpression, goto 17
+        19, // on NumExpression+, goto 18
+        20, // on Value, goto 19
+        0, // on __Filter, error
+        // State 12
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        14, // on Line, goto 13
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 13
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 14
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        17, // on Ident+, goto 16
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        18, // on NumExpression, goto 17
+        19, // on NumExpression+, goto 18
+        28, // on Value, goto 27
+        0, // on __Filter, error
+        // State 15
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 16
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 17
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 18
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        31, // on NumExpression, goto 30
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 19
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 20
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 21
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 22
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 23
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 24
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 25
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 26
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 27
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 28
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 29
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 30
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 31
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Ident+, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on Value, error
+        0, // on __Filter, error
+    ];
     pub fn parse_Filter<
         __TOKEN: __ToTriple<Error=char>,
         __TOKENS: IntoIterator<Item=__TOKEN>,
     >(
-        __tokens: __TOKENS,
-    ) -> Result<Box<Vec<ast::Block>>, __ParseError<TokenLocation,Tok,char>>
+        __tokens0: __TOKENS,
+    ) -> Result<Box<Vec<ast::Block>>, __lalrpop_util::ParseError<TokenLocation,Tok,char>>
     {
-        let __tokens = __tokens.into_iter();
+        let __tokens = __tokens0.into_iter();
         let mut __tokens = __tokens.map(|t| __ToTriple::to_triple(t));
-        let __lookahead = match __tokens.next() {
-            Some(Ok(v)) => Some(v),
-            None => None,
-            Some(Err(e)) => return Err(__ParseError::User { error: e }),
-        };
-        match try!(__state0(&mut __tokens, __lookahead)) {
-            (Some(__lookahead), _) => {
-                Err(__ParseError::ExtraToken { token: __lookahead })
-            }
-            (None, __Nonterminal::____Filter((_, __nt, _))) => {
-                Ok(__nt)
-            }
-            _ => unreachable!(),
-        }
-    }
-
-    #[allow(dead_code)]
-    pub enum __Nonterminal<> {
-        Block((TokenLocation, ast::Block, TokenLocation)),
-        Block_2a((TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation)),
-        Block_2b((TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation)),
-        Color((TokenLocation, ast::Color, TokenLocation)),
-        ComparisonOperator((TokenLocation, ast::ComparisonOperator, TokenLocation)),
-        Condition((TokenLocation, ast::Condition, TokenLocation)),
-        Filter((TokenLocation, Box<Vec<ast::Block>>, TokenLocation)),
-        Ident_2b((TokenLocation, ::std::vec::Vec<String>, TokenLocation)),
-        Line((TokenLocation, ast::Instruction, TokenLocation)),
-        Line_2a((TokenLocation, ::std::vec::Vec<ast::Instruction>, TokenLocation)),
-        Line_2b((TokenLocation, ::std::vec::Vec<ast::Instruction>, TokenLocation)),
-        NumExpression((TokenLocation, ast::NumberExpression, TokenLocation)),
-        NumExpression_2b((TokenLocation, ::std::vec::Vec<ast::NumberExpression>, TokenLocation)),
-        Value((TokenLocation, ast::Value, TokenLocation)),
-        ____Filter((TokenLocation, Box<Vec<ast::Block>>, TokenLocation)),
-    }
-
-    pub fn __state0<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __lookahead: Option<(TokenLocation, Tok, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        match __lookahead {
-            Some((__loc1, __tok @ Tok::Hide, __loc2)) => {
-                let mut __sym0 = &mut Some((__loc1, (__tok), __loc2));
-                __result = try!(__state4(__tokens, __sym0));
-            }
-            Some((__loc1, __tok @ Tok::Show, __loc2)) => {
-                let mut __sym0 = &mut Some((__loc1, (__tok), __loc2));
-                __result = try!(__state5(__tokens, __sym0));
-            }
-            None => {
-                let __start: TokenLocation = ::std::default::Default::default();
-                let __end = __lookahead.as_ref().map(|o| o.0.clone()).unwrap_or_else(|| __start.clone());
-                let __nt = super::__action29(&__start, &__end);
-                let __nt = __Nonterminal::Filter((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                __result = (__lookahead, __nt);
-            }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
+        let mut __states = vec![0_i32];
+        let mut __symbols = vec![];
+        '__shift: loop {
+            let __lookahead = match __tokens.next() {
+                Some(Ok(v)) => v,
+                None => break '__shift,
+                Some(Err(e)) => return Err(__lalrpop_util::ParseError::User { error: e }),
+            };
+            let __integer = match __lookahead {
+                (_, Tok::LParen, _) if true => 0,
+                (_, Tok::RParen, _) if true => 1,
+                (_, Tok::Times, _) if true => 2,
+                (_, Tok::Plus, _) if true => 3,
+                (_, Tok::Minus, _) if true => 4,
+                (_, Tok::Div, _) if true => 5,
+                (_, Tok::Lt, _) if true => 6,
+                (_, Tok::Lte, _) if true => 7,
+                (_, Tok::Eql, _) if true => 8,
+                (_, Tok::Gt, _) if true => 9,
+                (_, Tok::Gte, _) if true => 10,
+                (_, Tok::Hide, _) if true => 11,
+                (_, Tok::Show, _) if true => 12,
+                (_, Tok::NewLine, _) if true => 13,
+                (_, Tok::Ident(_), _) if true => 14,
+                (_, Tok::Num(_), _) if true => 15,
+                _ => {
+                    return Err(__lalrpop_util::ParseError::UnrecognizedToken {
+                        token: Some(__lookahead),
+                        expected: vec![],
+                    });
+                }
+            };
+            loop {
+                let __state = *__states.last().unwrap() as usize;
+                let __action = __ACTION[__state * 16 + __integer];
+                if __action > 0 {
+                    let __symbol = match __integer {
+                        0 => match __lookahead.1 {
+                            __tok @ Tok::LParen => __Symbol::Term_22_28_22(__tok),
+                            _ => unreachable!(),
+                        },
+                        1 => match __lookahead.1 {
+                            __tok @ Tok::RParen => __Symbol::Term_22_29_22(__tok),
+                            _ => unreachable!(),
+                        },
+                        2 => match __lookahead.1 {
+                            __tok @ Tok::Times => __Symbol::Term_22_2a_22(__tok),
+                            _ => unreachable!(),
+                        },
+                        3 => match __lookahead.1 {
+                            __tok @ Tok::Plus => __Symbol::Term_22_2b_22(__tok),
+                            _ => unreachable!(),
+                        },
+                        4 => match __lookahead.1 {
+                            __tok @ Tok::Minus => __Symbol::Term_22_2d_22(__tok),
+                            _ => unreachable!(),
+                        },
+                        5 => match __lookahead.1 {
+                            __tok @ Tok::Div => __Symbol::Term_22_2f_22(__tok),
+                            _ => unreachable!(),
+                        },
+                        6 => match __lookahead.1 {
+                            __tok @ Tok::Lt => __Symbol::Term_22_3c_22(__tok),
+                            _ => unreachable!(),
+                        },
+                        7 => match __lookahead.1 {
+                            __tok @ Tok::Lte => __Symbol::Term_22_3c_3d_22(__tok),
+                            _ => unreachable!(),
+                        },
+                        8 => match __lookahead.1 {
+                            __tok @ Tok::Eql => __Symbol::Term_22_3d_22(__tok),
+                            _ => unreachable!(),
+                        },
+                        9 => match __lookahead.1 {
+                            __tok @ Tok::Gt => __Symbol::Term_22_3e_22(__tok),
+                            _ => unreachable!(),
+                        },
+                        10 => match __lookahead.1 {
+                            __tok @ Tok::Gte => __Symbol::Term_22_3e_3d_22(__tok),
+                            _ => unreachable!(),
+                        },
+                        11 => match __lookahead.1 {
+                            __tok @ Tok::Hide => __Symbol::Term_22Hide_22(__tok),
+                            _ => unreachable!(),
+                        },
+                        12 => match __lookahead.1 {
+                            __tok @ Tok::Show => __Symbol::Term_22Show_22(__tok),
+                            _ => unreachable!(),
+                        },
+                        13 => match __lookahead.1 {
+                            __tok @ Tok::NewLine => __Symbol::Term_22_5c_5cn_22(__tok),
+                            _ => unreachable!(),
+                        },
+                        14 => match __lookahead.1 {
+                            Tok::Ident(__tok0) => __Symbol::TermIdent(__tok0),
+                            _ => unreachable!(),
+                        },
+                        15 => match __lookahead.1 {
+                            Tok::Num(__tok0) => __Symbol::TermNum(__tok0),
+                            _ => unreachable!(),
+                        },
+                        _ => unreachable!(),
+                    };
+                    __states.push(__action - 1);
+                    __symbols.push((__lookahead.0, __symbol, __lookahead.2));
+                    continue '__shift;
+                } else if __action < 0 {
+                    if let Some(r) = __reduce(__action, Some(&__lookahead.0), &mut __states, &mut __symbols) {
+                        return r;
+                    }
+                } else {
+                    return Err(__lalrpop_util::ParseError::UnrecognizedToken {
+                        token: Some(__lookahead),
+                        expected: vec![],
+                    });
+                }
             }
         }
         loop {
-            let (__lookahead, __nt) = __result;
-            match __nt {
-                __Nonterminal::Block(__nt) => {
-                    let __sym0 = &mut Some(__nt);
-                    __result = try!(__state1(__tokens, __lookahead, __sym0));
+            let __state = *__states.last().unwrap() as usize;
+            let __action = __EOF_ACTION[__state];
+            if __action < 0 {
+                if let Some(r) = __reduce(__action, None, &mut __states, &mut __symbols) {
+                    return r;
                 }
-                __Nonterminal::Block_2b(__nt) => {
-                    let __sym0 = &mut Some(__nt);
-                    __result = try!(__state2(__tokens, __lookahead, __sym0));
-                }
-                __Nonterminal::Filter(__nt) => {
-                    let __sym0 = &mut Some(__nt);
-                    __result = try!(__state3(__tokens, __lookahead, __sym0));
-                }
-                _ => {
-                    return Ok((__lookahead, __nt));
-                }
-            }
-        }
-    }
-
-    pub fn __state1<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __lookahead: Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym0: &mut Option<(TokenLocation, ast::Block, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        match __lookahead {
-            None |
-            Some((_, Tok::Hide, _)) |
-            Some((_, Tok::Show, _)) => {
-                let __sym0 = __sym0.take().unwrap();
-                let __start = __sym0.0.clone();
-                let __end = __sym0.2.clone();
-                let __nt = super::__action25(__sym0);
-                let __nt = __Nonterminal::Block_2b((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
-            }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
+            } else {
+                return Err(__lalrpop_util::ParseError::UnrecognizedToken {
+                    token: None,
                     expected: vec![],
                 });
             }
         }
     }
-
-    pub fn __state2<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
+    pub fn __reduce<
     >(
-        __tokens: &mut __TOKENS,
-        __lookahead: Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym0: &mut Option<(TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
+        __action: i32,
+        __lookahead_start: Option<&TokenLocation>,
+        __states: &mut ::std::vec::Vec<i32>,
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>,
+    ) -> Option<Result<Box<Vec<ast::Block>>,__lalrpop_util::ParseError<TokenLocation,Tok,char>>>
     {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        match __lookahead {
-            Some((__loc1, __tok @ Tok::Hide, __loc2)) => {
-                let mut __sym1 = &mut Some((__loc1, (__tok), __loc2));
-                __result = try!(__state4(__tokens, __sym1));
-            }
-            Some((__loc1, __tok @ Tok::Show, __loc2)) => {
-                let mut __sym1 = &mut Some((__loc1, (__tok), __loc2));
-                __result = try!(__state5(__tokens, __sym1));
-            }
-            None => {
-                let __sym0 = __sym0.take().unwrap();
-                let __start = __sym0.0.clone();
-                let __end = __sym0.2.clone();
-                let __nt = super::__action30(__sym0);
-                let __nt = __Nonterminal::Filter((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
-            }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-        while __sym0.is_some() {
-            let (__lookahead, __nt) = __result;
-            match __nt {
-                __Nonterminal::Block(__nt) => {
-                    let __sym1 = &mut Some(__nt);
-                    __result = try!(__state6(__tokens, __lookahead, __sym0, __sym1));
-                }
-                _ => {
-                    return Ok((__lookahead, __nt));
-                }
-            }
-        }
-        return Ok(__result);
-    }
-
-    pub fn __state3<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __lookahead: Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym0: &mut Option<(TokenLocation, Box<Vec<ast::Block>>, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        match __lookahead {
-            None => {
-                let __sym0 = __sym0.take().unwrap();
-                let __start = __sym0.0.clone();
-                let __end = __sym0.2.clone();
-                let __nt = super::__action0(__sym0);
-                let __nt = __Nonterminal::____Filter((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
-            }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-    }
-
-    pub fn __state4<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __sym0: &mut Option<(TokenLocation, Tok, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        let __lookahead = match __tokens.next() {
-            Some(Ok(v)) => Some(v),
-            None => None,
-            Some(Err(e)) => return Err(__ParseError::User { error: e }),
-        };
-        match __lookahead {
-            Some((__loc1, __tok @ Tok::NewLine, __loc2)) => {
-                let mut __sym1 = &mut Some((__loc1, (__tok), __loc2));
-                __result = try!(__state7(__tokens, __sym0, __sym1));
-            }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-        return Ok(__result);
-    }
-
-    pub fn __state5<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __sym0: &mut Option<(TokenLocation, Tok, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        let __lookahead = match __tokens.next() {
-            Some(Ok(v)) => Some(v),
-            None => None,
-            Some(Err(e)) => return Err(__ParseError::User { error: e }),
-        };
-        match __lookahead {
-            Some((__loc1, __tok @ Tok::NewLine, __loc2)) => {
-                let mut __sym1 = &mut Some((__loc1, (__tok), __loc2));
-                __result = try!(__state8(__tokens, __sym0, __sym1));
-            }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-        return Ok(__result);
-    }
-
-    pub fn __state6<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __lookahead: Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym0: &mut Option<(TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation)>,
-        __sym1: &mut Option<(TokenLocation, ast::Block, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        match __lookahead {
-            None |
-            Some((_, Tok::Hide, _)) |
-            Some((_, Tok::Show, _)) => {
-                let __sym0 = __sym0.take().unwrap();
-                let __sym1 = __sym1.take().unwrap();
-                let __start = __sym0.0.clone();
-                let __end = __sym1.2.clone();
-                let __nt = super::__action26(__sym0, __sym1);
-                let __nt = __Nonterminal::Block_2b((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
-            }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-    }
-
-    pub fn __state7<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __sym0: &mut Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym1: &mut Option<(TokenLocation, Tok, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        let __lookahead = match __tokens.next() {
-            Some(Ok(v)) => Some(v),
-            None => None,
-            Some(Err(e)) => return Err(__ParseError::User { error: e }),
-        };
-        match __lookahead {
-            Some((__loc1, Tok::Ident(__tok0), __loc2)) => {
-                let mut __sym2 = &mut Some((__loc1, (__tok0), __loc2));
-                __result = try!(__state11(__tokens, __sym2));
-            }
-            None |
-            Some((_, Tok::Hide, _)) |
-            Some((_, Tok::Show, _)) => {
-                let __sym0 = __sym0.take().unwrap();
-                let __sym1 = __sym1.take().unwrap();
-                let __start = __sym0.0.clone();
-                let __end = __sym1.2.clone();
-                let __nt = super::__action33(__sym0, __sym1);
-                let __nt = __Nonterminal::Block((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
-            }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-        while __sym1.is_some() {
-            let (__lookahead, __nt) = __result;
-            match __nt {
-                __Nonterminal::Line(__nt) => {
-                    let __sym2 = &mut Some(__nt);
-                    __result = try!(__state9(__tokens, __lookahead, __sym2));
-                }
-                __Nonterminal::Line_2b(__nt) => {
-                    let __sym2 = &mut Some(__nt);
-                    __result = try!(__state10(__tokens, __lookahead, __sym0, __sym1, __sym2));
-                }
-                _ => {
-                    return Ok((__lookahead, __nt));
-                }
-            }
-        }
-        return Ok(__result);
-    }
-
-    pub fn __state8<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __sym0: &mut Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym1: &mut Option<(TokenLocation, Tok, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        let __lookahead = match __tokens.next() {
-            Some(Ok(v)) => Some(v),
-            None => None,
-            Some(Err(e)) => return Err(__ParseError::User { error: e }),
-        };
-        match __lookahead {
-            Some((__loc1, Tok::Ident(__tok0), __loc2)) => {
-                let mut __sym2 = &mut Some((__loc1, (__tok0), __loc2));
-                __result = try!(__state11(__tokens, __sym2));
-            }
-            None |
-            Some((_, Tok::Hide, _)) |
-            Some((_, Tok::Show, _)) => {
-                let __sym0 = __sym0.take().unwrap();
-                let __sym1 = __sym1.take().unwrap();
+        let __nonterminal = match -__action {
+            1 => {
+                // Block = "Show", "\\n" => ActionFn(31);
+                let __sym1 = __pop_Term_22_5c_5cn_22(__symbols);
+                let __sym0 = __pop_Term_22Show_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
                 let __nt = super::__action31(__sym0, __sym1);
-                let __nt = __Nonterminal::Block((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 2);
+                __symbols.push((__start, __Symbol::NtBlock(__nt), __end));
+                0
             }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-        while __sym1.is_some() {
-            let (__lookahead, __nt) = __result;
-            match __nt {
-                __Nonterminal::Line(__nt) => {
-                    let __sym2 = &mut Some(__nt);
-                    __result = try!(__state9(__tokens, __lookahead, __sym2));
-                }
-                __Nonterminal::Line_2b(__nt) => {
-                    let __sym2 = &mut Some(__nt);
-                    __result = try!(__state12(__tokens, __lookahead, __sym0, __sym1, __sym2));
-                }
-                _ => {
-                    return Ok((__lookahead, __nt));
-                }
-            }
-        }
-        return Ok(__result);
-    }
-
-    pub fn __state9<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __lookahead: Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym0: &mut Option<(TokenLocation, ast::Instruction, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        match __lookahead {
-            None |
-            Some((_, Tok::Hide, _)) |
-            Some((_, Tok::Show, _)) |
-            Some((_, Tok::Ident(_), _)) => {
-                let __sym0 = __sym0.take().unwrap();
-                let __start = __sym0.0.clone();
-                let __end = __sym0.2.clone();
-                let __nt = super::__action27(__sym0);
-                let __nt = __Nonterminal::Line_2b((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
-            }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-    }
-
-    pub fn __state10<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __lookahead: Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym0: &mut Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym1: &mut Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym2: &mut Option<(TokenLocation, ::std::vec::Vec<ast::Instruction>, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        match __lookahead {
-            Some((__loc1, Tok::Ident(__tok0), __loc2)) => {
-                let mut __sym3 = &mut Some((__loc1, (__tok0), __loc2));
-                __result = try!(__state11(__tokens, __sym3));
-            }
-            None |
-            Some((_, Tok::Hide, _)) |
-            Some((_, Tok::Show, _)) => {
-                let __sym0 = __sym0.take().unwrap();
-                let __sym1 = __sym1.take().unwrap();
-                let __sym2 = __sym2.take().unwrap();
-                let __start = __sym0.0.clone();
-                let __end = __sym2.2.clone();
-                let __nt = super::__action34(__sym0, __sym1, __sym2);
-                let __nt = __Nonterminal::Block((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
-            }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-        while __sym2.is_some() {
-            let (__lookahead, __nt) = __result;
-            match __nt {
-                __Nonterminal::Line(__nt) => {
-                    let __sym3 = &mut Some(__nt);
-                    __result = try!(__state13(__tokens, __lookahead, __sym2, __sym3));
-                }
-                _ => {
-                    return Ok((__lookahead, __nt));
-                }
-            }
-        }
-        return Ok(__result);
-    }
-
-    pub fn __state11<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __sym0: &mut Option<(TokenLocation, String, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        let __lookahead = match __tokens.next() {
-            Some(Ok(v)) => Some(v),
-            None => None,
-            Some(Err(e)) => return Err(__ParseError::User { error: e }),
-        };
-        match __lookahead {
-            Some((__loc1, __tok @ Tok::Lt, __loc2)) => {
-                let mut __sym1 = &mut Some((__loc1, (__tok), __loc2));
-                __result = try!(__state20(__tokens, __sym1));
-            }
-            Some((__loc1, __tok @ Tok::Lte, __loc2)) => {
-                let mut __sym1 = &mut Some((__loc1, (__tok), __loc2));
-                __result = try!(__state21(__tokens, __sym1));
-            }
-            Some((__loc1, __tok @ Tok::Eql, __loc2)) => {
-                let mut __sym1 = &mut Some((__loc1, (__tok), __loc2));
-                __result = try!(__state22(__tokens, __sym1));
-            }
-            Some((__loc1, __tok @ Tok::Gt, __loc2)) => {
-                let mut __sym1 = &mut Some((__loc1, (__tok), __loc2));
-                __result = try!(__state23(__tokens, __sym1));
-            }
-            Some((__loc1, __tok @ Tok::Gte, __loc2)) => {
-                let mut __sym1 = &mut Some((__loc1, (__tok), __loc2));
-                __result = try!(__state24(__tokens, __sym1));
-            }
-            Some((__loc1, Tok::Ident(__tok0), __loc2)) => {
-                let mut __sym1 = &mut Some((__loc1, (__tok0), __loc2));
-                __result = try!(__state25(__tokens, __sym1));
-            }
-            Some((__loc1, Tok::Num(__tok0), __loc2)) => {
-                let mut __sym1 = &mut Some((__loc1, (__tok0), __loc2));
-                __result = try!(__state26(__tokens, __sym1));
-            }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-        while __sym0.is_some() {
-            let (__lookahead, __nt) = __result;
-            match __nt {
-                __Nonterminal::ComparisonOperator(__nt) => {
-                    let __sym1 = &mut Some(__nt);
-                    __result = try!(__state14(__tokens, __lookahead, __sym1));
-                }
-                __Nonterminal::Condition(__nt) => {
-                    let __sym1 = &mut Some(__nt);
-                    __result = try!(__state15(__tokens, __lookahead, __sym0, __sym1));
-                }
-                __Nonterminal::Ident_2b(__nt) => {
-                    let __sym1 = &mut Some(__nt);
-                    __result = try!(__state16(__tokens, __lookahead, __sym1));
-                }
-                __Nonterminal::NumExpression(__nt) => {
-                    let __sym1 = &mut Some(__nt);
-                    __result = try!(__state17(__tokens, __lookahead, __sym1));
-                }
-                __Nonterminal::NumExpression_2b(__nt) => {
-                    let __sym1 = &mut Some(__nt);
-                    __result = try!(__state18(__tokens, __lookahead, __sym1));
-                }
-                __Nonterminal::Value(__nt) => {
-                    let __sym1 = &mut Some(__nt);
-                    __result = try!(__state19(__tokens, __lookahead, __sym0, __sym1));
-                }
-                _ => {
-                    return Ok((__lookahead, __nt));
-                }
-            }
-        }
-        return Ok(__result);
-    }
-
-    pub fn __state12<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __lookahead: Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym0: &mut Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym1: &mut Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym2: &mut Option<(TokenLocation, ::std::vec::Vec<ast::Instruction>, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        match __lookahead {
-            Some((__loc1, Tok::Ident(__tok0), __loc2)) => {
-                let mut __sym3 = &mut Some((__loc1, (__tok0), __loc2));
-                __result = try!(__state11(__tokens, __sym3));
-            }
-            None |
-            Some((_, Tok::Hide, _)) |
-            Some((_, Tok::Show, _)) => {
-                let __sym0 = __sym0.take().unwrap();
-                let __sym1 = __sym1.take().unwrap();
-                let __sym2 = __sym2.take().unwrap();
+            2 => {
+                // Block = "Show", "\\n", Line+ => ActionFn(32);
+                let __sym2 = __pop_NtLine_2b(__symbols);
+                let __sym1 = __pop_Term_22_5c_5cn_22(__symbols);
+                let __sym0 = __pop_Term_22Show_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
                 let __nt = super::__action32(__sym0, __sym1, __sym2);
-                let __nt = __Nonterminal::Block((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 3);
+                __symbols.push((__start, __Symbol::NtBlock(__nt), __end));
+                0
             }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-        while __sym2.is_some() {
-            let (__lookahead, __nt) = __result;
-            match __nt {
-                __Nonterminal::Line(__nt) => {
-                    let __sym3 = &mut Some(__nt);
-                    __result = try!(__state13(__tokens, __lookahead, __sym2, __sym3));
-                }
-                _ => {
-                    return Ok((__lookahead, __nt));
-                }
-            }
-        }
-        return Ok(__result);
-    }
-
-    pub fn __state13<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __lookahead: Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym0: &mut Option<(TokenLocation, ::std::vec::Vec<ast::Instruction>, TokenLocation)>,
-        __sym1: &mut Option<(TokenLocation, ast::Instruction, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        match __lookahead {
-            None |
-            Some((_, Tok::Hide, _)) |
-            Some((_, Tok::Show, _)) |
-            Some((_, Tok::Ident(_), _)) => {
-                let __sym0 = __sym0.take().unwrap();
-                let __sym1 = __sym1.take().unwrap();
+            3 => {
+                // Block = "Hide", "\\n" => ActionFn(33);
+                let __sym1 = __pop_Term_22_5c_5cn_22(__symbols);
+                let __sym0 = __pop_Term_22Hide_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
-                let __nt = super::__action28(__sym0, __sym1);
-                let __nt = __Nonterminal::Line_2b((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
+                let __nt = super::__action33(__sym0, __sym1);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 2);
+                __symbols.push((__start, __Symbol::NtBlock(__nt), __end));
+                0
             }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
+            4 => {
+                // Block = "Hide", "\\n", Line+ => ActionFn(34);
+                let __sym2 = __pop_NtLine_2b(__symbols);
+                let __sym1 = __pop_Term_22_5c_5cn_22(__symbols);
+                let __sym0 = __pop_Term_22Hide_22(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym2.2.clone();
+                let __nt = super::__action34(__sym0, __sym1, __sym2);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 3);
+                __symbols.push((__start, __Symbol::NtBlock(__nt), __end));
+                0
             }
-        }
-    }
-
-    pub fn __state14<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __lookahead: Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym0: &mut Option<(TokenLocation, ast::ComparisonOperator, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        match __lookahead {
-            Some((__loc1, Tok::Ident(__tok0), __loc2)) => {
-                let mut __sym1 = &mut Some((__loc1, (__tok0), __loc2));
-                __result = try!(__state25(__tokens, __sym1));
+            5 => {
+                // Block* =  => ActionFn(23);
+                let __start = __symbols.last().map(|s| s.2.clone()).unwrap_or_default();
+                let __end = __lookahead_start.cloned().unwrap_or_else(|| __start.clone());
+                let __nt = super::__action23(&__start, &__end);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 0);
+                __symbols.push((__start, __Symbol::NtBlock_2a(__nt), __end));
+                1
             }
-            Some((__loc1, Tok::Num(__tok0), __loc2)) => {
-                let mut __sym1 = &mut Some((__loc1, (__tok0), __loc2));
-                __result = try!(__state26(__tokens, __sym1));
-            }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-        while __sym0.is_some() {
-            let (__lookahead, __nt) = __result;
-            match __nt {
-                __Nonterminal::Ident_2b(__nt) => {
-                    let __sym1 = &mut Some(__nt);
-                    __result = try!(__state16(__tokens, __lookahead, __sym1));
-                }
-                __Nonterminal::NumExpression(__nt) => {
-                    let __sym1 = &mut Some(__nt);
-                    __result = try!(__state17(__tokens, __lookahead, __sym1));
-                }
-                __Nonterminal::NumExpression_2b(__nt) => {
-                    let __sym1 = &mut Some(__nt);
-                    __result = try!(__state18(__tokens, __lookahead, __sym1));
-                }
-                __Nonterminal::Value(__nt) => {
-                    let __sym1 = &mut Some(__nt);
-                    __result = try!(__state27(__tokens, __lookahead, __sym0, __sym1));
-                }
-                _ => {
-                    return Ok((__lookahead, __nt));
-                }
-            }
-        }
-        return Ok(__result);
-    }
-
-    pub fn __state15<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __lookahead: Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym0: &mut Option<(TokenLocation, String, TokenLocation)>,
-        __sym1: &mut Option<(TokenLocation, ast::Condition, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        match __lookahead {
-            Some((__loc1, __tok @ Tok::NewLine, __loc2)) => {
-                let mut __sym2 = &mut Some((__loc1, (__tok), __loc2));
-                __result = try!(__state28(__tokens, __sym0, __sym1, __sym2));
-            }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-        return Ok(__result);
-    }
-
-    pub fn __state16<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __lookahead: Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym0: &mut Option<(TokenLocation, ::std::vec::Vec<String>, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        match __lookahead {
-            Some((__loc1, Tok::Ident(__tok0), __loc2)) => {
-                let mut __sym1 = &mut Some((__loc1, (__tok0), __loc2));
-                __result = try!(__state29(__tokens, __sym0, __sym1));
-            }
-            Some((_, Tok::NewLine, _)) => {
-                let __sym0 = __sym0.take().unwrap();
+            6 => {
+                // Block* = Block+ => ActionFn(24);
+                let __sym0 = __pop_NtBlock_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action7(__sym0);
-                let __nt = __Nonterminal::Value((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
+                let __nt = super::__action24(__sym0);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 1);
+                __symbols.push((__start, __Symbol::NtBlock_2a(__nt), __end));
+                1
             }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-        return Ok(__result);
-    }
-
-    pub fn __state17<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __lookahead: Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym0: &mut Option<(TokenLocation, ast::NumberExpression, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        match __lookahead {
-            Some((_, Tok::NewLine, _)) |
-            Some((_, Tok::Num(_), _)) => {
-                let __sym0 = __sym0.take().unwrap();
+            7 => {
+                // Block+ = Block => ActionFn(25);
+                let __sym0 = __pop_NtBlock(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action19(__sym0);
-                let __nt = __Nonterminal::NumExpression_2b((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
+                let __nt = super::__action25(__sym0);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 1);
+                __symbols.push((__start, __Symbol::NtBlock_2b(__nt), __end));
+                2
             }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-    }
-
-    pub fn __state18<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __lookahead: Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym0: &mut Option<(TokenLocation, ::std::vec::Vec<ast::NumberExpression>, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        match __lookahead {
-            Some((__loc1, Tok::Num(__tok0), __loc2)) => {
-                let mut __sym1 = &mut Some((__loc1, (__tok0), __loc2));
-                __result = try!(__state26(__tokens, __sym1));
-            }
-            Some((_, Tok::NewLine, _)) => {
-                let __sym0 = __sym0.take().unwrap();
+            8 => {
+                // Block+ = Block+, Block => ActionFn(26);
+                let __sym1 = __pop_NtBlock(__symbols);
+                let __sym0 = __pop_NtBlock_2b(__symbols);
                 let __start = __sym0.0.clone();
-                let __end = __sym0.2.clone();
-                let __nt = super::__action6(__sym0);
-                let __nt = __Nonterminal::Value((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
+                let __end = __sym1.2.clone();
+                let __nt = super::__action26(__sym0, __sym1);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 2);
+                __symbols.push((__start, __Symbol::NtBlock_2b(__nt), __end));
+                2
             }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-        while __sym0.is_some() {
-            let (__lookahead, __nt) = __result;
-            match __nt {
-                __Nonterminal::NumExpression(__nt) => {
-                    let __sym1 = &mut Some(__nt);
-                    __result = try!(__state30(__tokens, __lookahead, __sym0, __sym1));
-                }
-                _ => {
-                    return Ok((__lookahead, __nt));
-                }
-            }
-        }
-        return Ok(__result);
-    }
-
-    pub fn __state19<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __lookahead: Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym0: &mut Option<(TokenLocation, String, TokenLocation)>,
-        __sym1: &mut Option<(TokenLocation, ast::Value, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        match __lookahead {
-            Some((__loc1, __tok @ Tok::NewLine, __loc2)) => {
-                let mut __sym2 = &mut Some((__loc1, (__tok), __loc2));
-                __result = try!(__state31(__tokens, __sym0, __sym1, __sym2));
-            }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-        return Ok(__result);
-    }
-
-    pub fn __state20<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __sym0: &mut Option<(TokenLocation, Tok, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        let __lookahead = match __tokens.next() {
-            Some(Ok(v)) => Some(v),
-            None => None,
-            Some(Err(e)) => return Err(__ParseError::User { error: e }),
-        };
-        match __lookahead {
-            Some((_, Tok::Ident(_), _)) |
-            Some((_, Tok::Num(_), _)) => {
-                let __sym0 = __sym0.take().unwrap();
+            9 => {
+                // Color = NumExpression, NumExpression, NumExpression, NumExpression => ActionFn(15);
+                let __sym3 = __pop_NtNumExpression(__symbols);
+                let __sym2 = __pop_NtNumExpression(__symbols);
+                let __sym1 = __pop_NtNumExpression(__symbols);
+                let __sym0 = __pop_NtNumExpression(__symbols);
                 let __start = __sym0.0.clone();
-                let __end = __sym0.2.clone();
-                let __nt = super::__action12(__sym0);
-                let __nt = __Nonterminal::ComparisonOperator((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
+                let __end = __sym3.2.clone();
+                let __nt = super::__action15(__sym0, __sym1, __sym2, __sym3);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 4);
+                __symbols.push((__start, __Symbol::NtColor(__nt), __end));
+                3
             }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-    }
-
-    pub fn __state21<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __sym0: &mut Option<(TokenLocation, Tok, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        let __lookahead = match __tokens.next() {
-            Some(Ok(v)) => Some(v),
-            None => None,
-            Some(Err(e)) => return Err(__ParseError::User { error: e }),
-        };
-        match __lookahead {
-            Some((_, Tok::Ident(_), _)) |
-            Some((_, Tok::Num(_), _)) => {
-                let __sym0 = __sym0.take().unwrap();
+            10 => {
+                // Color = NumExpression, NumExpression, NumExpression => ActionFn(16);
+                let __sym2 = __pop_NtNumExpression(__symbols);
+                let __sym1 = __pop_NtNumExpression(__symbols);
+                let __sym0 = __pop_NtNumExpression(__symbols);
                 let __start = __sym0.0.clone();
-                let __end = __sym0.2.clone();
-                let __nt = super::__action11(__sym0);
-                let __nt = __Nonterminal::ComparisonOperator((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
+                let __end = __sym2.2.clone();
+                let __nt = super::__action16(__sym0, __sym1, __sym2);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 3);
+                __symbols.push((__start, __Symbol::NtColor(__nt), __end));
+                3
             }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-    }
-
-    pub fn __state22<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __sym0: &mut Option<(TokenLocation, Tok, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        let __lookahead = match __tokens.next() {
-            Some(Ok(v)) => Some(v),
-            None => None,
-            Some(Err(e)) => return Err(__ParseError::User { error: e }),
-        };
-        match __lookahead {
-            Some((_, Tok::Ident(_), _)) |
-            Some((_, Tok::Num(_), _)) => {
-                let __sym0 = __sym0.take().unwrap();
-                let __start = __sym0.0.clone();
-                let __end = __sym0.2.clone();
-                let __nt = super::__action13(__sym0);
-                let __nt = __Nonterminal::ComparisonOperator((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
-            }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-    }
-
-    pub fn __state23<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __sym0: &mut Option<(TokenLocation, Tok, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        let __lookahead = match __tokens.next() {
-            Some(Ok(v)) => Some(v),
-            None => None,
-            Some(Err(e)) => return Err(__ParseError::User { error: e }),
-        };
-        match __lookahead {
-            Some((_, Tok::Ident(_), _)) |
-            Some((_, Tok::Num(_), _)) => {
-                let __sym0 = __sym0.take().unwrap();
-                let __start = __sym0.0.clone();
-                let __end = __sym0.2.clone();
-                let __nt = super::__action10(__sym0);
-                let __nt = __Nonterminal::ComparisonOperator((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
-            }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-    }
-
-    pub fn __state24<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __sym0: &mut Option<(TokenLocation, Tok, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        let __lookahead = match __tokens.next() {
-            Some(Ok(v)) => Some(v),
-            None => None,
-            Some(Err(e)) => return Err(__ParseError::User { error: e }),
-        };
-        match __lookahead {
-            Some((_, Tok::Ident(_), _)) |
-            Some((_, Tok::Num(_), _)) => {
-                let __sym0 = __sym0.take().unwrap();
+            11 => {
+                // ComparisonOperator = ">=" => ActionFn(9);
+                let __sym0 = __pop_Term_22_3e_3d_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
                 let __nt = super::__action9(__sym0);
-                let __nt = __Nonterminal::ComparisonOperator((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 1);
+                __symbols.push((__start, __Symbol::NtComparisonOperator(__nt), __end));
+                4
             }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-    }
-
-    pub fn __state25<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __sym0: &mut Option<(TokenLocation, String, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        let __lookahead = match __tokens.next() {
-            Some(Ok(v)) => Some(v),
-            None => None,
-            Some(Err(e)) => return Err(__ParseError::User { error: e }),
-        };
-        match __lookahead {
-            Some((_, Tok::NewLine, _)) |
-            Some((_, Tok::Ident(_), _)) => {
-                let __sym0 = __sym0.take().unwrap();
+            12 => {
+                // ComparisonOperator = ">" => ActionFn(10);
+                let __sym0 = __pop_Term_22_3e_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action17(__sym0);
-                let __nt = __Nonterminal::Ident_2b((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
+                let __nt = super::__action10(__sym0);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 1);
+                __symbols.push((__start, __Symbol::NtComparisonOperator(__nt), __end));
+                4
             }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-    }
-
-    pub fn __state26<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __sym0: &mut Option<(TokenLocation, i32, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        let __lookahead = match __tokens.next() {
-            Some(Ok(v)) => Some(v),
-            None => None,
-            Some(Err(e)) => return Err(__ParseError::User { error: e }),
-        };
-        match __lookahead {
-            Some((_, Tok::NewLine, _)) |
-            Some((_, Tok::Num(_), _)) => {
-                let __sym0 = __sym0.take().unwrap();
+            13 => {
+                // ComparisonOperator = "<=" => ActionFn(11);
+                let __sym0 = __pop_Term_22_3c_3d_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action14(__sym0);
-                let __nt = __Nonterminal::NumExpression((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
+                let __nt = super::__action11(__sym0);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 1);
+                __symbols.push((__start, __Symbol::NtComparisonOperator(__nt), __end));
+                4
             }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
+            14 => {
+                // ComparisonOperator = "<" => ActionFn(12);
+                let __sym0 = __pop_Term_22_3c_22(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym0.2.clone();
+                let __nt = super::__action12(__sym0);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 1);
+                __symbols.push((__start, __Symbol::NtComparisonOperator(__nt), __end));
+                4
             }
-        }
-    }
-
-    pub fn __state27<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __lookahead: Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym0: &mut Option<(TokenLocation, ast::ComparisonOperator, TokenLocation)>,
-        __sym1: &mut Option<(TokenLocation, ast::Value, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        match __lookahead {
-            Some((_, Tok::NewLine, _)) => {
-                let __sym0 = __sym0.take().unwrap();
-                let __sym1 = __sym1.take().unwrap();
+            15 => {
+                // ComparisonOperator = "=" => ActionFn(13);
+                let __sym0 = __pop_Term_22_3d_22(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym0.2.clone();
+                let __nt = super::__action13(__sym0);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 1);
+                __symbols.push((__start, __Symbol::NtComparisonOperator(__nt), __end));
+                4
+            }
+            16 => {
+                // Condition = ComparisonOperator, Value => ActionFn(8);
+                let __sym1 = __pop_NtValue(__symbols);
+                let __sym0 = __pop_NtComparisonOperator(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
                 let __nt = super::__action8(__sym0, __sym1);
-                let __nt = __Nonterminal::Condition((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 2);
+                __symbols.push((__start, __Symbol::NtCondition(__nt), __end));
+                5
             }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
+            17 => {
+                // Filter =  => ActionFn(29);
+                let __start = __symbols.last().map(|s| s.2.clone()).unwrap_or_default();
+                let __end = __lookahead_start.cloned().unwrap_or_else(|| __start.clone());
+                let __nt = super::__action29(&__start, &__end);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 0);
+                __symbols.push((__start, __Symbol::NtFilter(__nt), __end));
+                6
             }
-        }
-    }
-
-    pub fn __state28<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __sym0: &mut Option<(TokenLocation, String, TokenLocation)>,
-        __sym1: &mut Option<(TokenLocation, ast::Condition, TokenLocation)>,
-        __sym2: &mut Option<(TokenLocation, Tok, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        let __lookahead = match __tokens.next() {
-            Some(Ok(v)) => Some(v),
-            None => None,
-            Some(Err(e)) => return Err(__ParseError::User { error: e }),
-        };
-        match __lookahead {
-            None |
-            Some((_, Tok::Hide, _)) |
-            Some((_, Tok::Show, _)) |
-            Some((_, Tok::Ident(_), _)) => {
-                let __sym0 = __sym0.take().unwrap();
-                let __sym1 = __sym1.take().unwrap();
-                let __sym2 = __sym2.take().unwrap();
+            18 => {
+                // Filter = Block+ => ActionFn(30);
+                let __sym0 = __pop_NtBlock_2b(__symbols);
                 let __start = __sym0.0.clone();
-                let __end = __sym2.2.clone();
-                let __nt = super::__action5(__sym0, __sym1, __sym2);
-                let __nt = __Nonterminal::Line((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
+                let __end = __sym0.2.clone();
+                let __nt = super::__action30(__sym0);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 1);
+                __symbols.push((__start, __Symbol::NtFilter(__nt), __end));
+                6
             }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
+            19 => {
+                // Ident+ = Ident => ActionFn(17);
+                let __sym0 = __pop_TermIdent(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym0.2.clone();
+                let __nt = super::__action17(__sym0);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 1);
+                __symbols.push((__start, __Symbol::NtIdent_2b(__nt), __end));
+                7
             }
-        }
-    }
-
-    pub fn __state29<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __sym0: &mut Option<(TokenLocation, ::std::vec::Vec<String>, TokenLocation)>,
-        __sym1: &mut Option<(TokenLocation, String, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        let __lookahead = match __tokens.next() {
-            Some(Ok(v)) => Some(v),
-            None => None,
-            Some(Err(e)) => return Err(__ParseError::User { error: e }),
-        };
-        match __lookahead {
-            Some((_, Tok::NewLine, _)) |
-            Some((_, Tok::Ident(_), _)) => {
-                let __sym0 = __sym0.take().unwrap();
-                let __sym1 = __sym1.take().unwrap();
+            20 => {
+                // Ident+ = Ident+, Ident => ActionFn(18);
+                let __sym1 = __pop_TermIdent(__symbols);
+                let __sym0 = __pop_NtIdent_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
                 let __nt = super::__action18(__sym0, __sym1);
-                let __nt = __Nonterminal::Ident_2b((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 2);
+                __symbols.push((__start, __Symbol::NtIdent_2b(__nt), __end));
+                7
             }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-    }
-
-    pub fn __state30<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __lookahead: Option<(TokenLocation, Tok, TokenLocation)>,
-        __sym0: &mut Option<(TokenLocation, ::std::vec::Vec<ast::NumberExpression>, TokenLocation)>,
-        __sym1: &mut Option<(TokenLocation, ast::NumberExpression, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        match __lookahead {
-            Some((_, Tok::NewLine, _)) |
-            Some((_, Tok::Num(_), _)) => {
-                let __sym0 = __sym0.take().unwrap();
-                let __sym1 = __sym1.take().unwrap();
-                let __start = __sym0.0.clone();
-                let __end = __sym1.2.clone();
-                let __nt = super::__action20(__sym0, __sym1);
-                let __nt = __Nonterminal::NumExpression_2b((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
-            }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
-            }
-        }
-    }
-
-    pub fn __state31<
-        __TOKENS: Iterator<Item=Result<(TokenLocation, Tok, TokenLocation),char>>,
-    >(
-        __tokens: &mut __TOKENS,
-        __sym0: &mut Option<(TokenLocation, String, TokenLocation)>,
-        __sym1: &mut Option<(TokenLocation, ast::Value, TokenLocation)>,
-        __sym2: &mut Option<(TokenLocation, Tok, TokenLocation)>,
-    ) -> Result<(Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>), __ParseError<TokenLocation,Tok,char>>
-    {
-        let mut __result: (Option<(TokenLocation, Tok, TokenLocation)>, __Nonterminal<>);
-        let __lookahead = match __tokens.next() {
-            Some(Ok(v)) => Some(v),
-            None => None,
-            Some(Err(e)) => return Err(__ParseError::User { error: e }),
-        };
-        match __lookahead {
-            None |
-            Some((_, Tok::Hide, _)) |
-            Some((_, Tok::Show, _)) |
-            Some((_, Tok::Ident(_), _)) => {
-                let __sym0 = __sym0.take().unwrap();
-                let __sym1 = __sym1.take().unwrap();
-                let __sym2 = __sym2.take().unwrap();
+            21 => {
+                // Line = Ident, Value, "\\n" => ActionFn(4);
+                let __sym2 = __pop_Term_22_5c_5cn_22(__symbols);
+                let __sym1 = __pop_NtValue(__symbols);
+                let __sym0 = __pop_TermIdent(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
                 let __nt = super::__action4(__sym0, __sym1, __sym2);
-                let __nt = __Nonterminal::Line((
-                    __start,
-                    __nt,
-                    __end,
-                ));
-                return Ok((__lookahead, __nt));
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 3);
+                __symbols.push((__start, __Symbol::NtLine(__nt), __end));
+                8
             }
-            _ => {
-                return Err(__ParseError::UnrecognizedToken {
-                    token: __lookahead,
-                    expected: vec![],
-                });
+            22 => {
+                // Line = Ident, Condition, "\\n" => ActionFn(5);
+                let __sym2 = __pop_Term_22_5c_5cn_22(__symbols);
+                let __sym1 = __pop_NtCondition(__symbols);
+                let __sym0 = __pop_TermIdent(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym2.2.clone();
+                let __nt = super::__action5(__sym0, __sym1, __sym2);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 3);
+                __symbols.push((__start, __Symbol::NtLine(__nt), __end));
+                8
             }
+            23 => {
+                // Line* =  => ActionFn(21);
+                let __start = __symbols.last().map(|s| s.2.clone()).unwrap_or_default();
+                let __end = __lookahead_start.cloned().unwrap_or_else(|| __start.clone());
+                let __nt = super::__action21(&__start, &__end);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 0);
+                __symbols.push((__start, __Symbol::NtLine_2a(__nt), __end));
+                9
+            }
+            24 => {
+                // Line* = Line+ => ActionFn(22);
+                let __sym0 = __pop_NtLine_2b(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym0.2.clone();
+                let __nt = super::__action22(__sym0);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 1);
+                __symbols.push((__start, __Symbol::NtLine_2a(__nt), __end));
+                9
+            }
+            25 => {
+                // Line+ = Line => ActionFn(27);
+                let __sym0 = __pop_NtLine(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym0.2.clone();
+                let __nt = super::__action27(__sym0);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 1);
+                __symbols.push((__start, __Symbol::NtLine_2b(__nt), __end));
+                10
+            }
+            26 => {
+                // Line+ = Line+, Line => ActionFn(28);
+                let __sym1 = __pop_NtLine(__symbols);
+                let __sym0 = __pop_NtLine_2b(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym1.2.clone();
+                let __nt = super::__action28(__sym0, __sym1);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 2);
+                __symbols.push((__start, __Symbol::NtLine_2b(__nt), __end));
+                10
+            }
+            27 => {
+                // NumExpression = Num => ActionFn(14);
+                let __sym0 = __pop_TermNum(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym0.2.clone();
+                let __nt = super::__action14(__sym0);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 1);
+                __symbols.push((__start, __Symbol::NtNumExpression(__nt), __end));
+                11
+            }
+            28 => {
+                // NumExpression+ = NumExpression => ActionFn(19);
+                let __sym0 = __pop_NtNumExpression(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym0.2.clone();
+                let __nt = super::__action19(__sym0);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 1);
+                __symbols.push((__start, __Symbol::NtNumExpression_2b(__nt), __end));
+                12
+            }
+            29 => {
+                // NumExpression+ = NumExpression+, NumExpression => ActionFn(20);
+                let __sym1 = __pop_NtNumExpression(__symbols);
+                let __sym0 = __pop_NtNumExpression_2b(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym1.2.clone();
+                let __nt = super::__action20(__sym0, __sym1);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 2);
+                __symbols.push((__start, __Symbol::NtNumExpression_2b(__nt), __end));
+                12
+            }
+            30 => {
+                // Value = NumExpression+ => ActionFn(6);
+                let __sym0 = __pop_NtNumExpression_2b(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym0.2.clone();
+                let __nt = super::__action6(__sym0);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 1);
+                __symbols.push((__start, __Symbol::NtValue(__nt), __end));
+                13
+            }
+            31 => {
+                // Value = Ident+ => ActionFn(7);
+                let __sym0 = __pop_NtIdent_2b(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym0.2.clone();
+                let __nt = super::__action7(__sym0);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 1);
+                __symbols.push((__start, __Symbol::NtValue(__nt), __end));
+                13
+            }
+            32 => {
+                // __Filter = Filter => ActionFn(0);
+                let __sym0 = __pop_NtFilter(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym0.2.clone();
+                let __nt = super::__action0(__sym0);
+                return Some(Ok(__nt));
+            }
+            _ => panic!("invalid action code {}", __action)
+        };
+        let __state = *__states.last().unwrap() as usize;
+        let __next_state = __GOTO[__state * 15 + __nonterminal] - 1;
+        __states.push(__next_state);
+        None
+    }
+    fn __pop_Term_22_28_22<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, Tok, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::Term_22_28_22(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_Term_22_29_22<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, Tok, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::Term_22_29_22(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_Term_22_2a_22<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, Tok, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::Term_22_2a_22(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_Term_22_2b_22<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, Tok, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::Term_22_2b_22(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_Term_22_2d_22<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, Tok, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::Term_22_2d_22(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_Term_22_2f_22<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, Tok, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::Term_22_2f_22(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_Term_22_3c_22<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, Tok, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::Term_22_3c_22(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_Term_22_3c_3d_22<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, Tok, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::Term_22_3c_3d_22(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_Term_22_3d_22<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, Tok, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::Term_22_3d_22(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_Term_22_3e_22<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, Tok, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::Term_22_3e_22(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_Term_22_3e_3d_22<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, Tok, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::Term_22_3e_3d_22(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_Term_22Hide_22<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, Tok, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::Term_22Hide_22(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_Term_22Show_22<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, Tok, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::Term_22Show_22(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_Term_22_5c_5cn_22<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, Tok, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::Term_22_5c_5cn_22(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_TermIdent<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, String, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::TermIdent(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_TermNum<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, i32, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::TermNum(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_NtBlock<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, ast::Block, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::NtBlock(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_NtBlock_2a<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::NtBlock_2a(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_NtBlock_2b<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::NtBlock_2b(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_NtColor<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, ast::Color, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::NtColor(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_NtComparisonOperator<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, ast::ComparisonOperator, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::NtComparisonOperator(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_NtCondition<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, ast::Condition, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::NtCondition(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_NtFilter<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, Box<Vec<ast::Block>>, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::NtFilter(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_NtIdent_2b<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, ::std::vec::Vec<String>, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::NtIdent_2b(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_NtLine<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, ast::Instruction, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::NtLine(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_NtLine_2a<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, ::std::vec::Vec<ast::Instruction>, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::NtLine_2a(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_NtLine_2b<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, ::std::vec::Vec<ast::Instruction>, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::NtLine_2b(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_NtNumExpression<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, ast::NumberExpression, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::NtNumExpression(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_NtNumExpression_2b<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, ::std::vec::Vec<ast::NumberExpression>, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::NtNumExpression_2b(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_NtValue<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, ast::Value, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::NtValue(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_Nt____Filter<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, Box<Vec<ast::Block>>, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::Nt____Filter(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
         }
     }
 }
