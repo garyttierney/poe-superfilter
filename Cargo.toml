@@ -2,5 +2,10 @@
 name = "superfilter"
 version = "0.1.0"
 authors = ["Stefan Kaufhold <cere@fastmail.fm>"]
+build = "build.rs" # LALRPOP preprocessing
 
 [dependencies]
+lalrpop-util = "0.11.0"
+
+[build-dependencies]
+lalrpop = "0.11.0"

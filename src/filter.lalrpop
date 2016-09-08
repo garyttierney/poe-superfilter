@@ -1,0 +1,87 @@
+
+use ast;
+use std::str::FromStr;
+use tok::Location as TokenLocation;
+use tok::Tok;
+
+grammar;
+
+extern {
+    type Location = TokenLocation;
+    type Error = char;
+
+    enum Tok {
+        "(" => Tok::LParen,
+        ")" => Tok::RParen,
+        "-" => Tok::Minus,
+        "+" => Tok::Plus,
+        "*" => Tok::Times,
+        "/" => Tok::Div,
+        "\n" => Tok::NewLine,
+        "Show" => Tok::Show,
+        "Hide" => Tok::Hide,
+        ">=" => Tok::Gte,
+        ">" => Tok::Gt,
+        "<=" => Tok::Lte,
+        "<" => Tok::Lt,
+        "=" => Tok::Eql,
+        Num => Tok::Num(<i32>),
+        Ident => Tok::Ident(<String>)
+    }
+}
+
+pub Filter: Box<Vec<ast::Block>> = {
+    Block* => Box::new(<>)
+};
+
+Block: ast::Block = {
+    "Show" "\n" <l:Line*> => ast::Block::Show(Box::new(l)),
+    "Hide" "\n" <l:Line*> => ast::Block::Hide(Box::new(l)),
+};
+
+Line: ast::Instruction = {
+    <n:Ident> <v:Value> "\n" => ast::Instruction {
+        name: n,
+        value: ast::InstructionExpression::Value(v)
+    },
+    <n:Ident> <c:Condition> "\n" => ast::Instruction {
+        name: n,
+        value: ast::InstructionExpression::Condition(c)
+    }
+};
+
+Value: ast::Value = {
+    NumExpression+ => ast::Value::Numbers(<>),
+    Ident+ => ast::Value::Names(<>)
+};
+
+Condition: ast::Condition = {
+    <op:ComparisonOperator> <v:Value> => ast::Condition { value: v, operator: op }
+};
+
+ComparisonOperator: ast::ComparisonOperator = {
+    ">=" => ast::ComparisonOperator::Gte,
+    ">" => ast::ComparisonOperator::Gt,
+    "<=" => ast::ComparisonOperator::Lte,
+    "<" => ast::ComparisonOperator::Lt,
+    "=" => ast::ComparisonOperator::Eq
+};
+
+NumExpression : ast::NumberExpression = {
+    Num => ast::NumberExpression::Number(<>)
+};
+
+Color: ast::Color = {
+    <r:NumExpression> <g:NumExpression> <b:NumExpression> <a:NumExpression> => ast::Color {
+        r: r,
+        g: g,
+        b: b,
+        a: a
+    },
+    <r:NumExpression> <g:NumExpression> <b:NumExpression> => ast::Color {
+        r: r,
+        g: g,
+        b: b,
+        a: ast::NumberExpression::Number(255)
+    }
+};
