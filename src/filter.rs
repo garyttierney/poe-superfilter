@@ -29,8 +29,9 @@ mod __parse__Filter {
         Term_22Hide_22(Tok),
         Term_22Show_22(Tok),
         Term_22_5c_5cn_22(Tok),
-        TermIdent(String),
+        TermConstant(String),
         TermNum(i32),
+        TermQuotedStrLiteral(String),
         NtBlock(ast::Block),
         NtBlock_2a(::std::vec::Vec<ast::Block>),
         NtBlock_2b(::std::vec::Vec<ast::Block>),
@@ -38,12 +39,13 @@ mod __parse__Filter {
         NtComparisonOperator(ast::ComparisonOperator),
         NtCondition(ast::Condition),
         NtFilter(Box<Vec<ast::Block>>),
-        NtIdent_2b(::std::vec::Vec<String>),
         NtLine(ast::Instruction),
         NtLine_2a(::std::vec::Vec<ast::Instruction>),
         NtLine_2b(::std::vec::Vec<ast::Instruction>),
         NtNumExpression(ast::NumberExpression),
         NtNumExpression_2b(::std::vec::Vec<ast::NumberExpression>),
+        NtStrLiteral(String),
+        NtStrLiteral_2b(::std::vec::Vec<String>),
         NtValue(ast::Value),
         Nt____Filter(Box<Vec<ast::Block>>),
     }
@@ -63,8 +65,9 @@ mod __parse__Filter {
         5, // on "Hide", goto 4
         6, // on "Show", goto 5
         0, // on "\\n", error
-        0, // on Ident, error
+        0, // on Constant, error
         0, // on Num, error
+        0, // on QuotedStrLiteral, error
         // State 1
         0, // on "(", error
         0, // on ")", error
@@ -77,11 +80,12 @@ mod __parse__Filter {
         0, // on "=", error
         0, // on ">", error
         0, // on ">=", error
-        -7, // on "Hide", reduce `Block+ = Block => ActionFn(25);`
-        -7, // on "Show", reduce `Block+ = Block => ActionFn(25);`
+        -7, // on "Hide", reduce `Block+ = Block => ActionFn(27);`
+        -7, // on "Show", reduce `Block+ = Block => ActionFn(27);`
         0, // on "\\n", error
-        0, // on Ident, error
+        0, // on Constant, error
         0, // on Num, error
+        0, // on QuotedStrLiteral, error
         // State 2
         0, // on "(", error
         0, // on ")", error
@@ -97,8 +101,9 @@ mod __parse__Filter {
         5, // on "Hide", goto 4
         6, // on "Show", goto 5
         0, // on "\\n", error
-        0, // on Ident, error
+        0, // on Constant, error
         0, // on Num, error
+        0, // on QuotedStrLiteral, error
         // State 3
         0, // on "(", error
         0, // on ")", error
@@ -114,8 +119,9 @@ mod __parse__Filter {
         0, // on "Hide", error
         0, // on "Show", error
         0, // on "\\n", error
-        0, // on Ident, error
+        0, // on Constant, error
         0, // on Num, error
+        0, // on QuotedStrLiteral, error
         // State 4
         0, // on "(", error
         0, // on ")", error
@@ -131,8 +137,9 @@ mod __parse__Filter {
         0, // on "Hide", error
         0, // on "Show", error
         8, // on "\\n", goto 7
-        0, // on Ident, error
+        0, // on Constant, error
         0, // on Num, error
+        0, // on QuotedStrLiteral, error
         // State 5
         0, // on "(", error
         0, // on ")", error
@@ -148,8 +155,9 @@ mod __parse__Filter {
         0, // on "Hide", error
         0, // on "Show", error
         9, // on "\\n", goto 8
-        0, // on Ident, error
+        0, // on Constant, error
         0, // on Num, error
+        0, // on QuotedStrLiteral, error
         // State 6
         0, // on "(", error
         0, // on ")", error
@@ -162,11 +170,12 @@ mod __parse__Filter {
         0, // on "=", error
         0, // on ">", error
         0, // on ">=", error
-        -8, // on "Hide", reduce `Block+ = Block+, Block => ActionFn(26);`
-        -8, // on "Show", reduce `Block+ = Block+, Block => ActionFn(26);`
+        -8, // on "Hide", reduce `Block+ = Block+, Block => ActionFn(28);`
+        -8, // on "Show", reduce `Block+ = Block+, Block => ActionFn(28);`
         0, // on "\\n", error
-        0, // on Ident, error
+        0, // on Constant, error
         0, // on Num, error
+        0, // on QuotedStrLiteral, error
         // State 7
         0, // on "(", error
         0, // on ")", error
@@ -179,11 +188,12 @@ mod __parse__Filter {
         0, // on "=", error
         0, // on ">", error
         0, // on ">=", error
-        -3, // on "Hide", reduce `Block = "Hide", "\\n" => ActionFn(33);`
-        -3, // on "Show", reduce `Block = "Hide", "\\n" => ActionFn(33);`
+        -3, // on "Hide", reduce `Block = "Hide", "\\n" => ActionFn(35);`
+        -3, // on "Show", reduce `Block = "Hide", "\\n" => ActionFn(35);`
         0, // on "\\n", error
-        12, // on Ident, goto 11
+        12, // on Constant, goto 11
         0, // on Num, error
+        0, // on QuotedStrLiteral, error
         // State 8
         0, // on "(", error
         0, // on ")", error
@@ -196,11 +206,12 @@ mod __parse__Filter {
         0, // on "=", error
         0, // on ">", error
         0, // on ">=", error
-        -1, // on "Hide", reduce `Block = "Show", "\\n" => ActionFn(31);`
-        -1, // on "Show", reduce `Block = "Show", "\\n" => ActionFn(31);`
+        -1, // on "Hide", reduce `Block = "Show", "\\n" => ActionFn(33);`
+        -1, // on "Show", reduce `Block = "Show", "\\n" => ActionFn(33);`
         0, // on "\\n", error
-        12, // on Ident, goto 11
+        12, // on Constant, goto 11
         0, // on Num, error
+        0, // on QuotedStrLiteral, error
         // State 9
         0, // on "(", error
         0, // on ")", error
@@ -213,11 +224,12 @@ mod __parse__Filter {
         0, // on "=", error
         0, // on ">", error
         0, // on ">=", error
-        -25, // on "Hide", reduce `Line+ = Line => ActionFn(27);`
-        -25, // on "Show", reduce `Line+ = Line => ActionFn(27);`
+        -23, // on "Hide", reduce `Line+ = Line => ActionFn(29);`
+        -23, // on "Show", reduce `Line+ = Line => ActionFn(29);`
         0, // on "\\n", error
-        -25, // on Ident, reduce `Line+ = Line => ActionFn(27);`
+        -23, // on Constant, reduce `Line+ = Line => ActionFn(29);`
         0, // on Num, error
+        0, // on QuotedStrLiteral, error
         // State 10
         0, // on "(", error
         0, // on ")", error
@@ -230,11 +242,12 @@ mod __parse__Filter {
         0, // on "=", error
         0, // on ">", error
         0, // on ">=", error
-        -4, // on "Hide", reduce `Block = "Hide", "\\n", Line+ => ActionFn(34);`
-        -4, // on "Show", reduce `Block = "Hide", "\\n", Line+ => ActionFn(34);`
+        -4, // on "Hide", reduce `Block = "Hide", "\\n", Line+ => ActionFn(36);`
+        -4, // on "Show", reduce `Block = "Hide", "\\n", Line+ => ActionFn(36);`
         0, // on "\\n", error
-        12, // on Ident, goto 11
+        12, // on Constant, goto 11
         0, // on Num, error
+        0, // on QuotedStrLiteral, error
         // State 11
         0, // on "(", error
         0, // on ")", error
@@ -242,16 +255,17 @@ mod __parse__Filter {
         0, // on "+", error
         0, // on "-", error
         0, // on "/", error
-        21, // on "<", goto 20
-        22, // on "<=", goto 21
-        23, // on "=", goto 22
-        24, // on ">", goto 23
-        25, // on ">=", goto 24
+        22, // on "<", goto 21
+        23, // on "<=", goto 22
+        24, // on "=", goto 23
+        25, // on ">", goto 24
+        26, // on ">=", goto 25
         0, // on "Hide", error
         0, // on "Show", error
         0, // on "\\n", error
-        26, // on Ident, goto 25
-        27, // on Num, goto 26
+        27, // on Constant, goto 26
+        28, // on Num, goto 27
+        29, // on QuotedStrLiteral, goto 28
         // State 12
         0, // on "(", error
         0, // on ")", error
@@ -264,11 +278,12 @@ mod __parse__Filter {
         0, // on "=", error
         0, // on ">", error
         0, // on ">=", error
-        -2, // on "Hide", reduce `Block = "Show", "\\n", Line+ => ActionFn(32);`
-        -2, // on "Show", reduce `Block = "Show", "\\n", Line+ => ActionFn(32);`
+        -2, // on "Hide", reduce `Block = "Show", "\\n", Line+ => ActionFn(34);`
+        -2, // on "Show", reduce `Block = "Show", "\\n", Line+ => ActionFn(34);`
         0, // on "\\n", error
-        12, // on Ident, goto 11
+        12, // on Constant, goto 11
         0, // on Num, error
+        0, // on QuotedStrLiteral, error
         // State 13
         0, // on "(", error
         0, // on ")", error
@@ -281,11 +296,12 @@ mod __parse__Filter {
         0, // on "=", error
         0, // on ">", error
         0, // on ">=", error
-        -26, // on "Hide", reduce `Line+ = Line+, Line => ActionFn(28);`
-        -26, // on "Show", reduce `Line+ = Line+, Line => ActionFn(28);`
+        -24, // on "Hide", reduce `Line+ = Line+, Line => ActionFn(30);`
+        -24, // on "Show", reduce `Line+ = Line+, Line => ActionFn(30);`
         0, // on "\\n", error
-        -26, // on Ident, reduce `Line+ = Line+, Line => ActionFn(28);`
+        -24, // on Constant, reduce `Line+ = Line+, Line => ActionFn(30);`
         0, // on Num, error
+        0, // on QuotedStrLiteral, error
         // State 14
         0, // on "(", error
         0, // on ")", error
@@ -301,8 +317,9 @@ mod __parse__Filter {
         0, // on "Hide", error
         0, // on "Show", error
         0, // on "\\n", error
-        26, // on Ident, goto 25
-        27, // on Num, goto 26
+        27, // on Constant, goto 26
+        28, // on Num, goto 27
+        29, // on QuotedStrLiteral, goto 28
         // State 15
         0, // on "(", error
         0, // on ")", error
@@ -317,9 +334,10 @@ mod __parse__Filter {
         0, // on ">=", error
         0, // on "Hide", error
         0, // on "Show", error
-        29, // on "\\n", goto 28
-        0, // on Ident, error
+        31, // on "\\n", goto 30
+        0, // on Constant, error
         0, // on Num, error
+        0, // on QuotedStrLiteral, error
         // State 16
         0, // on "(", error
         0, // on ")", error
@@ -334,9 +352,10 @@ mod __parse__Filter {
         0, // on ">=", error
         0, // on "Hide", error
         0, // on "Show", error
-        -31, // on "\\n", reduce `Value = Ident+ => ActionFn(7);`
-        30, // on Ident, goto 29
-        0, // on Num, error
+        -26, // on "\\n", reduce `NumExpression+ = NumExpression => ActionFn(21);`
+        0, // on Constant, error
+        -26, // on Num, reduce `NumExpression+ = NumExpression => ActionFn(21);`
+        0, // on QuotedStrLiteral, error
         // State 17
         0, // on "(", error
         0, // on ")", error
@@ -351,9 +370,10 @@ mod __parse__Filter {
         0, // on ">=", error
         0, // on "Hide", error
         0, // on "Show", error
-        -28, // on "\\n", reduce `NumExpression+ = NumExpression => ActionFn(19);`
-        0, // on Ident, error
-        -28, // on Num, reduce `NumExpression+ = NumExpression => ActionFn(19);`
+        -32, // on "\\n", reduce `Value = NumExpression+ => ActionFn(6);`
+        0, // on Constant, error
+        28, // on Num, goto 27
+        0, // on QuotedStrLiteral, error
         // State 18
         0, // on "(", error
         0, // on ")", error
@@ -368,9 +388,10 @@ mod __parse__Filter {
         0, // on ">=", error
         0, // on "Hide", error
         0, // on "Show", error
-        -30, // on "\\n", reduce `Value = NumExpression+ => ActionFn(6);`
-        0, // on Ident, error
-        27, // on Num, goto 26
+        -30, // on "\\n", reduce `StrLiteral+ = StrLiteral => ActionFn(19);`
+        -30, // on Constant, reduce `StrLiteral+ = StrLiteral => ActionFn(19);`
+        0, // on Num, error
+        -30, // on QuotedStrLiteral, reduce `StrLiteral+ = StrLiteral => ActionFn(19);`
         // State 19
         0, // on "(", error
         0, // on ")", error
@@ -385,9 +406,10 @@ mod __parse__Filter {
         0, // on ">=", error
         0, // on "Hide", error
         0, // on "Show", error
-        32, // on "\\n", goto 31
-        0, // on Ident, error
+        -33, // on "\\n", reduce `Value = StrLiteral+ => ActionFn(7);`
+        27, // on Constant, goto 26
         0, // on Num, error
+        29, // on QuotedStrLiteral, goto 28
         // State 20
         0, // on "(", error
         0, // on ")", error
@@ -402,9 +424,10 @@ mod __parse__Filter {
         0, // on ">=", error
         0, // on "Hide", error
         0, // on "Show", error
-        0, // on "\\n", error
-        -14, // on Ident, reduce `ComparisonOperator = "<" => ActionFn(12);`
-        -14, // on Num, reduce `ComparisonOperator = "<" => ActionFn(12);`
+        34, // on "\\n", goto 33
+        0, // on Constant, error
+        0, // on Num, error
+        0, // on QuotedStrLiteral, error
         // State 21
         0, // on "(", error
         0, // on ")", error
@@ -420,8 +443,9 @@ mod __parse__Filter {
         0, // on "Hide", error
         0, // on "Show", error
         0, // on "\\n", error
-        -13, // on Ident, reduce `ComparisonOperator = "<=" => ActionFn(11);`
-        -13, // on Num, reduce `ComparisonOperator = "<=" => ActionFn(11);`
+        -14, // on Constant, reduce `ComparisonOperator = "<" => ActionFn(14);`
+        -14, // on Num, reduce `ComparisonOperator = "<" => ActionFn(14);`
+        -14, // on QuotedStrLiteral, reduce `ComparisonOperator = "<" => ActionFn(14);`
         // State 22
         0, // on "(", error
         0, // on ")", error
@@ -437,8 +461,9 @@ mod __parse__Filter {
         0, // on "Hide", error
         0, // on "Show", error
         0, // on "\\n", error
-        -15, // on Ident, reduce `ComparisonOperator = "=" => ActionFn(13);`
-        -15, // on Num, reduce `ComparisonOperator = "=" => ActionFn(13);`
+        -13, // on Constant, reduce `ComparisonOperator = "<=" => ActionFn(13);`
+        -13, // on Num, reduce `ComparisonOperator = "<=" => ActionFn(13);`
+        -13, // on QuotedStrLiteral, reduce `ComparisonOperator = "<=" => ActionFn(13);`
         // State 23
         0, // on "(", error
         0, // on ")", error
@@ -454,8 +479,9 @@ mod __parse__Filter {
         0, // on "Hide", error
         0, // on "Show", error
         0, // on "\\n", error
-        -12, // on Ident, reduce `ComparisonOperator = ">" => ActionFn(10);`
-        -12, // on Num, reduce `ComparisonOperator = ">" => ActionFn(10);`
+        -15, // on Constant, reduce `ComparisonOperator = "=" => ActionFn(15);`
+        -15, // on Num, reduce `ComparisonOperator = "=" => ActionFn(15);`
+        -15, // on QuotedStrLiteral, reduce `ComparisonOperator = "=" => ActionFn(15);`
         // State 24
         0, // on "(", error
         0, // on ")", error
@@ -471,8 +497,9 @@ mod __parse__Filter {
         0, // on "Hide", error
         0, // on "Show", error
         0, // on "\\n", error
-        -11, // on Ident, reduce `ComparisonOperator = ">=" => ActionFn(9);`
-        -11, // on Num, reduce `ComparisonOperator = ">=" => ActionFn(9);`
+        -12, // on Constant, reduce `ComparisonOperator = ">" => ActionFn(12);`
+        -12, // on Num, reduce `ComparisonOperator = ">" => ActionFn(12);`
+        -12, // on QuotedStrLiteral, reduce `ComparisonOperator = ">" => ActionFn(12);`
         // State 25
         0, // on "(", error
         0, // on ")", error
@@ -487,9 +514,10 @@ mod __parse__Filter {
         0, // on ">=", error
         0, // on "Hide", error
         0, // on "Show", error
-        -19, // on "\\n", reduce `Ident+ = Ident => ActionFn(17);`
-        -19, // on Ident, reduce `Ident+ = Ident => ActionFn(17);`
-        0, // on Num, error
+        0, // on "\\n", error
+        -11, // on Constant, reduce `ComparisonOperator = ">=" => ActionFn(11);`
+        -11, // on Num, reduce `ComparisonOperator = ">=" => ActionFn(11);`
+        -11, // on QuotedStrLiteral, reduce `ComparisonOperator = ">=" => ActionFn(11);`
         // State 26
         0, // on "(", error
         0, // on ")", error
@@ -504,9 +532,10 @@ mod __parse__Filter {
         0, // on ">=", error
         0, // on "Hide", error
         0, // on "Show", error
-        -27, // on "\\n", reduce `NumExpression = Num => ActionFn(14);`
-        0, // on Ident, error
-        -27, // on Num, reduce `NumExpression = Num => ActionFn(14);`
+        -29, // on "\\n", reduce `StrLiteral = Constant => ActionFn(9);`
+        -29, // on Constant, reduce `StrLiteral = Constant => ActionFn(9);`
+        0, // on Num, error
+        -29, // on QuotedStrLiteral, reduce `StrLiteral = Constant => ActionFn(9);`
         // State 27
         0, // on "(", error
         0, // on ")", error
@@ -521,9 +550,10 @@ mod __parse__Filter {
         0, // on ">=", error
         0, // on "Hide", error
         0, // on "Show", error
-        -16, // on "\\n", reduce `Condition = ComparisonOperator, Value => ActionFn(8);`
-        0, // on Ident, error
-        0, // on Num, error
+        -25, // on "\\n", reduce `NumExpression = Num => ActionFn(16);`
+        0, // on Constant, error
+        -25, // on Num, reduce `NumExpression = Num => ActionFn(16);`
+        0, // on QuotedStrLiteral, error
         // State 28
         0, // on "(", error
         0, // on ")", error
@@ -536,11 +566,12 @@ mod __parse__Filter {
         0, // on "=", error
         0, // on ">", error
         0, // on ">=", error
-        -22, // on "Hide", reduce `Line = Ident, Condition, "\\n" => ActionFn(5);`
-        -22, // on "Show", reduce `Line = Ident, Condition, "\\n" => ActionFn(5);`
-        0, // on "\\n", error
-        -22, // on Ident, reduce `Line = Ident, Condition, "\\n" => ActionFn(5);`
+        0, // on "Hide", error
+        0, // on "Show", error
+        -28, // on "\\n", reduce `StrLiteral = QuotedStrLiteral => ActionFn(8);`
+        -28, // on Constant, reduce `StrLiteral = QuotedStrLiteral => ActionFn(8);`
         0, // on Num, error
+        -28, // on QuotedStrLiteral, reduce `StrLiteral = QuotedStrLiteral => ActionFn(8);`
         // State 29
         0, // on "(", error
         0, // on ")", error
@@ -555,10 +586,29 @@ mod __parse__Filter {
         0, // on ">=", error
         0, // on "Hide", error
         0, // on "Show", error
-        -20, // on "\\n", reduce `Ident+ = Ident+, Ident => ActionFn(18);`
-        -20, // on Ident, reduce `Ident+ = Ident+, Ident => ActionFn(18);`
+        -16, // on "\\n", reduce `Condition = ComparisonOperator, Value => ActionFn(10);`
+        0, // on Constant, error
         0, // on Num, error
+        0, // on QuotedStrLiteral, error
         // State 30
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        -20, // on "Hide", reduce `Line = Constant, Condition, "\\n" => ActionFn(5);`
+        -20, // on "Show", reduce `Line = Constant, Condition, "\\n" => ActionFn(5);`
+        0, // on "\\n", error
+        -20, // on Constant, reduce `Line = Constant, Condition, "\\n" => ActionFn(5);`
+        0, // on Num, error
+        0, // on QuotedStrLiteral, error
+        // State 31
         0, // on "(", error
         0, // on ")", error
         0, // on "*", error
@@ -572,10 +622,11 @@ mod __parse__Filter {
         0, // on ">=", error
         0, // on "Hide", error
         0, // on "Show", error
-        -29, // on "\\n", reduce `NumExpression+ = NumExpression+, NumExpression => ActionFn(20);`
-        0, // on Ident, error
-        -29, // on Num, reduce `NumExpression+ = NumExpression+, NumExpression => ActionFn(20);`
-        // State 31
+        -27, // on "\\n", reduce `NumExpression+ = NumExpression+, NumExpression => ActionFn(22);`
+        0, // on Constant, error
+        -27, // on Num, reduce `NumExpression+ = NumExpression+, NumExpression => ActionFn(22);`
+        0, // on QuotedStrLiteral, error
+        // State 32
         0, // on "(", error
         0, // on ")", error
         0, // on "*", error
@@ -587,30 +638,46 @@ mod __parse__Filter {
         0, // on "=", error
         0, // on ">", error
         0, // on ">=", error
-        -21, // on "Hide", reduce `Line = Ident, Value, "\\n" => ActionFn(4);`
-        -21, // on "Show", reduce `Line = Ident, Value, "\\n" => ActionFn(4);`
-        0, // on "\\n", error
-        -21, // on Ident, reduce `Line = Ident, Value, "\\n" => ActionFn(4);`
+        0, // on "Hide", error
+        0, // on "Show", error
+        -31, // on "\\n", reduce `StrLiteral+ = StrLiteral+, StrLiteral => ActionFn(20);`
+        -31, // on Constant, reduce `StrLiteral+ = StrLiteral+, StrLiteral => ActionFn(20);`
         0, // on Num, error
+        -31, // on QuotedStrLiteral, reduce `StrLiteral+ = StrLiteral+, StrLiteral => ActionFn(20);`
+        // State 33
+        0, // on "(", error
+        0, // on ")", error
+        0, // on "*", error
+        0, // on "+", error
+        0, // on "-", error
+        0, // on "/", error
+        0, // on "<", error
+        0, // on "<=", error
+        0, // on "=", error
+        0, // on ">", error
+        0, // on ">=", error
+        -19, // on "Hide", reduce `Line = Constant, Value, "\\n" => ActionFn(4);`
+        -19, // on "Show", reduce `Line = Constant, Value, "\\n" => ActionFn(4);`
+        0, // on "\\n", error
+        -19, // on Constant, reduce `Line = Constant, Value, "\\n" => ActionFn(4);`
+        0, // on Num, error
+        0, // on QuotedStrLiteral, error
     ];
     const __EOF_ACTION: &'static [i32] = &[
-        -17, // on EOF, reduce `Filter =  => ActionFn(29);`
-        -7, // on EOF, reduce `Block+ = Block => ActionFn(25);`
-        -18, // on EOF, reduce `Filter = Block+ => ActionFn(30);`
-        -32, // on EOF, reduce `__Filter = Filter => ActionFn(0);`
+        -17, // on EOF, reduce `Filter =  => ActionFn(31);`
+        -7, // on EOF, reduce `Block+ = Block => ActionFn(27);`
+        -18, // on EOF, reduce `Filter = Block+ => ActionFn(32);`
+        -34, // on EOF, reduce `__Filter = Filter => ActionFn(0);`
         0, // on EOF, error
         0, // on EOF, error
-        -8, // on EOF, reduce `Block+ = Block+, Block => ActionFn(26);`
-        -3, // on EOF, reduce `Block = "Hide", "\\n" => ActionFn(33);`
-        -1, // on EOF, reduce `Block = "Show", "\\n" => ActionFn(31);`
-        -25, // on EOF, reduce `Line+ = Line => ActionFn(27);`
-        -4, // on EOF, reduce `Block = "Hide", "\\n", Line+ => ActionFn(34);`
+        -8, // on EOF, reduce `Block+ = Block+, Block => ActionFn(28);`
+        -3, // on EOF, reduce `Block = "Hide", "\\n" => ActionFn(35);`
+        -1, // on EOF, reduce `Block = "Show", "\\n" => ActionFn(33);`
+        -23, // on EOF, reduce `Line+ = Line => ActionFn(29);`
+        -4, // on EOF, reduce `Block = "Hide", "\\n", Line+ => ActionFn(36);`
         0, // on EOF, error
-        -2, // on EOF, reduce `Block = "Show", "\\n", Line+ => ActionFn(32);`
-        -26, // on EOF, reduce `Line+ = Line+, Line => ActionFn(28);`
-        0, // on EOF, error
-        0, // on EOF, error
-        0, // on EOF, error
+        -2, // on EOF, reduce `Block = "Show", "\\n", Line+ => ActionFn(34);`
+        -24, // on EOF, reduce `Line+ = Line+, Line => ActionFn(30);`
         0, // on EOF, error
         0, // on EOF, error
         0, // on EOF, error
@@ -622,10 +689,15 @@ mod __parse__Filter {
         0, // on EOF, error
         0, // on EOF, error
         0, // on EOF, error
-        -22, // on EOF, reduce `Line = Ident, Condition, "\\n" => ActionFn(5);`
         0, // on EOF, error
         0, // on EOF, error
-        -21, // on EOF, reduce `Line = Ident, Value, "\\n" => ActionFn(4);`
+        0, // on EOF, error
+        0, // on EOF, error
+        0, // on EOF, error
+        -20, // on EOF, reduce `Line = Constant, Condition, "\\n" => ActionFn(5);`
+        0, // on EOF, error
+        0, // on EOF, error
+        -19, // on EOF, reduce `Line = Constant, Value, "\\n" => ActionFn(4);`
     ];
     const __GOTO: &'static [i32] = &[
         // State 0
@@ -636,12 +708,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         4, // on Filter, goto 3
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 1
@@ -652,12 +725,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 2
@@ -668,12 +742,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 3
@@ -684,12 +759,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 4
@@ -700,12 +776,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 5
@@ -716,12 +793,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 6
@@ -732,12 +810,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 7
@@ -748,12 +827,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         10, // on Line, goto 9
         0, // on Line*, error
         11, // on Line+, goto 10
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 8
@@ -764,12 +844,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         10, // on Line, goto 9
         0, // on Line*, error
         13, // on Line+, goto 12
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 9
@@ -780,12 +861,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 10
@@ -796,12 +878,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         14, // on Line, goto 13
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 11
@@ -812,13 +895,14 @@ mod __parse__Filter {
         15, // on ComparisonOperator, goto 14
         16, // on Condition, goto 15
         0, // on Filter, error
-        17, // on Ident+, goto 16
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
-        18, // on NumExpression, goto 17
-        19, // on NumExpression+, goto 18
-        20, // on Value, goto 19
+        17, // on NumExpression, goto 16
+        18, // on NumExpression+, goto 17
+        19, // on StrLiteral, goto 18
+        20, // on StrLiteral+, goto 19
+        21, // on Value, goto 20
         0, // on __Filter, error
         // State 12
         0, // on Block, error
@@ -828,12 +912,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         14, // on Line, goto 13
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 13
@@ -844,12 +929,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 14
@@ -860,13 +946,14 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        17, // on Ident+, goto 16
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
-        18, // on NumExpression, goto 17
-        19, // on NumExpression+, goto 18
-        28, // on Value, goto 27
+        17, // on NumExpression, goto 16
+        18, // on NumExpression+, goto 17
+        19, // on StrLiteral, goto 18
+        20, // on StrLiteral+, goto 19
+        30, // on Value, goto 29
         0, // on __Filter, error
         // State 15
         0, // on Block, error
@@ -876,12 +963,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 16
@@ -892,12 +980,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 17
@@ -908,12 +997,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
-        0, // on NumExpression, error
+        32, // on NumExpression, goto 31
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 18
@@ -924,12 +1014,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
-        31, // on NumExpression, goto 30
+        0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 19
@@ -940,12 +1031,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        33, // on StrLiteral, goto 32
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 20
@@ -956,12 +1048,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 21
@@ -972,12 +1065,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 22
@@ -988,12 +1082,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 23
@@ -1004,12 +1099,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 24
@@ -1020,12 +1116,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 25
@@ -1036,12 +1133,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 26
@@ -1052,12 +1150,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 27
@@ -1068,12 +1167,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 28
@@ -1084,12 +1184,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 29
@@ -1100,12 +1201,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 30
@@ -1116,12 +1218,13 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
         // State 31
@@ -1132,12 +1235,47 @@ mod __parse__Filter {
         0, // on ComparisonOperator, error
         0, // on Condition, error
         0, // on Filter, error
-        0, // on Ident+, error
         0, // on Line, error
         0, // on Line*, error
         0, // on Line+, error
         0, // on NumExpression, error
         0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 32
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
+        0, // on Value, error
+        0, // on __Filter, error
+        // State 33
+        0, // on Block, error
+        0, // on Block*, error
+        0, // on Block+, error
+        0, // on Color, error
+        0, // on ComparisonOperator, error
+        0, // on Condition, error
+        0, // on Filter, error
+        0, // on Line, error
+        0, // on Line*, error
+        0, // on Line+, error
+        0, // on NumExpression, error
+        0, // on NumExpression+, error
+        0, // on StrLiteral, error
+        0, // on StrLiteral+, error
         0, // on Value, error
         0, // on __Filter, error
     ];
@@ -1173,8 +1311,9 @@ mod __parse__Filter {
                 (_, Tok::Hide, _) if true => 11,
                 (_, Tok::Show, _) if true => 12,
                 (_, Tok::NewLine, _) if true => 13,
-                (_, Tok::Ident(_), _) if true => 14,
+                (_, Tok::Constant(_), _) if true => 14,
                 (_, Tok::Num(_), _) if true => 15,
+                (_, Tok::StrLiteral(_), _) if true => 16,
                 _ => {
                     return Err(__lalrpop_util::ParseError::UnrecognizedToken {
                         token: Some(__lookahead),
@@ -1184,7 +1323,7 @@ mod __parse__Filter {
             };
             loop {
                 let __state = *__states.last().unwrap() as usize;
-                let __action = __ACTION[__state * 16 + __integer];
+                let __action = __ACTION[__state * 17 + __integer];
                 if __action > 0 {
                     let __symbol = match __integer {
                         0 => match __lookahead.1 {
@@ -1244,11 +1383,15 @@ mod __parse__Filter {
                             _ => unreachable!(),
                         },
                         14 => match __lookahead.1 {
-                            Tok::Ident(__tok0) => __Symbol::TermIdent(__tok0),
+                            Tok::Constant(__tok0) => __Symbol::TermConstant(__tok0),
                             _ => unreachable!(),
                         },
                         15 => match __lookahead.1 {
                             Tok::Num(__tok0) => __Symbol::TermNum(__tok0),
+                            _ => unreachable!(),
+                        },
+                        16 => match __lookahead.1 {
+                            Tok::StrLiteral(__tok0) => __Symbol::TermQuotedStrLiteral(__tok0),
                             _ => unreachable!(),
                         },
                         _ => unreachable!(),
@@ -1293,34 +1436,9 @@ mod __parse__Filter {
     {
         let __nonterminal = match -__action {
             1 => {
-                // Block = "Show", "\\n" => ActionFn(31);
+                // Block = "Show", "\\n" => ActionFn(33);
                 let __sym1 = __pop_Term_22_5c_5cn_22(__symbols);
                 let __sym0 = __pop_Term_22Show_22(__symbols);
-                let __start = __sym0.0.clone();
-                let __end = __sym1.2.clone();
-                let __nt = super::__action31(__sym0, __sym1);
-                let __states_len = __states.len();
-                __states.truncate(__states_len - 2);
-                __symbols.push((__start, __Symbol::NtBlock(__nt), __end));
-                0
-            }
-            2 => {
-                // Block = "Show", "\\n", Line+ => ActionFn(32);
-                let __sym2 = __pop_NtLine_2b(__symbols);
-                let __sym1 = __pop_Term_22_5c_5cn_22(__symbols);
-                let __sym0 = __pop_Term_22Show_22(__symbols);
-                let __start = __sym0.0.clone();
-                let __end = __sym2.2.clone();
-                let __nt = super::__action32(__sym0, __sym1, __sym2);
-                let __states_len = __states.len();
-                __states.truncate(__states_len - 3);
-                __symbols.push((__start, __Symbol::NtBlock(__nt), __end));
-                0
-            }
-            3 => {
-                // Block = "Hide", "\\n" => ActionFn(33);
-                let __sym1 = __pop_Term_22_5c_5cn_22(__symbols);
-                let __sym0 = __pop_Term_22Hide_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
                 let __nt = super::__action33(__sym0, __sym1);
@@ -1329,11 +1447,11 @@ mod __parse__Filter {
                 __symbols.push((__start, __Symbol::NtBlock(__nt), __end));
                 0
             }
-            4 => {
-                // Block = "Hide", "\\n", Line+ => ActionFn(34);
+            2 => {
+                // Block = "Show", "\\n", Line+ => ActionFn(34);
                 let __sym2 = __pop_NtLine_2b(__symbols);
                 let __sym1 = __pop_Term_22_5c_5cn_22(__symbols);
-                let __sym0 = __pop_Term_22Hide_22(__symbols);
+                let __sym0 = __pop_Term_22Show_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
                 let __nt = super::__action34(__sym0, __sym1, __sym2);
@@ -1342,102 +1460,105 @@ mod __parse__Filter {
                 __symbols.push((__start, __Symbol::NtBlock(__nt), __end));
                 0
             }
+            3 => {
+                // Block = "Hide", "\\n" => ActionFn(35);
+                let __sym1 = __pop_Term_22_5c_5cn_22(__symbols);
+                let __sym0 = __pop_Term_22Hide_22(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym1.2.clone();
+                let __nt = super::__action35(__sym0, __sym1);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 2);
+                __symbols.push((__start, __Symbol::NtBlock(__nt), __end));
+                0
+            }
+            4 => {
+                // Block = "Hide", "\\n", Line+ => ActionFn(36);
+                let __sym2 = __pop_NtLine_2b(__symbols);
+                let __sym1 = __pop_Term_22_5c_5cn_22(__symbols);
+                let __sym0 = __pop_Term_22Hide_22(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym2.2.clone();
+                let __nt = super::__action36(__sym0, __sym1, __sym2);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 3);
+                __symbols.push((__start, __Symbol::NtBlock(__nt), __end));
+                0
+            }
             5 => {
-                // Block* =  => ActionFn(23);
+                // Block* =  => ActionFn(25);
                 let __start = __symbols.last().map(|s| s.2.clone()).unwrap_or_default();
                 let __end = __lookahead_start.cloned().unwrap_or_else(|| __start.clone());
-                let __nt = super::__action23(&__start, &__end);
+                let __nt = super::__action25(&__start, &__end);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 0);
                 __symbols.push((__start, __Symbol::NtBlock_2a(__nt), __end));
                 1
             }
             6 => {
-                // Block* = Block+ => ActionFn(24);
+                // Block* = Block+ => ActionFn(26);
                 let __sym0 = __pop_NtBlock_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action24(__sym0);
+                let __nt = super::__action26(__sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtBlock_2a(__nt), __end));
                 1
             }
             7 => {
-                // Block+ = Block => ActionFn(25);
+                // Block+ = Block => ActionFn(27);
                 let __sym0 = __pop_NtBlock(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action25(__sym0);
+                let __nt = super::__action27(__sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtBlock_2b(__nt), __end));
                 2
             }
             8 => {
-                // Block+ = Block+, Block => ActionFn(26);
+                // Block+ = Block+, Block => ActionFn(28);
                 let __sym1 = __pop_NtBlock(__symbols);
                 let __sym0 = __pop_NtBlock_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
-                let __nt = super::__action26(__sym0, __sym1);
+                let __nt = super::__action28(__sym0, __sym1);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 2);
                 __symbols.push((__start, __Symbol::NtBlock_2b(__nt), __end));
                 2
             }
             9 => {
-                // Color = NumExpression, NumExpression, NumExpression, NumExpression => ActionFn(15);
+                // Color = NumExpression, NumExpression, NumExpression, NumExpression => ActionFn(17);
                 let __sym3 = __pop_NtNumExpression(__symbols);
                 let __sym2 = __pop_NtNumExpression(__symbols);
                 let __sym1 = __pop_NtNumExpression(__symbols);
                 let __sym0 = __pop_NtNumExpression(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym3.2.clone();
-                let __nt = super::__action15(__sym0, __sym1, __sym2, __sym3);
+                let __nt = super::__action17(__sym0, __sym1, __sym2, __sym3);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 4);
                 __symbols.push((__start, __Symbol::NtColor(__nt), __end));
                 3
             }
             10 => {
-                // Color = NumExpression, NumExpression, NumExpression => ActionFn(16);
+                // Color = NumExpression, NumExpression, NumExpression => ActionFn(18);
                 let __sym2 = __pop_NtNumExpression(__symbols);
                 let __sym1 = __pop_NtNumExpression(__symbols);
                 let __sym0 = __pop_NtNumExpression(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action16(__sym0, __sym1, __sym2);
+                let __nt = super::__action18(__sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::NtColor(__nt), __end));
                 3
             }
             11 => {
-                // ComparisonOperator = ">=" => ActionFn(9);
+                // ComparisonOperator = ">=" => ActionFn(11);
                 let __sym0 = __pop_Term_22_3e_3d_22(__symbols);
-                let __start = __sym0.0.clone();
-                let __end = __sym0.2.clone();
-                let __nt = super::__action9(__sym0);
-                let __states_len = __states.len();
-                __states.truncate(__states_len - 1);
-                __symbols.push((__start, __Symbol::NtComparisonOperator(__nt), __end));
-                4
-            }
-            12 => {
-                // ComparisonOperator = ">" => ActionFn(10);
-                let __sym0 = __pop_Term_22_3e_22(__symbols);
-                let __start = __sym0.0.clone();
-                let __end = __sym0.2.clone();
-                let __nt = super::__action10(__sym0);
-                let __states_len = __states.len();
-                __states.truncate(__states_len - 1);
-                __symbols.push((__start, __Symbol::NtComparisonOperator(__nt), __end));
-                4
-            }
-            13 => {
-                // ComparisonOperator = "<=" => ActionFn(11);
-                let __sym0 = __pop_Term_22_3c_3d_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
                 let __nt = super::__action11(__sym0);
@@ -1446,9 +1567,9 @@ mod __parse__Filter {
                 __symbols.push((__start, __Symbol::NtComparisonOperator(__nt), __end));
                 4
             }
-            14 => {
-                // ComparisonOperator = "<" => ActionFn(12);
-                let __sym0 = __pop_Term_22_3c_22(__symbols);
+            12 => {
+                // ComparisonOperator = ">" => ActionFn(12);
+                let __sym0 = __pop_Term_22_3e_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
                 let __nt = super::__action12(__sym0);
@@ -1457,9 +1578,9 @@ mod __parse__Filter {
                 __symbols.push((__start, __Symbol::NtComparisonOperator(__nt), __end));
                 4
             }
-            15 => {
-                // ComparisonOperator = "=" => ActionFn(13);
-                let __sym0 = __pop_Term_22_3d_22(__symbols);
+            13 => {
+                // ComparisonOperator = "<=" => ActionFn(13);
+                let __sym0 = __pop_Term_22_3c_3d_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
                 let __nt = super::__action13(__sym0);
@@ -1468,167 +1589,211 @@ mod __parse__Filter {
                 __symbols.push((__start, __Symbol::NtComparisonOperator(__nt), __end));
                 4
             }
+            14 => {
+                // ComparisonOperator = "<" => ActionFn(14);
+                let __sym0 = __pop_Term_22_3c_22(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym0.2.clone();
+                let __nt = super::__action14(__sym0);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 1);
+                __symbols.push((__start, __Symbol::NtComparisonOperator(__nt), __end));
+                4
+            }
+            15 => {
+                // ComparisonOperator = "=" => ActionFn(15);
+                let __sym0 = __pop_Term_22_3d_22(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym0.2.clone();
+                let __nt = super::__action15(__sym0);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 1);
+                __symbols.push((__start, __Symbol::NtComparisonOperator(__nt), __end));
+                4
+            }
             16 => {
-                // Condition = ComparisonOperator, Value => ActionFn(8);
+                // Condition = ComparisonOperator, Value => ActionFn(10);
                 let __sym1 = __pop_NtValue(__symbols);
                 let __sym0 = __pop_NtComparisonOperator(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
-                let __nt = super::__action8(__sym0, __sym1);
+                let __nt = super::__action10(__sym0, __sym1);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 2);
                 __symbols.push((__start, __Symbol::NtCondition(__nt), __end));
                 5
             }
             17 => {
-                // Filter =  => ActionFn(29);
+                // Filter =  => ActionFn(31);
                 let __start = __symbols.last().map(|s| s.2.clone()).unwrap_or_default();
                 let __end = __lookahead_start.cloned().unwrap_or_else(|| __start.clone());
-                let __nt = super::__action29(&__start, &__end);
+                let __nt = super::__action31(&__start, &__end);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 0);
                 __symbols.push((__start, __Symbol::NtFilter(__nt), __end));
                 6
             }
             18 => {
-                // Filter = Block+ => ActionFn(30);
+                // Filter = Block+ => ActionFn(32);
                 let __sym0 = __pop_NtBlock_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action30(__sym0);
+                let __nt = super::__action32(__sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtFilter(__nt), __end));
                 6
             }
             19 => {
-                // Ident+ = Ident => ActionFn(17);
-                let __sym0 = __pop_TermIdent(__symbols);
-                let __start = __sym0.0.clone();
-                let __end = __sym0.2.clone();
-                let __nt = super::__action17(__sym0);
-                let __states_len = __states.len();
-                __states.truncate(__states_len - 1);
-                __symbols.push((__start, __Symbol::NtIdent_2b(__nt), __end));
-                7
-            }
-            20 => {
-                // Ident+ = Ident+, Ident => ActionFn(18);
-                let __sym1 = __pop_TermIdent(__symbols);
-                let __sym0 = __pop_NtIdent_2b(__symbols);
-                let __start = __sym0.0.clone();
-                let __end = __sym1.2.clone();
-                let __nt = super::__action18(__sym0, __sym1);
-                let __states_len = __states.len();
-                __states.truncate(__states_len - 2);
-                __symbols.push((__start, __Symbol::NtIdent_2b(__nt), __end));
-                7
-            }
-            21 => {
-                // Line = Ident, Value, "\\n" => ActionFn(4);
+                // Line = Constant, Value, "\\n" => ActionFn(4);
                 let __sym2 = __pop_Term_22_5c_5cn_22(__symbols);
                 let __sym1 = __pop_NtValue(__symbols);
-                let __sym0 = __pop_TermIdent(__symbols);
+                let __sym0 = __pop_TermConstant(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
                 let __nt = super::__action4(__sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::NtLine(__nt), __end));
-                8
+                7
             }
-            22 => {
-                // Line = Ident, Condition, "\\n" => ActionFn(5);
+            20 => {
+                // Line = Constant, Condition, "\\n" => ActionFn(5);
                 let __sym2 = __pop_Term_22_5c_5cn_22(__symbols);
                 let __sym1 = __pop_NtCondition(__symbols);
-                let __sym0 = __pop_TermIdent(__symbols);
+                let __sym0 = __pop_TermConstant(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
                 let __nt = super::__action5(__sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::NtLine(__nt), __end));
-                8
+                7
             }
-            23 => {
-                // Line* =  => ActionFn(21);
+            21 => {
+                // Line* =  => ActionFn(23);
                 let __start = __symbols.last().map(|s| s.2.clone()).unwrap_or_default();
                 let __end = __lookahead_start.cloned().unwrap_or_else(|| __start.clone());
-                let __nt = super::__action21(&__start, &__end);
+                let __nt = super::__action23(&__start, &__end);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 0);
                 __symbols.push((__start, __Symbol::NtLine_2a(__nt), __end));
-                9
+                8
             }
-            24 => {
-                // Line* = Line+ => ActionFn(22);
+            22 => {
+                // Line* = Line+ => ActionFn(24);
                 let __sym0 = __pop_NtLine_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action22(__sym0);
+                let __nt = super::__action24(__sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtLine_2a(__nt), __end));
-                9
+                8
             }
-            25 => {
-                // Line+ = Line => ActionFn(27);
+            23 => {
+                // Line+ = Line => ActionFn(29);
                 let __sym0 = __pop_NtLine(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action27(__sym0);
+                let __nt = super::__action29(__sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtLine_2b(__nt), __end));
-                10
+                9
             }
-            26 => {
-                // Line+ = Line+, Line => ActionFn(28);
+            24 => {
+                // Line+ = Line+, Line => ActionFn(30);
                 let __sym1 = __pop_NtLine(__symbols);
                 let __sym0 = __pop_NtLine_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
-                let __nt = super::__action28(__sym0, __sym1);
+                let __nt = super::__action30(__sym0, __sym1);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 2);
                 __symbols.push((__start, __Symbol::NtLine_2b(__nt), __end));
-                10
+                9
             }
-            27 => {
-                // NumExpression = Num => ActionFn(14);
+            25 => {
+                // NumExpression = Num => ActionFn(16);
                 let __sym0 = __pop_TermNum(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action14(__sym0);
+                let __nt = super::__action16(__sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtNumExpression(__nt), __end));
+                10
+            }
+            26 => {
+                // NumExpression+ = NumExpression => ActionFn(21);
+                let __sym0 = __pop_NtNumExpression(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym0.2.clone();
+                let __nt = super::__action21(__sym0);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 1);
+                __symbols.push((__start, __Symbol::NtNumExpression_2b(__nt), __end));
+                11
+            }
+            27 => {
+                // NumExpression+ = NumExpression+, NumExpression => ActionFn(22);
+                let __sym1 = __pop_NtNumExpression(__symbols);
+                let __sym0 = __pop_NtNumExpression_2b(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym1.2.clone();
+                let __nt = super::__action22(__sym0, __sym1);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 2);
+                __symbols.push((__start, __Symbol::NtNumExpression_2b(__nt), __end));
                 11
             }
             28 => {
-                // NumExpression+ = NumExpression => ActionFn(19);
-                let __sym0 = __pop_NtNumExpression(__symbols);
+                // StrLiteral = QuotedStrLiteral => ActionFn(8);
+                let __sym0 = __pop_TermQuotedStrLiteral(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym0.2.clone();
+                let __nt = super::__action8(__sym0);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 1);
+                __symbols.push((__start, __Symbol::NtStrLiteral(__nt), __end));
+                12
+            }
+            29 => {
+                // StrLiteral = Constant => ActionFn(9);
+                let __sym0 = __pop_TermConstant(__symbols);
+                let __start = __sym0.0.clone();
+                let __end = __sym0.2.clone();
+                let __nt = super::__action9(__sym0);
+                let __states_len = __states.len();
+                __states.truncate(__states_len - 1);
+                __symbols.push((__start, __Symbol::NtStrLiteral(__nt), __end));
+                12
+            }
+            30 => {
+                // StrLiteral+ = StrLiteral => ActionFn(19);
+                let __sym0 = __pop_NtStrLiteral(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
                 let __nt = super::__action19(__sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
-                __symbols.push((__start, __Symbol::NtNumExpression_2b(__nt), __end));
-                12
+                __symbols.push((__start, __Symbol::NtStrLiteral_2b(__nt), __end));
+                13
             }
-            29 => {
-                // NumExpression+ = NumExpression+, NumExpression => ActionFn(20);
-                let __sym1 = __pop_NtNumExpression(__symbols);
-                let __sym0 = __pop_NtNumExpression_2b(__symbols);
+            31 => {
+                // StrLiteral+ = StrLiteral+, StrLiteral => ActionFn(20);
+                let __sym1 = __pop_NtStrLiteral(__symbols);
+                let __sym0 = __pop_NtStrLiteral_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
                 let __nt = super::__action20(__sym0, __sym1);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 2);
-                __symbols.push((__start, __Symbol::NtNumExpression_2b(__nt), __end));
-                12
+                __symbols.push((__start, __Symbol::NtStrLiteral_2b(__nt), __end));
+                13
             }
-            30 => {
+            32 => {
                 // Value = NumExpression+ => ActionFn(6);
                 let __sym0 = __pop_NtNumExpression_2b(__symbols);
                 let __start = __sym0.0.clone();
@@ -1637,20 +1802,20 @@ mod __parse__Filter {
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtValue(__nt), __end));
-                13
+                14
             }
-            31 => {
-                // Value = Ident+ => ActionFn(7);
-                let __sym0 = __pop_NtIdent_2b(__symbols);
+            33 => {
+                // Value = StrLiteral+ => ActionFn(7);
+                let __sym0 = __pop_NtStrLiteral_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
                 let __nt = super::__action7(__sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtValue(__nt), __end));
-                13
+                14
             }
-            32 => {
+            34 => {
                 // __Filter = Filter => ActionFn(0);
                 let __sym0 = __pop_NtFilter(__symbols);
                 let __start = __sym0.0.clone();
@@ -1661,7 +1826,7 @@ mod __parse__Filter {
             _ => panic!("invalid action code {}", __action)
         };
         let __state = *__states.last().unwrap() as usize;
-        let __next_state = __GOTO[__state * 15 + __nonterminal] - 1;
+        let __next_state = __GOTO[__state * 16 + __nonterminal] - 1;
         __states.push(__next_state);
         None
     }
@@ -1791,12 +1956,12 @@ mod __parse__Filter {
             _ => panic!("symbol type mismatch")
         }
     }
-    fn __pop_TermIdent<
+    fn __pop_TermConstant<
     >(
         __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
     ) -> (TokenLocation, String, TokenLocation) {
         match __symbols.pop().unwrap() {
-            (__l, __Symbol::TermIdent(__v), __r) => (__l, __v, __r),
+            (__l, __Symbol::TermConstant(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
@@ -1806,6 +1971,15 @@ mod __parse__Filter {
     ) -> (TokenLocation, i32, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::TermNum(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_TermQuotedStrLiteral<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, String, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::TermQuotedStrLiteral(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
@@ -1872,15 +2046,6 @@ mod __parse__Filter {
             _ => panic!("symbol type mismatch")
         }
     }
-    fn __pop_NtIdent_2b<
-    >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ::std::vec::Vec<String>, TokenLocation) {
-        match __symbols.pop().unwrap() {
-            (__l, __Symbol::NtIdent_2b(__v), __r) => (__l, __v, __r),
-            _ => panic!("symbol type mismatch")
-        }
-    }
     fn __pop_NtLine<
     >(
         __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
@@ -1923,6 +2088,24 @@ mod __parse__Filter {
     ) -> (TokenLocation, ::std::vec::Vec<ast::NumberExpression>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtNumExpression_2b(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_NtStrLiteral<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, String, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::NtStrLiteral(__v), __r) => (__l, __v, __r),
+            _ => panic!("symbol type mismatch")
+        }
+    }
+    fn __pop_NtStrLiteral_2b<
+    >(
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+    ) -> (TokenLocation, ::std::vec::Vec<String>, TokenLocation) {
+        match __symbols.pop().unwrap() {
+            (__l, __Symbol::NtStrLiteral_2b(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
@@ -2027,6 +2210,22 @@ pub fn __action7<
 
 pub fn __action8<
 >(
+    (_, __0, _): (TokenLocation, String, TokenLocation),
+) -> String
+{
+    String::from(__0)
+}
+
+pub fn __action9<
+>(
+    (_, __0, _): (TokenLocation, String, TokenLocation),
+) -> String
+{
+    String::from(__0)
+}
+
+pub fn __action10<
+>(
     (_, op, _): (TokenLocation, ast::ComparisonOperator, TokenLocation),
     (_, v, _): (TokenLocation, ast::Value, TokenLocation),
 ) -> ast::Condition
@@ -2034,7 +2233,7 @@ pub fn __action8<
     ast::Condition { value: v, operator: op }
 }
 
-pub fn __action9<
+pub fn __action11<
 >(
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> ast::ComparisonOperator
@@ -2042,7 +2241,7 @@ pub fn __action9<
     ast::ComparisonOperator::Gte
 }
 
-pub fn __action10<
+pub fn __action12<
 >(
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> ast::ComparisonOperator
@@ -2050,7 +2249,7 @@ pub fn __action10<
     ast::ComparisonOperator::Gt
 }
 
-pub fn __action11<
+pub fn __action13<
 >(
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> ast::ComparisonOperator
@@ -2058,7 +2257,7 @@ pub fn __action11<
     ast::ComparisonOperator::Lte
 }
 
-pub fn __action12<
+pub fn __action14<
 >(
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> ast::ComparisonOperator
@@ -2066,7 +2265,7 @@ pub fn __action12<
     ast::ComparisonOperator::Lt
 }
 
-pub fn __action13<
+pub fn __action15<
 >(
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> ast::ComparisonOperator
@@ -2074,7 +2273,7 @@ pub fn __action13<
     ast::ComparisonOperator::Eq
 }
 
-pub fn __action14<
+pub fn __action16<
 >(
     (_, __0, _): (TokenLocation, i32, TokenLocation),
 ) -> ast::NumberExpression
@@ -2082,7 +2281,7 @@ pub fn __action14<
     ast::NumberExpression::Number(__0)
 }
 
-pub fn __action15<
+pub fn __action17<
 >(
     (_, r, _): (TokenLocation, ast::NumberExpression, TokenLocation),
     (_, g, _): (TokenLocation, ast::NumberExpression, TokenLocation),
@@ -2098,7 +2297,7 @@ pub fn __action15<
     }
 }
 
-pub fn __action16<
+pub fn __action18<
 >(
     (_, r, _): (TokenLocation, ast::NumberExpression, TokenLocation),
     (_, g, _): (TokenLocation, ast::NumberExpression, TokenLocation),
@@ -2113,7 +2312,7 @@ pub fn __action16<
     }
 }
 
-pub fn __action17<
+pub fn __action19<
 >(
     (_, __0, _): (TokenLocation, String, TokenLocation),
 ) -> ::std::vec::Vec<String>
@@ -2121,7 +2320,7 @@ pub fn __action17<
     vec![__0]
 }
 
-pub fn __action18<
+pub fn __action20<
 >(
     (_, v, _): (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
     (_, e, _): (TokenLocation, String, TokenLocation),
@@ -2130,7 +2329,7 @@ pub fn __action18<
     { let mut v = v; v.push(e); v }
 }
 
-pub fn __action19<
+pub fn __action21<
 >(
     (_, __0, _): (TokenLocation, ast::NumberExpression, TokenLocation),
 ) -> ::std::vec::Vec<ast::NumberExpression>
@@ -2138,7 +2337,7 @@ pub fn __action19<
     vec![__0]
 }
 
-pub fn __action20<
+pub fn __action22<
 >(
     (_, v, _): (TokenLocation, ::std::vec::Vec<ast::NumberExpression>, TokenLocation),
     (_, e, _): (TokenLocation, ast::NumberExpression, TokenLocation),
@@ -2147,7 +2346,7 @@ pub fn __action20<
     { let mut v = v; v.push(e); v }
 }
 
-pub fn __action21<
+pub fn __action23<
 >(
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
@@ -2156,7 +2355,7 @@ pub fn __action21<
     vec![]
 }
 
-pub fn __action22<
+pub fn __action24<
 >(
     (_, v, _): (TokenLocation, ::std::vec::Vec<ast::Instruction>, TokenLocation),
 ) -> ::std::vec::Vec<ast::Instruction>
@@ -2164,7 +2363,7 @@ pub fn __action22<
     v
 }
 
-pub fn __action23<
+pub fn __action25<
 >(
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
@@ -2173,7 +2372,7 @@ pub fn __action23<
     vec![]
 }
 
-pub fn __action24<
+pub fn __action26<
 >(
     (_, v, _): (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation),
 ) -> ::std::vec::Vec<ast::Block>
@@ -2181,7 +2380,7 @@ pub fn __action24<
     v
 }
 
-pub fn __action25<
+pub fn __action27<
 >(
     (_, __0, _): (TokenLocation, ast::Block, TokenLocation),
 ) -> ::std::vec::Vec<ast::Block>
@@ -2189,7 +2388,7 @@ pub fn __action25<
     vec![__0]
 }
 
-pub fn __action26<
+pub fn __action28<
 >(
     (_, v, _): (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation),
     (_, e, _): (TokenLocation, ast::Block, TokenLocation),
@@ -2198,7 +2397,7 @@ pub fn __action26<
     { let mut v = v; v.push(e); v }
 }
 
-pub fn __action27<
+pub fn __action29<
 >(
     (_, __0, _): (TokenLocation, ast::Instruction, TokenLocation),
 ) -> ::std::vec::Vec<ast::Instruction>
@@ -2206,7 +2405,7 @@ pub fn __action27<
     vec![__0]
 }
 
-pub fn __action28<
+pub fn __action30<
 >(
     (_, v, _): (TokenLocation, ::std::vec::Vec<ast::Instruction>, TokenLocation),
     (_, e, _): (TokenLocation, ast::Instruction, TokenLocation),
@@ -2215,7 +2414,7 @@ pub fn __action28<
     { let mut v = v; v.push(e); v }
 }
 
-pub fn __action29<
+pub fn __action31<
 >(
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
@@ -2223,68 +2422,28 @@ pub fn __action29<
 {
     let __start0 = __lookbehind.clone();
     let __end0 = __lookahead.clone();
-    let __temp0 = __action23(
+    let __temp0 = __action25(
         &__start0,
         &__end0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action1(
-        __temp0,
-    )
-}
-
-pub fn __action30<
->(
-    __0: (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation),
-) -> Box<Vec<ast::Block>>
-{
-    let __start0 = __0.0.clone();
-    let __end0 = __0.2.clone();
-    let __temp0 = __action24(
-        __0,
-    );
-    let __temp0 = (__start0, __temp0, __end0);
-    __action1(
-        __temp0,
-    )
-}
-
-pub fn __action31<
->(
-    __0: (TokenLocation, Tok, TokenLocation),
-    __1: (TokenLocation, Tok, TokenLocation),
-) -> ast::Block
-{
-    let __start0 = __1.2.clone();
-    let __end0 = __1.2.clone();
-    let __temp0 = __action21(
-        &__start0,
-        &__end0,
-    );
-    let __temp0 = (__start0, __temp0, __end0);
-    __action2(
-        __0,
-        __1,
         __temp0,
     )
 }
 
 pub fn __action32<
 >(
-    __0: (TokenLocation, Tok, TokenLocation),
-    __1: (TokenLocation, Tok, TokenLocation),
-    __2: (TokenLocation, ::std::vec::Vec<ast::Instruction>, TokenLocation),
-) -> ast::Block
+    __0: (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation),
+) -> Box<Vec<ast::Block>>
 {
-    let __start0 = __2.0.clone();
-    let __end0 = __2.2.clone();
-    let __temp0 = __action22(
-        __2,
+    let __start0 = __0.0.clone();
+    let __end0 = __0.2.clone();
+    let __temp0 = __action26(
+        __0,
     );
     let __temp0 = (__start0, __temp0, __end0);
-    __action2(
-        __0,
-        __1,
+    __action1(
         __temp0,
     )
 }
@@ -2297,12 +2456,12 @@ pub fn __action33<
 {
     let __start0 = __1.2.clone();
     let __end0 = __1.2.clone();
-    let __temp0 = __action21(
+    let __temp0 = __action23(
         &__start0,
         &__end0,
     );
     let __temp0 = (__start0, __temp0, __end0);
-    __action3(
+    __action2(
         __0,
         __1,
         __temp0,
@@ -2318,7 +2477,47 @@ pub fn __action34<
 {
     let __start0 = __2.0.clone();
     let __end0 = __2.2.clone();
-    let __temp0 = __action22(
+    let __temp0 = __action24(
+        __2,
+    );
+    let __temp0 = (__start0, __temp0, __end0);
+    __action2(
+        __0,
+        __1,
+        __temp0,
+    )
+}
+
+pub fn __action35<
+>(
+    __0: (TokenLocation, Tok, TokenLocation),
+    __1: (TokenLocation, Tok, TokenLocation),
+) -> ast::Block
+{
+    let __start0 = __1.2.clone();
+    let __end0 = __1.2.clone();
+    let __temp0 = __action23(
+        &__start0,
+        &__end0,
+    );
+    let __temp0 = (__start0, __temp0, __end0);
+    __action3(
+        __0,
+        __1,
+        __temp0,
+    )
+}
+
+pub fn __action36<
+>(
+    __0: (TokenLocation, Tok, TokenLocation),
+    __1: (TokenLocation, Tok, TokenLocation),
+    __2: (TokenLocation, ::std::vec::Vec<ast::Instruction>, TokenLocation),
+) -> ast::Block
+{
+    let __start0 = __2.0.clone();
+    let __end0 = __2.2.clone();
+    let __temp0 = __action24(
         __2,
     );
     let __temp0 = (__start0, __temp0, __end0);

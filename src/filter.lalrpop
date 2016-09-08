@@ -27,7 +27,8 @@ extern {
         "<" => Tok::Lt,
         "=" => Tok::Eql,
         Num => Tok::Num(<i32>),
-        Ident => Tok::Ident(<String>)
+        QuotedStrLiteral => Tok::StrLiteral(<String>),
+        Constant => Tok::Constant(<String>)
     }
 }
 
@@ -41,11 +42,11 @@ Block: ast::Block = {
 };
 
 Line: ast::Instruction = {
-    <n:Ident> <v:Value> "\n" => ast::Instruction {
+    <n:Constant> <v:Value> "\n" => ast::Instruction {
         name: n,
         value: ast::InstructionExpression::Value(v)
     },
-    <n:Ident> <c:Condition> "\n" => ast::Instruction {
+    <n:Constant> <c:Condition> "\n" => ast::Instruction {
         name: n,
         value: ast::InstructionExpression::Condition(c)
     }
@@ -53,7 +54,12 @@ Line: ast::Instruction = {
 
 Value: ast::Value = {
     NumExpression+ => ast::Value::Numbers(<>),
-    Ident+ => ast::Value::Names(<>)
+    StrLiteral+ => ast::Value::Names(<>)
+};
+
+StrLiteral: String = {
+    QuotedStrLiteral => String::from(<>),
+    Constant => String::from(<>),
 };
 
 Condition: ast::Condition = {

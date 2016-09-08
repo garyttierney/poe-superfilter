@@ -2,7 +2,8 @@ use std::str::FromStr;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Tok {
-    Ident(String),
+    StrLiteral(String),
+    Constant(String),
     Num(i32),
     LParen,
     RParen,
@@ -160,7 +161,7 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
                 '"' => {
                     let tmp = self.take_quoted_string(c);
                     let length = tmp.len() as isize;
-                    self.push(Tok::Ident(tmp), length);
+                    self.push(Tok::StrLiteral(tmp), length);
                 },
                 '#' => self.skip_rest_of_line(),
                 _ if c.is_alphabetic() => {
@@ -170,7 +171,7 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
                         match tmp.as_ref() {
                             "Show" => Tok::Show,
                             "Hide" => Tok::Hide,
-                            _ => Tok::Ident(tmp)
+                            _ => Tok::Constant(tmp)
                         },
                         length
                     );
