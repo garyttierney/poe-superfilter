@@ -79,11 +79,9 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
 
         // insert newline at the end if none is present
         let last = self.tokens.last().cloned();
-        if let Some(t) = last {
-            match t {
-                (_, Tok::NewLine, _) => {}
-                _ => self.push(Tok::NewLine, 1)
-            }
+        match last {
+            Some((_, Tok::NewLine, _)) => {}
+            _ => self.push(Tok::NewLine, 1)
         }
     }
 
