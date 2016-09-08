@@ -4,7 +4,7 @@ use std::str::FromStr;
 use tok::Location as TokenLocation;
 use tok::Tok;
 
-#[LALR]
+//#[LALR]
 grammar;
 
 extern {
@@ -28,36 +28,51 @@ extern {
         "=" => Tok::Eql,
         Num => Tok::Num(<i32>),
         QuotedStrLiteral => Tok::StrLiteral(<String>),
-        Constant => Tok::Constant(<String>)
+        Constant => Tok::Constant(<String>),
+        VarIdentifier => Tok::VarIdentifier(<String>)
     }
 }
 
-pub Filter: Box<Vec<ast::Block>> = {
-    Block* => Box::new(<>)
-};
-
-Block: ast::Block = {
-    "Show" "\n" <l:Line*> => ast::Block::Show(Box::new(l)),
-    "Hide" "\n" <l:Line*> => ast::Block::Hide(Box::new(l)),
-};
-
-Line: ast::Instruction = {
-    <n:Constant> <v:Value> "\n" => ast::Instruction {
-        name: n,
-        value: ast::InstructionExpression::Value(v)
-    },
-    <n:Constant> <c:Condition> "\n" => ast::Instruction {
-        name: n,
-        value: ast::InstructionExpression::Condition(c)
+pub Filter : Box<Vec<ast::Block>> = {
+    <def:VarDefinitionBlock?> <blocks:Block*> => {
+        let mut blocks = blocks;
+        if let Some(b) = def {
+            blocks.insert(0, b);
+        }
+        Box::new(blocks)
     }
 };
 
-Value: ast::Value = {
-    NumExpression+ => ast::Value::Numbers(<>),
-    StrLiteral+ => ast::Value::Names(<>)
+VarDefinitionBlock : ast::Block = {
+    VarDefinition+ => ast::Block::Definitions(Box::new(<>))
 };
 
-StrLiteral: String = {
+Block : ast::Block = {
+    "Show" "\n" <l:FilterInstruction*> => ast::Block::Show(Box::new(l)),
+    "Hide" "\n" <l:FilterInstruction*> => ast::Block::Hide(Box::new(l)),
+};
+
+VarDefinition : ast::VarDefinition  = {
+    <id:VarIdentifier> "=" <v:Value+> "\n" => ast::VarDefinition { identifier: id, values: v }
+};
+
+FilterInstruction : ast::FilterInstruction = {
+    <Constant> <Value+> "\n" => ast::FilterInstruction::SetValue(<>),
+    <Constant> <Condition> "\n" => ast::FilterInstruction::Condition(<>),
+    VarDefinition => ast::FilterInstruction::Var(<>)
+};
+
+Value : ast::Value = {
+    NumExpression => ast::Value::Num(<>),
+    StringExpression => ast::Value::Str(<>),
+    VarIdentifier => ast::Value::Var(<>)
+};
+
+StringExpression : ast::StringBox = {
+    StrLiteral => ast::StringBox::Value(<>),
+};
+
+StrLiteral : String = {
     QuotedStrLiteral => String::from(<>),
     Constant => String::from(<>),
 };
@@ -87,7 +102,7 @@ NumFactor : ast::NumberExpression = {
 };
 
 NumTerm : ast::NumberExpression = {
-    Num => ast::NumberExpression::Number(<>),
+    Num => ast::NumberExpression::Number(ast::NumberBox::IntValue(<>)),
     "(" <NumExpression> ")" => <>
 };
 
@@ -102,6 +117,6 @@ Color: ast::Color = {
         r: r,
         g: g,
         b: b,
-        a: ast::NumberExpression::Number(255)
+        a: ast::NumberExpression::Number(ast::NumberBox::IntValue(255))
     }
 };

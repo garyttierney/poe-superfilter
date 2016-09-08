@@ -1,9 +1,11 @@
+use regex::Regex;
 use std::str::FromStr;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Tok {
     StrLiteral(String),
     Constant(String),
+    VarIdentifier(String),
     Num(i32),
     LParen,
     RParen,
@@ -134,6 +136,11 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
     }
 
     fn read_token(&mut self) {
+        lazy_static! {
+            // used to match a single character that belongs to an identifier
+            static ref IDENT_CHAR_RX : Regex = Regex::new("[A-Za-z0-9_]").unwrap();
+        }
+
         if let Some(c) = self.lookahead {
             match c {
                 '\n' => self.new_line(),
@@ -163,9 +170,16 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
                     let length = tmp.len() as isize;
                     self.push(Tok::StrLiteral(tmp), length);
                 },
+                '$' => {
+                    if let Some(c0) = self.next_char() {
+                        let tmp = self.take_while(c0, |c| IDENT_CHAR_RX.is_match(&c.to_string()));
+                        let length = tmp.len() as isize;
+                        self.push(Tok::VarIdentifier(tmp), length);
+                    }
+                },
                 '#' => self.skip_rest_of_line(),
                 _ if c.is_alphabetic() => {
-                    let tmp = self.take_while(c, |c| c.is_alphabetic());
+                    let tmp = self.take_while(c, |c| IDENT_CHAR_RX.is_match(&c.to_string()));
                     let length = tmp.len() as isize;
                     self.push(
                         match tmp.as_ref() {

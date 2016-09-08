@@ -1,28 +1,43 @@
 
 #[derive(Debug)]
 pub enum Block {
-    Show(Box<Vec<Instruction>>),
-    Hide(Box<Vec<Instruction>>),
-    Empty
+    Show(Box<Vec<FilterInstruction>>),
+    Hide(Box<Vec<FilterInstruction>>),
+    Definitions(Box<Vec<VarDefinition>>)
 }
 
 #[derive(Debug)]
-pub struct Instruction {
-    pub name: String,
-    pub value: InstructionExpression
+pub enum NumberBox {
+    IntValue(i32),
+    Decimal(f32),
+    Var(String)
 }
 
 #[derive(Debug)]
-pub enum InstructionExpression {
-    Condition(Condition),
-    Value(Value)
+pub enum StringBox {
+    Value(String),
+    Var(String)
+}
+
+#[derive(Debug)]
+pub struct VarDefinition {
+    pub identifier: String,
+    pub values: Vec<Value>
+}
+
+#[derive(Debug)]
+pub enum FilterInstruction {
+    SetValue(String, Vec<Value>),
+    Condition(String, Condition),
+    Var(VarDefinition)
 }
 
 #[derive(Debug)]
 pub enum Value {
-    Numbers(Vec<NumberExpression>),
-    Color(Color),
-    Names(Vec<String>)
+    Num(NumberExpression),
+    Str(StringBox),
+    Var(String),
+    Color(Color)
 }
 
 #[derive(Debug)]
@@ -50,7 +65,7 @@ pub enum ComparisonOperator {
 
 #[derive(Debug)]
 pub enum NumberExpression {
-    Number(i32),
+    Number(NumberBox),
     Op(Box<NumberExpression>, NumberOperation, Box<NumberExpression>)
 }
 

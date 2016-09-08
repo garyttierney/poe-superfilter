@@ -1,8 +1,11 @@
+$test = "abc"
+$test2 = 1
+
 Show
 	Class Flask
 	Rarity Magic
 	BaseType "Small"
-	SetTextColor 100 100 255 255
+	SetTextColor $test_var 100 255 255
 	SetBorderColor 100 100 100
 	SetFontSize 38 # comment
 	ItemLevel <= 5
