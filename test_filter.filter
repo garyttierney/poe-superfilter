@@ -4,7 +4,7 @@ Show
 	BaseType "Small"
 	SetTextColor 100 100 255 255
 	SetBorderColor 100 100 100
-	SetFontSize 38
+	SetFontSize 38 # comment
 	ItemLevel <= 5
 
 Show

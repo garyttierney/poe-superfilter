@@ -76,6 +76,15 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
                 self.next_char();
             }
         }
+
+        // insert newline at the end if none is present
+        let last = self.tokens.last().cloned();
+        if let Some(t) = last {
+            match t {
+                (_, Tok::NewLine, _) => {}
+                _ => self.push(Tok::NewLine, 1)
+            }
+        }
     }
 
     fn next_char(&mut self) -> Option<char> {
@@ -96,6 +105,22 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
         self.cursor.pos = 0;
         self.token_in_current_line = false;
         self.next_char();
+    }
+
+    fn skip_rest_of_line(&mut self) {
+        if self.token_in_current_line {
+            self.push(Tok::NewLine, 1);
+        }
+        self.cursor.line += 1;
+        self.cursor.pos = 0;
+        self.token_in_current_line = false;
+
+        while let Some(c) = self.next_char() {
+            if c == '\n' {
+                self.next_char();
+                break;
+            }
+        }
     }
 
     fn push(&mut self, token:Tok, length:isize) {
@@ -138,7 +163,8 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
                     let tmp = self.take_quoted_string(c);
                     let length = tmp.len() as isize;
                     self.push(Tok::Ident(tmp), length);
-                }
+                },
+                '#' => self.skip_rest_of_line(),
                 _ if c.is_alphabetic() => {
                     let tmp = self.take_while(c, |c| c.is_alphabetic());
                     let length = tmp.len() as isize;
