@@ -24,7 +24,8 @@ pub enum Tok {
     Show,
     Hide,
     Mixin,
-    Import
+    MixinInclude(String),
+    Import,
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
@@ -213,6 +214,9 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
             static ref IDENT_CHAR_RX : Regex = Regex::new("[A-Za-z0-9_]").unwrap();
         }
         if let Some(c0) = self.lookahead {
+            if !IDENT_CHAR_RX.is_match(&c0.to_string()) {
+                return None;
+            }
             return Some(self.take_while(c0, |c| IDENT_CHAR_RX.is_match(&c.to_string())));
         }
         None

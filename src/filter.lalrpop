@@ -1,6 +1,5 @@
 
 use ast;
-use std::str::FromStr;
 use tok::Location as TokenLocation;
 use tok::Tok;
 
@@ -24,6 +23,7 @@ extern {
         "Hide" => Tok::Hide,
         "Mixin" => Tok::Mixin,
         "Import" => Tok::Import,
+        "MixinInclude" => Tok::MixinInclude(<String>),
         ">=" => Tok::Gte,
         ">" => Tok::Gt,
         "<=" => Tok::Lte,
@@ -37,7 +37,7 @@ extern {
 }
 
 pub Filter : Box<Vec<ast::Block>> = {
-    <def:VarDefinitionBlock?> <blocks:Block*> => {
+    <def:HeadBlock?> <blocks:Block*> => {
         let mut blocks = blocks;
         if let Some(b) = def {
             blocks.insert(0, b);
@@ -46,19 +46,23 @@ pub Filter : Box<Vec<ast::Block>> = {
     }
 };
 
-VarDefinitionBlock : ast::Block = {
-    VarDefinition+ => ast::Block::Definitions(<>)
-};
+HeadBlock : ast::Block = HeadInstruction+ => ast::Block::Head(<>);
+HeadInstruction : ast::Statement = { VarDefinition => ast::Statement::Var(<>), Import };
+Import : ast::Statement = "Import" <StrLiteral> "\n" => ast::Statement::Import(<>);
 
 Block : ast::Block = {
-    "Show" "\n" <FilterInstruction*> => ast::Block::Show(<>),
-    "Hide" "\n" <FilterInstruction*> => ast::Block::Hide(<>),
-    "Mixin" <name:Constant> <args:("(" <Comma<VarIdentifier>> ")")?> "\n" <instructions:FilterInstruction*> => {
-        ast::Block::Mixin {
-            name: name,
-            parameters: args.unwrap_or(vec![]),
-            instructions: instructions,
-        }
+    "Show" "\n" <Statement*> => ast::Block::Show(<>),
+    "Hide" "\n" <Statement*> => ast::Block::Hide(<>),
+    "Mixin" <name:Constant> <args:("(" <Comma<VarIdentifier>> ")")?> "\n" <instructions:Statement*> => {
+        let params = args
+            .unwrap_or(vec![])
+            .iter()
+            .map(|param_name| ast::Param { name: param_name.clone(), default: None })
+            .collect();
+        ast::Block::Mixin(
+            ast::MixinSpec{ name: name, parameters: params },
+            instructions
+        )
     }
 };
 
@@ -77,10 +81,13 @@ VarDefinition : ast::VarDefinition  = {
     <id:VarIdentifier> "=" <v:Value+> "\n" => ast::VarDefinition { identifier: id, values: v }
 };
 
-FilterInstruction : ast::FilterInstruction = {
-    <Constant> <Value+> "\n" => ast::FilterInstruction::SetValue(<>),
-    <Constant> <Condition> "\n" => ast::FilterInstruction::Condition(<>),
-    VarDefinition => ast::FilterInstruction::Var(<>)
+Statement : ast::Statement = {
+    <Constant> <Value+> "\n" => ast::Statement::SetValue(<>),
+    <Constant> <Condition> "\n" => ast::Statement::Condition(<>),
+    VarDefinition => ast::Statement::Var(<>),
+    "+" <n:Constant> <params:("(" <Comma<Value>> ")")?> "\n" => ast::Statement::Include(
+        ast::MixinCall { name: n, parameters: params.unwrap_or(vec![]) }
+    )
 };
 
 Value : ast::Value = {

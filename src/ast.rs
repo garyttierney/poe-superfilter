@@ -1,14 +1,28 @@
 
 #[derive(Debug)]
 pub enum Block {
-    Show(Vec<FilterInstruction>),
-    Hide(Vec<FilterInstruction>),
-    Definitions(Vec<VarDefinition>),
-    Mixin {
-        name: String,
-        parameters: Vec<String>,
-        instructions: Vec<FilterInstruction>
-    }
+    Show(Vec<Statement>),
+    Hide(Vec<Statement>),
+    Head(Vec<Statement>),
+    Mixin(MixinSpec, Vec<Statement>),
+}
+
+#[derive(Debug)]
+pub struct MixinSpec {
+    pub name: String,
+    pub parameters: Vec<Param>,
+}
+
+#[derive(Debug)]
+pub struct Param {
+    pub name: String,
+    pub default: Option<Value>
+}
+
+#[derive(Debug)]
+pub struct MixinCall {
+    pub name: String,
+    pub parameters: Vec<Value>
 }
 
 #[derive(Debug)]
@@ -31,10 +45,12 @@ pub struct VarDefinition {
 }
 
 #[derive(Debug)]
-pub enum FilterInstruction {
+pub enum Statement {
     SetValue(String, Vec<Value>),
     Condition(String, Condition),
-    Var(VarDefinition)
+    Var(VarDefinition),
+    Include(MixinCall),
+    Import(String),
 }
 
 #[derive(Debug)]

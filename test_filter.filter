@@ -1,3 +1,5 @@
+Import "some-other"
+
 $test = "abc"
 $test2 = 1
 
@@ -9,11 +11,8 @@ Mixin FlaskMagic($type)
 	SetFontSize 38
 
 Show
-	Class Flask
-	Rarity Magic
-	BaseType "Small"
+	+FlaskMagic("Small")
 	SetTextColor $test_var 100 255 255
-	SetBorderColor 100 100 100
 	SetFontSize 38 # comment
 	ItemLevel <= 5
 
