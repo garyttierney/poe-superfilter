@@ -1,4 +1,4 @@
-//! A preprocessor tool that adds variables, mixins, arithmetics and lots
+//! A preprocessor for Path of Exile loot filters that adds variables, mixins, arithmetics and lots
 //! of other useful things to GGG's loot filter syntax and compiles filters
 //! written in the extended syntax down to a pure loot filter that can be used
 //! in the game.
