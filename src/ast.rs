@@ -1,9 +1,14 @@
 
 #[derive(Debug)]
 pub enum Block {
-    Show(Box<Vec<FilterInstruction>>),
-    Hide(Box<Vec<FilterInstruction>>),
-    Definitions(Box<Vec<VarDefinition>>)
+    Show(Vec<FilterInstruction>),
+    Hide(Vec<FilterInstruction>),
+    Definitions(Vec<VarDefinition>),
+    Mixin {
+        name: String,
+        parameters: Vec<String>,
+        instructions: Vec<FilterInstruction>
+    }
 }
 
 #[derive(Debug)]

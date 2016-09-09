@@ -1,6 +1,7 @@
 use regex::Regex;
 use std::str::FromStr;
 
+/// All tokens that can occur in superfilter syntax 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Tok {
     StrLiteral(String),
@@ -15,13 +16,15 @@ pub enum Tok {
     Div,
     Comma,
     NewLine,
-    Show,
-    Hide,
     Gte,
     Gt,
     Lte,
     Lt,
     Eql,
+    Show,
+    Hide,
+    Mixin,
+    Import
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
@@ -45,6 +48,7 @@ impl Location {
     }
 }
 
+/// Split a string into tokens, returning them as (start, token, end)
 pub fn tokenize(s: &str) -> Vec<(Location, Tok, Location)> {
     let mut tokenizer = Tokenizer::new(s.chars());
     tokenizer.tokenize();
@@ -136,11 +140,6 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
     }
 
     fn read_token(&mut self) {
-        lazy_static! {
-            // used to match a single character that belongs to an identifier
-            static ref IDENT_CHAR_RX : Regex = Regex::new("[A-Za-z0-9_]").unwrap();
-        }
-
         if let Some(c) = self.lookahead {
             match c {
                 '\n' => self.new_line(),
@@ -171,26 +170,21 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
                     self.push(Tok::StrLiteral(tmp), length);
                 },
                 '$' => {
-                    if let Some(c0) = self.next_char() {
-                        let tmp = self.take_while(c0, |c| IDENT_CHAR_RX.is_match(&c.to_string()));
+                    self.next_char();
+                    if let Some(tmp) = self.take_identifier() {
                         let length = tmp.len() as isize;
                         self.push(Tok::VarIdentifier(tmp), length);
                     }
                 },
                 '#' => self.skip_rest_of_line(),
                 _ if c.is_alphabetic() => {
-                    let tmp = self.take_while(c, |c| IDENT_CHAR_RX.is_match(&c.to_string()));
-                    let length = tmp.len() as isize;
-                    self.push(
-                        match tmp.as_ref() {
-                            "Show" => Tok::Show,
-                            "Hide" => Tok::Hide,
-                            _ => Tok::Constant(tmp)
-                        },
-                        length
-                    );
+                    if let Some(tmp) = self.take_identifier() {
+                        let length = tmp.len() as isize;
+                        let tok = Tokenizer::<C>::match_keyword(tmp);
+                        self.push(tok, length);
+                    }
                     return;
-                }
+                },
                 _ if c.is_digit(10) => {
                     let tmp = self.take_while(c, |c| c.is_digit(10));
                     self.push(Tok::Num(i32::from_str(&tmp).unwrap()), tmp.len() as isize);
@@ -201,6 +195,27 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
                 }
             }
         }
+    }
+
+    /// Matches for keywords in unquoted strings
+    fn match_keyword(id: String) -> Tok {
+        match id.as_ref() {
+            "Show" => Tok::Show,
+            "Hide" => Tok::Hide,
+            "Mixin" => Tok::Mixin,
+            "Import" => Tok::Import,
+            _ => Tok::Constant(id)
+        }
+    }
+
+    fn take_identifier(&mut self) -> Option<String> {
+        lazy_static! {
+            static ref IDENT_CHAR_RX : Regex = Regex::new("[A-Za-z0-9_]").unwrap();
+        }
+        if let Some(c0) = self.lookahead {
+            return Some(self.take_while(c0, |c| IDENT_CHAR_RX.is_match(&c.to_string())));
+        }
+        None
     }
 
     fn take_quoted_string(&mut self, quote:char) -> String {
@@ -227,7 +242,6 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
         where F: Fn(char) -> bool
     {
         let mut buf = String::new();
-
         buf.push(c0);
 
         while let Some(c) = self.next_char() {

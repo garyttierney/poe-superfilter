@@ -8,7 +8,7 @@ Mixins are reusable blocks of instructions that can be included anywhere.
 They can be used to minimize duplication in repeating sections of filters.
 
 ```
-@mixin FlaskMagic($type)
+Mixin FlaskMagic($type)
 	Class Flask
 	Rarity Magic
 	BaseType $type

@@ -18,9 +18,12 @@ extern {
         "+" => Tok::Plus,
         "*" => Tok::Times,
         "/" => Tok::Div,
+        "," => Tok::Comma,
         "\n" => Tok::NewLine,
         "Show" => Tok::Show,
         "Hide" => Tok::Hide,
+        "Mixin" => Tok::Mixin,
+        "Import" => Tok::Import,
         ">=" => Tok::Gte,
         ">" => Tok::Gt,
         "<=" => Tok::Lte,
@@ -44,12 +47,30 @@ pub Filter : Box<Vec<ast::Block>> = {
 };
 
 VarDefinitionBlock : ast::Block = {
-    VarDefinition+ => ast::Block::Definitions(Box::new(<>))
+    VarDefinition+ => ast::Block::Definitions(<>)
 };
 
 Block : ast::Block = {
-    "Show" "\n" <l:FilterInstruction*> => ast::Block::Show(Box::new(l)),
-    "Hide" "\n" <l:FilterInstruction*> => ast::Block::Hide(Box::new(l)),
+    "Show" "\n" <FilterInstruction*> => ast::Block::Show(<>),
+    "Hide" "\n" <FilterInstruction*> => ast::Block::Hide(<>),
+    "Mixin" <name:Constant> <args:("(" <Comma<VarIdentifier>> ")")?> "\n" <instructions:FilterInstruction*> => {
+        ast::Block::Mixin {
+            name: name,
+            parameters: args.unwrap_or(vec![]),
+            instructions: instructions,
+        }
+    }
+};
+
+Comma<T>: Vec<T> = {
+    <v:(<T> ",")*> <e:T?> => match e {
+        None => v,
+        Some(e) => {
+            let mut v = v;
+            v.push(e);
+            v
+        }
+    }
 };
 
 VarDefinition : ast::VarDefinition  = {

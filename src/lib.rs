@@ -6,25 +6,23 @@
 #[macro_use] extern crate lazy_static;
 extern crate regex;
 
-use std::fs::File;
-use std::io::prelude::*;
-
 #[allow(dead_code)]
 mod filter;
+
 #[allow(dead_code)]
-mod ast;
+pub mod ast;
+
 #[allow(dead_code)]
 mod tok;
 
-fn main() {
-    let mut file = File::open("test_filter.filter").unwrap();
-    let mut contents = String::new();
-    file.read_to_string(&mut contents).unwrap();
-    println!("{:?}", contents);
-    let tokens = Box::new(tok::tokenize(&contents));
+/// Compiles a complete filter into vanilla loot filter syntax
+pub fn compile(contents: &str) -> Box<String> {
+    let tokens = Box::new(tok::tokenize(contents));
     for tok in tokens.iter() {
         println!("{:?}", tok);
     }
     let filter = filter::parse_Filter(tokens.into_iter());
     println!("{:?}", filter);
+    // TODO: return actual compiled result
+    Box::new(String::from(""))
 }
