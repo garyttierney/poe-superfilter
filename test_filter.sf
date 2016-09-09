@@ -12,7 +12,7 @@ Mixin FlaskMagic($type)
 
 Show
 	+FlaskMagic("Small")
-	SetTextColor $test_var 100 255 255
+	SetTextColor 100 100 255 255
 	SetFontSize 38 # comment
 	ItemLevel <= 5
 

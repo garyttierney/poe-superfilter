@@ -23,7 +23,6 @@ extern {
         "Hide" => Tok::Hide,
         "Mixin" => Tok::Mixin,
         "Import" => Tok::Import,
-        "MixinInclude" => Tok::MixinInclude(<String>),
         ">=" => Tok::Gte,
         ">" => Tok::Gt,
         "<=" => Tok::Lte,

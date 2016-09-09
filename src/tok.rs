@@ -24,7 +24,6 @@ pub enum Tok {
     Show,
     Hide,
     Mixin,
-    MixinInclude(String),
     Import,
 }
 
