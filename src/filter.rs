@@ -11536,7 +11536,7 @@ pub fn __action27<
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> ast::ComparisonOperator
 {
-    ast::ComparisonOperator::Eq
+    ast::ComparisonOperator::Eql
 }
 
 pub fn __action28<

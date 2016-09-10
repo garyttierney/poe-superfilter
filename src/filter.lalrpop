@@ -118,7 +118,7 @@ ComparisonOperator : ast::ComparisonOperator = {
     ">" => ast::ComparisonOperator::Gt,
     "<=" => ast::ComparisonOperator::Lte,
     "<" => ast::ComparisonOperator::Lt,
-    "=" => ast::ComparisonOperator::Eq
+    "=" => ast::ComparisonOperator::Eql
 };
 
 NumExpression : ast::NumberExpression = {
