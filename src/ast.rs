@@ -1,59 +1,59 @@
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Block {
     Show(Vec<Statement>),
     Hide(Vec<Statement>),
-    Head(Vec<Statement>),
     Mixin(MixinSpec, Vec<Statement>),
+    Var(VarDefinition),
+    Import(String),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct MixinSpec {
     pub name: String,
     pub parameters: Vec<Param>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Param {
     pub name: String,
     pub default: Option<Value>
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct MixinCall {
     pub name: String,
     pub parameters: Vec<Value>
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum NumberBox {
     IntValue(i32),
     Decimal(f32),
     Var(String)
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum StringBox {
     Value(String),
     Var(String)
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct VarDefinition {
     pub identifier: String,
     pub values: Vec<Value>
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Statement {
     SetValue(String, Vec<Value>),
     Condition(String, Condition),
     Var(VarDefinition),
     Include(MixinCall),
-    Import(String),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Value {
     Num(NumberExpression),
     Str(StringBox),
@@ -61,7 +61,7 @@ pub enum Value {
     Color(Color)
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Color {
     pub r: NumberExpression,
     pub g: NumberExpression,
@@ -69,13 +69,13 @@ pub struct Color {
     pub a: NumberExpression
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Condition {
     pub value: Value,
     pub operator: ComparisonOperator
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum ComparisonOperator {
     Eq,
     Lt,
@@ -84,13 +84,13 @@ pub enum ComparisonOperator {
     Gte
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum NumberExpression {
     Number(NumberBox),
     Op(Box<NumberExpression>, NumberOperation, Box<NumberExpression>)
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum NumberOperation {
     Mul,
     Div,

@@ -36,20 +36,23 @@ extern {
 }
 
 pub Filter : Box<Vec<ast::Block>> = {
-    <def:HeadBlock?> <blocks:Block*> => {
-        let mut blocks = blocks;
-        if let Some(b) = def {
-            blocks.insert(0, b);
-        }
-        Box::new(blocks)
-    }
+    <defs:DefinitionBlock*> <first:ContentBlock> <rest:AnyBlock*> => {
+        let mut v = defs;
+        v.push(first);
+        v.extend(rest);
+        Box::new(v)
+    },
+    DefinitionBlock* => Box::new(<>),
 };
 
-HeadBlock : ast::Block = HeadInstruction+ => ast::Block::Head(<>);
-HeadInstruction : ast::Statement = { VarDefinition => ast::Statement::Var(<>), Import };
-Import : ast::Statement = "Import" <StrLiteral> "\n" => ast::Statement::Import(<>);
+DefinitionBlock : ast::Block = {
+    VarDefinition => ast::Block::Var(<>),
+    ImportBlock
+};
 
-Block : ast::Block = {
+ImportBlock : ast::Block = "Import" <StrLiteral> "\n" => ast::Block::Import(<>);
+
+ContentBlock : ast::Block = {
     "Show" "\n" <Statement*> => ast::Block::Show(<>),
     "Hide" "\n" <Statement*> => ast::Block::Hide(<>),
     "Mixin" <name:Constant> <args:("(" <Comma<VarIdentifier>> ")")?> "\n" <instructions:Statement*> => {
@@ -64,6 +67,8 @@ Block : ast::Block = {
         )
     }
 };
+
+AnyBlock : ast::Block = { ImportBlock, ContentBlock };
 
 Comma<T>: Vec<T> = {
     <v:(<T> ",")*> <e:T?> => match e {
