@@ -15,6 +15,9 @@ pub mod ast;
 #[allow(dead_code)]
 mod tok;
 
+#[allow(dead_code)]
+mod translate;
+
 /// Compiles a complete filter into vanilla loot filter syntax
 pub fn compile(contents: &str) -> Box<String> {
     let tokens = Box::new(tok::tokenize(contents));
