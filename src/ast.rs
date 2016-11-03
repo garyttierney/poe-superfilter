@@ -7,16 +7,17 @@
 pub enum Block {
     Show(Vec<Statement>),
     Hide(Vec<Statement>),
-    Mixin(MixinSpec, Vec<Statement>),
+    Mixin(Mixin),
     Var(VarDefinition),
     Import(String),
 }
 
 /// Name and parameter specs for a mixin 
 #[derive(Debug, Clone)]
-pub struct MixinSpec {
+pub struct Mixin {
     pub name: String,
     pub parameters: Vec<Param>,
+    pub statements: Vec<Statement>
 }
 
 /// (Mixin) Parameter name and default values

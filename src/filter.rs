@@ -11368,8 +11368,11 @@ pub fn __action8<
             .map(|param_name| ast::Param { name: param_name.clone(), default: None })
             .collect();
         ast::Block::Mixin(
-            ast::MixinSpec{ name: name, parameters: params },
-            instructions
+            ast::Mixin{
+                name: name,
+                parameters: params,
+                statements: instructions 
+            }
         )
     }
 }
