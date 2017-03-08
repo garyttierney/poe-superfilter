@@ -1,5 +1,6 @@
 
 use ast;
+use ast::block_statements as stm;
 use tok::Location as TokenLocation;
 use tok::Tok;
 
@@ -59,13 +60,13 @@ ContentBlock : ast::Block = {
         let params = args
             .unwrap_or(vec![])
             .iter()
-            .map(|param_name| ast::Param { name: param_name.clone(), default: None })
+            .map(|param_name| ast::mixin::Param { name: param_name.clone(), default: None })
             .collect();
         ast::Block::Mixin(
-            ast::Mixin{
+            ast::mixin::Mixin{
                 name: name,
                 parameters: params,
-                statements: instructions 
+                statements: instructions
             }
         )
     }
@@ -88,13 +89,23 @@ VarDefinition : ast::VarDefinition  = {
     <id:VarIdentifier> "=" <v:Value+> "\n" => ast::VarDefinition { identifier: id, values: v }
 };
 
-Statement : ast::Statement = {
-    <Constant> <Value+> "\n" => ast::Statement::SetValue(<>),
-    <Constant> <Condition> "\n" => ast::Statement::Condition(<>),
-    VarDefinition => ast::Statement::Var(<>),
-    "+" <n:Constant> <params:("(" <Comma<Value>> ")")?> "\n" => ast::Statement::Include(
-        ast::MixinCall { name: n, parameters: params.unwrap_or(vec![]) }
-    )
+SetValueStmt : stm::SetValueStatement = {
+    <n:Constant> <val:Value+> "\n" => stm::SetValueStatement { name: n, values: val }
+};
+
+ConditionStmt : stm::ConditionStatement = {
+    < n: Constant > < cond: Condition > "\n" => stm::ConditionStatement { name: n, condition: cond }
+};
+
+MixinCall : ast::mixin::MixinCall = {
+    "+" <n:Constant> <params:("(" <Comma<Value>> ")")?> "\n" => ast::mixin::MixinCall { name: n, parameters: params.unwrap_or(vec![]) }
+};
+
+Statement : stm::Statement = {
+    SetValueStmt => stm::Statement::SetValue(<>),
+    ConditionStmt => stm::Statement::Condition(<>),
+    VarDefinition => stm::Statement::Var(<>),
+    MixinCall => stm::Statement::Include(<>)
 };
 
 Value : ast::Value = {
@@ -103,8 +114,8 @@ Value : ast::Value = {
     VarIdentifier => ast::Value::Var(<>)
 };
 
-StringExpression : ast::StringBox = {
-    StrLiteral => ast::StringBox::Value(<>),
+StringExpression : ast::strings::StringBox = {
+    StrLiteral => ast::strings::StringBox::Value(<>),
 };
 
 StrLiteral : String = {
@@ -112,32 +123,32 @@ StrLiteral : String = {
     Constant => String::from(<>),
 };
 
-Condition : ast::Condition = {
-    <op:ComparisonOperator> <v:Value> => ast::Condition { value: v, operator: op }
+Condition : stm::Condition = {
+    <op:ComparisonOperator> <v:Value> => stm::Condition { value: v, operator: op }
 };
 
-ComparisonOperator : ast::ComparisonOperator = {
-    ">=" => ast::ComparisonOperator::Gte,
-    ">" => ast::ComparisonOperator::Gt,
-    "<=" => ast::ComparisonOperator::Lte,
-    "<" => ast::ComparisonOperator::Lt,
-    "=" => ast::ComparisonOperator::Eql
+ComparisonOperator : stm::ComparisonOperator = {
+    ">=" => stm::ComparisonOperator::Gte,
+    ">" => stm::ComparisonOperator::Gt,
+    "<=" => stm::ComparisonOperator::Lte,
+    "<" => stm::ComparisonOperator::Lt,
+    "=" => stm::ComparisonOperator::Eql
 };
 
-NumExpression : ast::NumberExpression = {
-    <l:NumExpression> "+" <r:NumFactor> => ast::NumberExpression::Op(Box::new(l), ast::NumberOperation::Add, Box::new(r)),
-    <l:NumExpression> "-" <r:NumFactor> => ast::NumberExpression::Op(Box::new(l), ast::NumberOperation::Sub, Box::new(r)),
+NumExpression : ast::numbers::NumberExpression = {
+    <l:NumExpression> "+" <r:NumFactor> => ast::numbers::NumberExpression::Op(Box::new(l), ast::numbers::NumberOperation::Add, Box::new(r)),
+    <l:NumExpression> "-" <r:NumFactor> => ast::numbers::NumberExpression::Op(Box::new(l), ast::numbers::NumberOperation::Sub, Box::new(r)),
     NumFactor
 };
 
-NumFactor : ast::NumberExpression = {
-    <l:NumFactor> "*" <r:NumTerm> => ast::NumberExpression::Op(Box::new(l), ast::NumberOperation::Mul, Box::new(r)),
-    <l:NumFactor> "/" <r:NumTerm> => ast::NumberExpression::Op(Box::new(l), ast::NumberOperation::Div, Box::new(r)),
+NumFactor : ast::numbers::NumberExpression = {
+    <l:NumFactor> "*" <r:NumTerm> => ast::numbers::NumberExpression::Op(Box::new(l), ast::numbers::NumberOperation::Mul, Box::new(r)),
+    <l:NumFactor> "/" <r:NumTerm> => ast::numbers::NumberExpression::Op(Box::new(l), ast::numbers::NumberOperation::Div, Box::new(r)),
     NumTerm
 };
 
-NumTerm : ast::NumberExpression = {
-    Num => ast::NumberExpression::Number(ast::NumberBox::IntValue(<>)),
+NumTerm : ast::numbers::NumberExpression = {
+    Num => ast::numbers::NumberExpression::Number(ast::numbers::NumberBox::IntValue(<>)),
     "(" <NumExpression> ")" => <>
 };
 
@@ -152,6 +163,6 @@ Color: ast::Color = {
         r: r,
         g: g,
         b: b,
-        a: ast::NumberExpression::Number(ast::NumberBox::IntValue(255))
+        a: ast::numbers::NumberExpression::Number(ast::numbers::NumberBox::IntValue(255))
     }
 };

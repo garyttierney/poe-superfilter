@@ -1,28 +1,26 @@
-//! Custom tokenizer implementation
-
 use regex::Regex;
 use std::str::FromStr;
 
 /// All tokens that can occur in superfilter syntax 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Tok {
-    StrLiteral(String), // String literal
-    Constant(String), // Constant
-    VarIdentifier(String), // Variable Identifier
-    Num(i32), // Number
-    LParen, // (
-    RParen, // )
-    Minus, // -
-    Plus, // +
-    Times, // *
-    Div, // /
-    Comma, // ,
+    StrLiteral(String),
+    Constant(String),
+    VarIdentifier(String),
+    Num(i32),
+    LParen,
+    RParen,
+    Minus,
+    Plus,
+    Times,
+    Div,
+    Comma,
     NewLine,
-    Gte, // >=
-    Gt, // >
-    Lte, // <=
-    Lt, // <
-    Eql, // =
+    Gte,
+    Gt,
+    Lte,
+    Lt,
+    Eql,
     Show,
     Hide,
     Mixin,
@@ -42,7 +40,6 @@ impl Default for Location {
 }
 
 impl Location {
-    /// add another location to this one
     fn add(&self, lines:isize, chars:isize) -> Location {
         Location {
             line: self.line.saturating_add(lines),
@@ -67,7 +64,6 @@ struct Tokenizer<C: Iterator<Item=char>> {
 }
 
 impl <C: Iterator<Item=char>> Tokenizer<C> {
-    /// Constructs new Superfilter tokenizer instance
     fn new(chars:C) -> Tokenizer<C> {
         Tokenizer {
             cursor: Location { line: 1, pos: 0 },
@@ -78,7 +74,6 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
         }
     }
 
-    /// Run tokenizer
     pub fn tokenize(&mut self) {
         self.next_char();
         while let Some(c) = self.lookahead {
