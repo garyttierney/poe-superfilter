@@ -3,57 +3,32 @@ use ast::Value;
 use ast::expressions::Expression;
 use ast::mixin::MixinCall;
 use ast::VarDefinition;
-use translate::TransformErr;
-use translate::ScopeData;
+use translate::{TransformErr, ScopeData, ExpressionValue};
+use std::fmt::Debug;
 
-/// Any statement that can occur inside of a Show/Hide/Mixin block
-#[derive(Debug, Clone)]
-pub enum Statement {
-    SetValue(SetValueStatement),
-    Condition(ConditionStatement),
-    Var(VarDefinition),
-    Include(MixinCall),
-}
-
-pub trait BlockStatement {}
+pub trait BlockStatement<'a> : Debug + Expression<'a> {}
 
 #[derive(Debug, Clone)]
-pub struct SetValueStatement {
+pub struct SetValueStatement<'a> {
     pub name : String,
-    pub values : Vec<Value>
+    pub values : Vec<&'a Value<'a>>
 }
 
-impl BlockStatement for SetValueStatement {}
-impl <'a> Expression<'a> for SetValueStatement {
-    fn transform(&mut self, parent_scope: &ScopeData) -> Result<(), TransformErr<'a>> {
-        unimplemented!()
-    }
-
-    fn render(&'a self) -> Result<String, TransformErr<'a>> {
-        unimplemented!()
-    }
-}
+impl <'a> BlockStatement<'a> for SetValueStatement<'a> {}
+impl <'a> Expression<'a> for SetValueStatement<'a> {}
 
 #[derive(Debug, Clone)]
-pub struct ConditionStatement {
+pub struct ConditionStatement<'a> {
     pub name : String,
-    pub condition : Condition
+    pub condition : Condition<'a>
 }
 
-impl BlockStatement for ConditionStatement {}
-impl <'a> Expression<'a> for ConditionStatement {
-    fn transform(&mut self, parent_scope: &ScopeData) -> Result<(), TransformErr<'a>> {
-        unimplemented!()
-    }
-
-    fn render(&'a self) -> Result<String, TransformErr<'a>> {
-        unimplemented!()
-    }
-}
+impl <'a> BlockStatement<'a> for ConditionStatement<'a> {}
+impl <'a> Expression<'a> for ConditionStatement<'a> {}
 
 #[derive(Debug, Clone)]
-pub struct Condition {
-    pub value: Value,
+pub struct Condition<'a> {
+    pub value: &'a Value<'a>,
     pub operator: ComparisonOperator
 }
 

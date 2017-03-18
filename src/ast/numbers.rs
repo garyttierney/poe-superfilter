@@ -1,7 +1,8 @@
 
-use translate::TransformErr;
-use translate::ScopeData;
+use ast;
+use ast::Node;
 use ast::expressions::Expression;
+use translate::{TransformErr, ScopeData, ExpressionValue};
 
 #[derive(Debug, Clone)]
 pub enum NumberOperation {
@@ -13,10 +14,13 @@ pub enum NumberOperation {
 
 /// Number value or expression
 #[derive(Debug, Clone)]
-pub enum NumberExpression {
+pub enum NumberExpression<'ast> {
     Number(NumberBox),
-    Op(Box<NumberExpression>, NumberOperation, Box<NumberExpression>)
+    Op(&'ast Node<'ast>, NumberOperation, &'ast Node<'ast>)
 }
+
+impl <'a> ast::Value<'a> for NumberExpression<'a> {}
+impl <'a> Expression<'a> for NumberExpression<'a> {}
 
 /// Number value or variable reference
 #[derive(Debug, Clone)]
@@ -26,12 +30,4 @@ pub enum NumberBox {
     Var(String)
 }
 
-impl <'a> Expression<'a> for NumberBox {
-    fn transform(&mut self, scope: &ScopeData) -> Result<(), TransformErr<'a>> {
-        unimplemented!()
-    }
-
-    fn render(&'a self) -> Result<String, TransformErr<'a>> {
-        unimplemented!()
-    }
-}
+impl <'a> Expression<'a> for NumberBox {}

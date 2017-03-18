@@ -1,8 +1,7 @@
 
-use translate::TransformErr;
-use translate::ScopeData;
-use ast::expressions::Expression;
-use translate::VariableData;
+use ast;
+use translate::{TransformErr, ScopeData, ExpressionValue};
+use ast::expressions::{Expression, TransformedExpression};
 
 /// String value or variable reference
 #[derive(Debug, Clone)]
@@ -11,35 +10,39 @@ pub enum StringBox {
     Var(String)
 }
 
+type TransformedStringBox = String;
+impl <'a> TransformedExpression<'a> for TransformedStringBox {}
+
+impl <'a> ast::Value<'a> for StringBox {}
 impl <'a> Expression<'a> for StringBox {
-    fn transform(&mut self, scope:&ScopeData) -> Result<(), TransformErr<'a>> {
+    /*fn transform(self, parent_scope: &ScopeData) -> Result<Box<TransformedExpression<'a>>, TransformErr> {
         match *self {
             StringBox::Var(ref name) => {
-                if let Some(value) = scope.var(name) {
+                if let Some(value) = parent_scope.var(name) {
                     match *value {
-                        VariableData::String(ref s) => {
-                            return Ok(());
+                        ExpressionValue::String(ref s) => {
+                            return Ok(s.clone());
                         },
                         _ => {
-                            let e = TransformErr::new("Invalid type: expected string value from $".to_owned() + &name);
+                            let e = TransformErr::Unknown("Invalid type: expected string value from $".to_owned() + &name);
                             return Err(e);
                         }
                     }
                 } else {
-                    let e = TransformErr::new("Variable reference not found: $".to_owned() + &name);
+                    let e = TransformErr::Unknown("Variable reference not found: $".to_owned() + &name);
                     return Err(e);
                 }
             },
-            StringBox::Value(_) => return Ok(())
+            StringBox::Value(val) => return Ok(TransformedStringBox(val))
         }
-    }
+    }*/
 
-    fn render(&self) -> Result<String, TransformErr<'a>> {
+    /*fn render(&self) -> Result<String, TransformErr> {
         match *self {
             StringBox::Value(ref s) => {
                 return Ok(format!("\"{}\"", s));
             },
             _ => unreachable!()
         }
-    }
+    }*/
 }

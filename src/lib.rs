@@ -24,7 +24,8 @@ pub fn compile(contents: &str) -> Box<String> {
     for tok in tokens.iter() {
         println!("{:?}", tok);
     }
-    let filter = filter::parse_Filter(tokens.into_iter());
+    let arena = ast::Arena::new();
+    let filter = filter::parse_Filter(&arena, tokens.into_iter());
     println!("{:?}", filter);
     // TODO: return actual compiled result
     Box::new(String::from(""))

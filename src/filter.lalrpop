@@ -1,11 +1,14 @@
 
 use ast;
+use ast::numbers::NumberExpression;
+
 use ast::block_statements as stm;
+use ast::{Arena, Node};
 use tok::Location as TokenLocation;
 use tok::Tok;
 
 //#[LALR]
-grammar;
+grammar<'ast>(arena: &'ast Arena<'ast>);
 
 extern {
     type Location = TokenLocation;
@@ -36,43 +39,49 @@ extern {
     }
 }
 
-pub Filter : Box<Vec<ast::Block>> = {
+pub Filter : Vec<&'ast Node<'ast>> = {
     <defs:DefinitionBlock*> <first:ContentBlock> <rest:AnyBlock*> => {
         let mut v = defs;
         v.push(first);
         v.extend(rest);
-        Box::new(v)
+        v
     },
-    DefinitionBlock* => Box::new(<>),
+    DefinitionBlock* => <>,
 };
 
-DefinitionBlock : ast::Block = {
-    VarDefinition => ast::Block::Var(<>),
+DefinitionBlock : &'ast Node<'ast> = {
+    VarDefinition => arena.alloc(Node::VarDefinition(<>)),
     ImportBlock
 };
 
-ImportBlock : ast::Block = "Import" <StrLiteral> "\n" => ast::Block::Import(<>);
+ImportBlock : &'ast Node<'ast> = "Import" <StrLiteral> "\n" => arena.alloc(Node::Block(ast::Block::Import(<>)));
 
-ContentBlock : ast::Block = {
-    "Show" "\n" <Statement*> => ast::Block::Show(<>),
-    "Hide" "\n" <Statement*> => ast::Block::Hide(<>),
+ContentBlock : &'ast Node<'ast> = {
+    "Show" "\n" <Statement*> => arena.alloc(Node::Block(
+        ast::Block::Show(<>.into_iter().map(|e| e as &stm::BlockStatement).collect())
+    )),
+    "Hide" "\n" <Statement*> => arena.alloc(Node::Block(
+        ast::Block::Hide(<>.into_iter().map(|e| e as &stm::BlockStatement).collect())
+    )),
     "Mixin" <name:Constant> <args:("(" <Comma<VarIdentifier>> ")")?> "\n" <instructions:Statement*> => {
         let params = args
             .unwrap_or(vec![])
             .iter()
             .map(|param_name| ast::mixin::Param { name: param_name.clone(), default: None })
             .collect();
-        ast::Block::Mixin(
-            ast::mixin::Mixin{
-                name: name,
-                parameters: params,
-                statements: instructions
-            }
-        )
+        arena.alloc(Node::Block(
+            ast::Block::Mixin(
+                ast::mixin::Mixin{
+                    name: name,
+                    parameters: params,
+                    statements: instructions.into_iter().map(|e| e as &stm::BlockStatement).collect()
+                }
+            )
+        ))
     }
 };
 
-AnyBlock : ast::Block = { ImportBlock, ContentBlock };
+AnyBlock : &'ast Node<'ast> = { ImportBlock, ContentBlock };
 
 Comma<T>: Vec<T> = {
     <v:(<T> ",")*> <e:T?> => match e {
@@ -85,37 +94,55 @@ Comma<T>: Vec<T> = {
     }
 };
 
-VarDefinition : ast::VarDefinition  = {
-    <id:VarIdentifier> "=" <v:Value+> "\n" => ast::VarDefinition { identifier: id, values: v }
+VarDefinition : ast::VarDefinition<'ast>  = {
+    <id:VarIdentifier> "=" <v:Value+> "\n" => ast::VarDefinition {
+        identifier: id,
+        values: v.into_iter().map(|e| e as &ast::Value).collect()
+    }
 };
 
-SetValueStmt : stm::SetValueStatement = {
-    <n:Constant> <val:Value+> "\n" => stm::SetValueStatement { name: n, values: val }
+SetValueStmt : &'ast Node<'ast> = {
+    <n:Constant> <val:Value+> "\n" => arena.alloc(Node::SetValueStmt(
+        stm::SetValueStatement {
+            name: n,
+            values: val.into_iter().map(|e| e as &ast::Value).collect()
+        }
+    ))
 };
 
-ConditionStmt : stm::ConditionStatement = {
-    < n: Constant > < cond: Condition > "\n" => stm::ConditionStatement { name: n, condition: cond }
+ConditionStmt : &'ast Node<'ast> = {
+    < n: Constant > < cond: Condition > "\n" => arena.alloc(Node::ConditionStmt(
+        stm::ConditionStatement {
+            name: n,
+            condition: cond
+        }
+    ))
 };
 
-MixinCall : ast::mixin::MixinCall = {
-    "+" <n:Constant> <params:("(" <Comma<Value>> ")")?> "\n" => ast::mixin::MixinCall { name: n, parameters: params.unwrap_or(vec![]) }
+MixinCall : &'ast Node<'ast> = {
+    "+" <n:Constant> <params:("(" <Comma<Value>> ")")?> "\n" => arena.alloc(Node::MixinCall(
+        ast::mixin::MixinCall {
+            name: n,
+            parameters: params.unwrap_or(vec![]).into_iter().map(|e| e as &ast::Value).collect()
+}
+    ))
 };
 
-Statement : stm::Statement = {
-    SetValueStmt => stm::Statement::SetValue(<>),
-    ConditionStmt => stm::Statement::Condition(<>),
-    VarDefinition => stm::Statement::Var(<>),
-    MixinCall => stm::Statement::Include(<>)
+Statement : &'ast Node<'ast> = {
+    SetValueStmt,
+    ConditionStmt,
+    MixinCall,
+    VarDefinition => arena.alloc(Node::VarDefinition(<>)),
 };
 
-Value : ast::Value = {
-    NumExpression => ast::Value::Num(<>),
-    StringExpression => ast::Value::Str(<>),
-    VarIdentifier => ast::Value::Var(<>)
+Value : &'ast Node<'ast> = {
+    NumExpression,
+    StringExpression,
+    VarIdentifier => arena.alloc(Node::VarRef(ast::var::VarReference { identifier: <> }))
 };
 
-StringExpression : ast::strings::StringBox = {
-    StrLiteral => ast::strings::StringBox::Value(<>),
+StringExpression : &'ast Node<'ast> = {
+    StrLiteral => arena.alloc(Node::StringBox(ast::strings::StringBox::Value(<>))),
 };
 
 StrLiteral : String = {
@@ -123,46 +150,58 @@ StrLiteral : String = {
     Constant => String::from(<>),
 };
 
-Condition : stm::Condition = {
+Condition : stm::Condition<'ast> = {
     <op:ComparisonOperator> <v:Value> => stm::Condition { value: v, operator: op }
 };
 
 ComparisonOperator : stm::ComparisonOperator = {
     ">=" => stm::ComparisonOperator::Gte,
-    ">" => stm::ComparisonOperator::Gt,
+    ">" =>  stm::ComparisonOperator::Gt,
     "<=" => stm::ComparisonOperator::Lte,
-    "<" => stm::ComparisonOperator::Lt,
-    "=" => stm::ComparisonOperator::Eql
+    "<" =>  stm::ComparisonOperator::Lt,
+    "=" =>  stm::ComparisonOperator::Eql
 };
 
-NumExpression : ast::numbers::NumberExpression = {
-    <l:NumExpression> "+" <r:NumFactor> => ast::numbers::NumberExpression::Op(Box::new(l), ast::numbers::NumberOperation::Add, Box::new(r)),
-    <l:NumExpression> "-" <r:NumFactor> => ast::numbers::NumberExpression::Op(Box::new(l), ast::numbers::NumberOperation::Sub, Box::new(r)),
+NumExpression : &'ast Node<'ast> = {
+    <l:NumExpression> "+" <r:NumFactor> => arena.alloc(Node::NumExpression(
+        NumberExpression::Op(l, ast::numbers::NumberOperation::Add, r)
+    )),
+    <l:NumExpression> "-" <r:NumFactor> => arena.alloc(Node::NumExpression(
+        NumberExpression::Op(l, ast::numbers::NumberOperation::Sub, r)
+    )),
     NumFactor
 };
 
-NumFactor : ast::numbers::NumberExpression = {
-    <l:NumFactor> "*" <r:NumTerm> => ast::numbers::NumberExpression::Op(Box::new(l), ast::numbers::NumberOperation::Mul, Box::new(r)),
-    <l:NumFactor> "/" <r:NumTerm> => ast::numbers::NumberExpression::Op(Box::new(l), ast::numbers::NumberOperation::Div, Box::new(r)),
+NumFactor : &'ast Node<'ast> = {
+    <l:NumFactor> "*" <r:NumTerm> => arena.alloc(Node::NumExpression(
+        NumberExpression::Op(l, ast::numbers::NumberOperation::Mul, r)
+    )),
+    <l:NumFactor> "/" <r:NumTerm> => arena.alloc(Node::NumExpression(
+        NumberExpression::Op(l, ast::numbers::NumberOperation::Div, r)
+    )),
     NumTerm
 };
 
-NumTerm : ast::numbers::NumberExpression = {
-    Num => ast::numbers::NumberExpression::Number(ast::numbers::NumberBox::IntValue(<>)),
+NumTerm : &'ast Node<'ast> = {
+    Num => arena.alloc(Node::NumExpression(
+        NumberExpression::Number(ast::numbers::NumberBox::IntValue(<>))
+    )),
     "(" <NumExpression> ")" => <>
 };
 
-Color: ast::Color = {
-    <r:NumExpression> <g:NumExpression> <b:NumExpression> <a:NumExpression> => ast::Color {
+Color: &'ast Node<'ast> = {
+    <r:NumExpression> <g:NumExpression> <b:NumExpression> <a:NumExpression> => arena.alloc(Node::Color(ast::Color {
         r: r,
         g: g,
         b: b,
         a: a
-    },
-    <r:NumExpression> <g:NumExpression> <b:NumExpression> => ast::Color {
+    })),
+    <r:NumExpression> <g:NumExpression> <b:NumExpression> => arena.alloc(Node::Color(ast::Color {
         r: r,
         g: g,
         b: b,
-        a: ast::numbers::NumberExpression::Number(ast::numbers::NumberBox::IntValue(255))
-    }
+        a: arena.alloc(Node::NumExpression(
+            NumberExpression::Number(ast::numbers::NumberBox::IntValue(255))
+        ))
+    }))
 };

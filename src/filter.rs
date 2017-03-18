@@ -1,5 +1,7 @@
 use ast;
+use ast::numbers::NumberExpression;
 use ast::block_statements as stm;
+use ast::{Arena, Node};
 use tok::Location as TokenLocation;
 use tok::Tok;
 extern crate lalrpop_util as __lalrpop_util;
@@ -8,13 +10,15 @@ mod __parse__Filter {
     #![allow(non_snake_case, non_camel_case_types, unused_mut, unused_variables, unused_imports)]
 
     use ast;
+    use ast::numbers::NumberExpression;
     use ast::block_statements as stm;
+    use ast::{Arena, Node};
     use tok::Location as TokenLocation;
     use tok::Tok;
     extern crate lalrpop_util as __lalrpop_util;
     use super::__ToTriple;
     #[allow(dead_code)]
-    pub enum __Symbol<> {
+    pub enum __Symbol<'ast> {
         Term_22_28_22(Tok),
         Term_22_29_22(Tok),
         Term_22_2a_22(Tok),
@@ -37,47 +41,47 @@ mod __parse__Filter {
         TermQuotedStrLiteral(String),
         TermVarIdentifier(String),
         Termerror(__lalrpop_util::ErrorRecovery<TokenLocation, Tok, char>),
-        Nt_28_22_28_22_20_3cComma_3cValue_3e_3e_20_22_29_22_29(Vec<ast::Value>),
-        Nt_28_22_28_22_20_3cComma_3cValue_3e_3e_20_22_29_22_29_3f(::std::option::Option<Vec<ast::Value>>),
+        Nt_28_22_28_22_20_3cComma_3cValue_3e_3e_20_22_29_22_29(Vec<&'ast Node<'ast>>),
+        Nt_28_22_28_22_20_3cComma_3cValue_3e_3e_20_22_29_22_29_3f(::std::option::Option<Vec<&'ast Node<'ast>>>),
         Nt_28_22_28_22_20_3cComma_3cVarIdentifier_3e_3e_20_22_29_22_29(Vec<String>),
         Nt_28_22_28_22_20_3cComma_3cVarIdentifier_3e_3e_20_22_29_22_29_3f(::std::option::Option<Vec<String>>),
-        Nt_28_3cValue_3e_20_22_2c_22_29(ast::Value),
-        Nt_28_3cValue_3e_20_22_2c_22_29_2a(::std::vec::Vec<ast::Value>),
-        Nt_28_3cValue_3e_20_22_2c_22_29_2b(::std::vec::Vec<ast::Value>),
+        Nt_28_3cValue_3e_20_22_2c_22_29(&'ast Node<'ast>),
+        Nt_28_3cValue_3e_20_22_2c_22_29_2a(::std::vec::Vec<&'ast Node<'ast>>),
+        Nt_28_3cValue_3e_20_22_2c_22_29_2b(::std::vec::Vec<&'ast Node<'ast>>),
         Nt_28_3cVarIdentifier_3e_20_22_2c_22_29(String),
         Nt_28_3cVarIdentifier_3e_20_22_2c_22_29_2a(::std::vec::Vec<String>),
         Nt_28_3cVarIdentifier_3e_20_22_2c_22_29_2b(::std::vec::Vec<String>),
-        NtAnyBlock(ast::Block),
-        NtAnyBlock_2a(::std::vec::Vec<ast::Block>),
-        NtAnyBlock_2b(::std::vec::Vec<ast::Block>),
-        NtColor(ast::Color),
-        NtComma_3cValue_3e(Vec<ast::Value>),
+        NtAnyBlock(&'ast Node<'ast>),
+        NtAnyBlock_2a(::std::vec::Vec<&'ast Node<'ast>>),
+        NtAnyBlock_2b(::std::vec::Vec<&'ast Node<'ast>>),
+        NtColor(&'ast Node<'ast>),
+        NtComma_3cValue_3e(Vec<&'ast Node<'ast>>),
         NtComma_3cVarIdentifier_3e(Vec<String>),
         NtComparisonOperator(stm::ComparisonOperator),
-        NtCondition(stm::Condition),
-        NtConditionStmt(stm::ConditionStatement),
-        NtContentBlock(ast::Block),
-        NtDefinitionBlock(ast::Block),
-        NtDefinitionBlock_2a(::std::vec::Vec<ast::Block>),
-        NtDefinitionBlock_2b(::std::vec::Vec<ast::Block>),
-        NtFilter(Box<Vec<ast::Block>>),
-        NtImportBlock(ast::Block),
-        NtMixinCall(ast::mixin::MixinCall),
-        NtNumExpression(ast::numbers::NumberExpression),
-        NtNumFactor(ast::numbers::NumberExpression),
-        NtNumTerm(ast::numbers::NumberExpression),
-        NtSetValueStmt(stm::SetValueStatement),
-        NtStatement(stm::Statement),
-        NtStatement_2a(::std::vec::Vec<stm::Statement>),
-        NtStatement_2b(::std::vec::Vec<stm::Statement>),
+        NtCondition(stm::Condition<'ast>),
+        NtConditionStmt(&'ast Node<'ast>),
+        NtContentBlock(&'ast Node<'ast>),
+        NtDefinitionBlock(&'ast Node<'ast>),
+        NtDefinitionBlock_2a(::std::vec::Vec<&'ast Node<'ast>>),
+        NtDefinitionBlock_2b(::std::vec::Vec<&'ast Node<'ast>>),
+        NtFilter(Vec<&'ast Node<'ast>>),
+        NtImportBlock(&'ast Node<'ast>),
+        NtMixinCall(&'ast Node<'ast>),
+        NtNumExpression(&'ast Node<'ast>),
+        NtNumFactor(&'ast Node<'ast>),
+        NtNumTerm(&'ast Node<'ast>),
+        NtSetValueStmt(&'ast Node<'ast>),
+        NtStatement(&'ast Node<'ast>),
+        NtStatement_2a(::std::vec::Vec<&'ast Node<'ast>>),
+        NtStatement_2b(::std::vec::Vec<&'ast Node<'ast>>),
         NtStrLiteral(String),
-        NtStringExpression(ast::strings::StringBox),
-        NtValue(ast::Value),
-        NtValue_2b(::std::vec::Vec<ast::Value>),
-        NtValue_3f(::std::option::Option<ast::Value>),
-        NtVarDefinition(ast::VarDefinition),
+        NtStringExpression(&'ast Node<'ast>),
+        NtValue(&'ast Node<'ast>),
+        NtValue_2b(::std::vec::Vec<&'ast Node<'ast>>),
+        NtValue_3f(::std::option::Option<&'ast Node<'ast>>),
+        NtVarDefinition(ast::VarDefinition<'ast>),
         NtVarIdentifier_3f(::std::option::Option<String>),
-        Nt____Filter(Box<Vec<ast::Block>>),
+        Nt____Filter(Vec<&'ast Node<'ast>>),
     }
     const __ACTION: &'static [i32] = &[
         // State 0
@@ -141,7 +145,7 @@ mod __parse__Filter {
         // State 29
         0, 0, 0, -73, 0, 0, 0, 0, 0, 0, 0, 0, -73, -73, -73, -73, 0, -73, 0, 0, -73, 0,
         // State 30
-        0, 0, 0, -75, 0, 0, 0, 0, 0, 0, 0, 0, -75, -75, -75, -75, 0, -75, 0, 0, -75, 0,
+        0, 0, 0, -74, 0, 0, 0, 0, 0, 0, 0, 0, -74, -74, -74, -74, 0, -74, 0, 0, -74, 0,
         // State 31
         0, 0, 0, -72, 0, 0, 0, 0, 0, 0, 0, 0, -72, -72, -72, -72, 0, -72, 0, 0, -72, 0,
         // State 32
@@ -149,7 +153,7 @@ mod __parse__Filter {
         // State 33
         0, 0, 0, 36, 0, 0, 0, 0, 0, 0, 0, 0, -43, -43, -43, -43, 0, 37, 0, 0, 38, 0,
         // State 34
-        0, 0, 0, -74, 0, 0, 0, 0, 0, 0, 0, 0, -74, -74, -74, -74, 0, -74, 0, 0, -74, 0,
+        0, 0, 0, -75, 0, 0, 0, 0, 0, 0, 0, 0, -75, -75, -75, -75, 0, -75, 0, 0, -75, 0,
         // State 35
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 57, 0, 0, 0, 0,
         // State 36
@@ -422,11 +426,11 @@ mod __parse__Filter {
         0,
         -57,
         -73,
-        -75,
+        -74,
         -72,
         -78,
         -43,
-        -74,
+        -75,
         0,
         0,
         0,
@@ -893,11 +897,13 @@ mod __parse__Filter {
         }).collect()
     }
     pub fn parse_Filter<
-        __TOKEN: __ToTriple<Error=char>,
+        'ast,
+        __TOKEN: __ToTriple<'ast, Error=char>,
         __TOKENS: IntoIterator<Item=__TOKEN>,
     >(
+        arena: &'ast Arena<'ast>,
         __tokens0: __TOKENS,
-    ) -> Result<Box<Vec<ast::Block>>, __lalrpop_util::ParseError<TokenLocation, Tok, char>>
+    ) -> Result<Vec<&'ast Node<'ast>>, __lalrpop_util::ParseError<TokenLocation, Tok, char>>
     {
         let __tokens = __tokens0.into_iter();
         let mut __tokens = __tokens.map(|t| __ToTriple::to_triple(t));
@@ -1039,7 +1045,7 @@ mod __parse__Filter {
                     __symbols.push((__lookahead.0, __symbol, __lookahead.2));
                     continue '__shift;
                 } else if __action < 0 {
-                    if let Some(r) = __reduce(__action, Some(&__lookahead.0), &mut __states, &mut __symbols, ::std::marker::PhantomData::<()>) {
+                    if let Some(r) = __reduce(arena, __action, Some(&__lookahead.0), &mut __states, &mut __symbols, ::std::marker::PhantomData::<()>) {
                         return r;
                     }
                 } else {
@@ -1056,7 +1062,7 @@ mod __parse__Filter {
             let __state = *__states.last().unwrap() as usize;
             let __action = __EOF_ACTION[__state];
             if __action < 0 {
-                if let Some(r) = __reduce(__action, None, &mut __states, &mut __symbols, ::std::marker::PhantomData::<()>) {
+                if let Some(r) = __reduce(arena, __action, None, &mut __states, &mut __symbols, ::std::marker::PhantomData::<()>) {
                     return r;
                 }
             } else {
@@ -1070,13 +1076,15 @@ mod __parse__Filter {
         }
     }
     pub fn __reduce<
+        'ast,
     >(
+        arena: &'ast Arena<'ast>,
         __action: i32,
         __lookahead_start: Option<&TokenLocation>,
         __states: &mut ::std::vec::Vec<i32>,
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>,
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>,
         _: ::std::marker::PhantomData<()>,
-    ) -> Option<Result<Box<Vec<ast::Block>>,__lalrpop_util::ParseError<TokenLocation, Tok, char>>>
+    ) -> Option<Result<Vec<&'ast Node<'ast>>,__lalrpop_util::ParseError<TokenLocation, Tok, char>>>
     {
         let __nonterminal = match -__action {
             1 => {
@@ -1086,7 +1094,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22_28_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action43::<>(__sym0, __sym1, __sym2);
+                let __nt = super::__action43::<>(arena, __sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::Nt_28_22_28_22_20_3cComma_3cValue_3e_3e_20_22_29_22_29(__nt), __end));
@@ -1099,7 +1107,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22_28_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action77::<>(__sym0, __sym1, __sym2);
+                let __nt = super::__action77::<>(arena, __sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::Nt_28_22_28_22_20_3cComma_3cValue_3e_3e_20_22_29_22_29_3f(__nt), __end));
@@ -1109,7 +1117,7 @@ mod __parse__Filter {
                 // ("(" <Comma<Value>> ")")? =  => ActionFn(42);
                 let __start = __symbols.last().map(|s| s.2.clone()).unwrap_or_default();
                 let __end = __lookahead_start.cloned().unwrap_or_else(|| __start.clone());
-                let __nt = super::__action42::<>(&__start, &__end);
+                let __nt = super::__action42::<>(arena, &__start, &__end);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 0);
                 __symbols.push((__start, __Symbol::Nt_28_22_28_22_20_3cComma_3cValue_3e_3e_20_22_29_22_29_3f(__nt), __end));
@@ -1122,7 +1130,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22_28_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action49::<>(__sym0, __sym1, __sym2);
+                let __nt = super::__action49::<>(arena, __sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::Nt_28_22_28_22_20_3cComma_3cVarIdentifier_3e_3e_20_22_29_22_29(__nt), __end));
@@ -1135,7 +1143,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22_28_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action80::<>(__sym0, __sym1, __sym2);
+                let __nt = super::__action80::<>(arena, __sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::Nt_28_22_28_22_20_3cComma_3cVarIdentifier_3e_3e_20_22_29_22_29_3f(__nt), __end));
@@ -1145,7 +1153,7 @@ mod __parse__Filter {
                 // ("(" <Comma<VarIdentifier>> ")")? =  => ActionFn(48);
                 let __start = __symbols.last().map(|s| s.2.clone()).unwrap_or_default();
                 let __end = __lookahead_start.cloned().unwrap_or_else(|| __start.clone());
-                let __nt = super::__action48::<>(&__start, &__end);
+                let __nt = super::__action48::<>(arena, &__start, &__end);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 0);
                 __symbols.push((__start, __Symbol::Nt_28_22_28_22_20_3cComma_3cVarIdentifier_3e_3e_20_22_29_22_29_3f(__nt), __end));
@@ -1157,7 +1165,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtValue(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
-                let __nt = super::__action72::<>(__sym0, __sym1);
+                let __nt = super::__action72::<>(arena, __sym0, __sym1);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 2);
                 __symbols.push((__start, __Symbol::Nt_28_3cValue_3e_20_22_2c_22_29(__nt), __end));
@@ -1167,7 +1175,7 @@ mod __parse__Filter {
                 // (<Value> ",")* =  => ActionFn(70);
                 let __start = __symbols.last().map(|s| s.2.clone()).unwrap_or_default();
                 let __end = __lookahead_start.cloned().unwrap_or_else(|| __start.clone());
-                let __nt = super::__action70::<>(&__start, &__end);
+                let __nt = super::__action70::<>(arena, &__start, &__end);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 0);
                 __symbols.push((__start, __Symbol::Nt_28_3cValue_3e_20_22_2c_22_29_2a(__nt), __end));
@@ -1178,7 +1186,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Nt_28_3cValue_3e_20_22_2c_22_29_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action71::<>(__sym0);
+                let __nt = super::__action71::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::Nt_28_3cValue_3e_20_22_2c_22_29_2a(__nt), __end));
@@ -1190,7 +1198,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtValue(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
-                let __nt = super::__action83::<>(__sym0, __sym1);
+                let __nt = super::__action83::<>(arena, __sym0, __sym1);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 2);
                 __symbols.push((__start, __Symbol::Nt_28_3cValue_3e_20_22_2c_22_29_2b(__nt), __end));
@@ -1203,7 +1211,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Nt_28_3cValue_3e_20_22_2c_22_29_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action84::<>(__sym0, __sym1, __sym2);
+                let __nt = super::__action84::<>(arena, __sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::Nt_28_3cValue_3e_20_22_2c_22_29_2b(__nt), __end));
@@ -1215,7 +1223,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_TermVarIdentifier(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
-                let __nt = super::__action67::<>(__sym0, __sym1);
+                let __nt = super::__action67::<>(arena, __sym0, __sym1);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 2);
                 __symbols.push((__start, __Symbol::Nt_28_3cVarIdentifier_3e_20_22_2c_22_29(__nt), __end));
@@ -1225,7 +1233,7 @@ mod __parse__Filter {
                 // (<VarIdentifier> ",")* =  => ActionFn(65);
                 let __start = __symbols.last().map(|s| s.2.clone()).unwrap_or_default();
                 let __end = __lookahead_start.cloned().unwrap_or_else(|| __start.clone());
-                let __nt = super::__action65::<>(&__start, &__end);
+                let __nt = super::__action65::<>(arena, &__start, &__end);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 0);
                 __symbols.push((__start, __Symbol::Nt_28_3cVarIdentifier_3e_20_22_2c_22_29_2a(__nt), __end));
@@ -1236,7 +1244,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Nt_28_3cVarIdentifier_3e_20_22_2c_22_29_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action66::<>(__sym0);
+                let __nt = super::__action66::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::Nt_28_3cVarIdentifier_3e_20_22_2c_22_29_2a(__nt), __end));
@@ -1248,7 +1256,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_TermVarIdentifier(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
-                let __nt = super::__action87::<>(__sym0, __sym1);
+                let __nt = super::__action87::<>(arena, __sym0, __sym1);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 2);
                 __symbols.push((__start, __Symbol::Nt_28_3cVarIdentifier_3e_20_22_2c_22_29_2b(__nt), __end));
@@ -1261,7 +1269,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Nt_28_3cVarIdentifier_3e_20_22_2c_22_29_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action88::<>(__sym0, __sym1, __sym2);
+                let __nt = super::__action88::<>(arena, __sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::Nt_28_3cVarIdentifier_3e_20_22_2c_22_29_2b(__nt), __end));
@@ -1272,7 +1280,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtImportBlock(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action9::<>(__sym0);
+                let __nt = super::__action9::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtAnyBlock(__nt), __end));
@@ -1283,7 +1291,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtContentBlock(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action10::<>(__sym0);
+                let __nt = super::__action10::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtAnyBlock(__nt), __end));
@@ -1293,7 +1301,7 @@ mod __parse__Filter {
                 // AnyBlock* =  => ActionFn(53);
                 let __start = __symbols.last().map(|s| s.2.clone()).unwrap_or_default();
                 let __end = __lookahead_start.cloned().unwrap_or_else(|| __start.clone());
-                let __nt = super::__action53::<>(&__start, &__end);
+                let __nt = super::__action53::<>(arena, &__start, &__end);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 0);
                 __symbols.push((__start, __Symbol::NtAnyBlock_2a(__nt), __end));
@@ -1304,7 +1312,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtAnyBlock_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action54::<>(__sym0);
+                let __nt = super::__action54::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtAnyBlock_2a(__nt), __end));
@@ -1315,7 +1323,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtAnyBlock(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action59::<>(__sym0);
+                let __nt = super::__action59::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtAnyBlock_2b(__nt), __end));
@@ -1327,7 +1335,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtAnyBlock_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
-                let __nt = super::__action60::<>(__sym0, __sym1);
+                let __nt = super::__action60::<>(arena, __sym0, __sym1);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 2);
                 __symbols.push((__start, __Symbol::NtAnyBlock_2b(__nt), __end));
@@ -1341,7 +1349,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtNumExpression(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym3.2.clone();
-                let __nt = super::__action39::<>(__sym0, __sym1, __sym2, __sym3);
+                let __nt = super::__action39::<>(arena, __sym0, __sym1, __sym2, __sym3);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 4);
                 __symbols.push((__start, __Symbol::NtColor(__nt), __end));
@@ -1354,7 +1362,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtNumExpression(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action40::<>(__sym0, __sym1, __sym2);
+                let __nt = super::__action40::<>(arena, __sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::NtColor(__nt), __end));
@@ -1365,7 +1373,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtValue(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action107::<>(__sym0);
+                let __nt = super::__action107::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtComma_3cValue_3e(__nt), __end));
@@ -1375,7 +1383,7 @@ mod __parse__Filter {
                 // Comma<Value> =  => ActionFn(108);
                 let __start = __symbols.last().map(|s| s.2.clone()).unwrap_or_default();
                 let __end = __lookahead_start.cloned().unwrap_or_else(|| __start.clone());
-                let __nt = super::__action108::<>(&__start, &__end);
+                let __nt = super::__action108::<>(arena, &__start, &__end);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 0);
                 __symbols.push((__start, __Symbol::NtComma_3cValue_3e(__nt), __end));
@@ -1387,7 +1395,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Nt_28_3cValue_3e_20_22_2c_22_29_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
-                let __nt = super::__action109::<>(__sym0, __sym1);
+                let __nt = super::__action109::<>(arena, __sym0, __sym1);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 2);
                 __symbols.push((__start, __Symbol::NtComma_3cValue_3e(__nt), __end));
@@ -1398,7 +1406,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Nt_28_3cValue_3e_20_22_2c_22_29_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action110::<>(__sym0);
+                let __nt = super::__action110::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtComma_3cValue_3e(__nt), __end));
@@ -1409,7 +1417,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_TermVarIdentifier(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action111::<>(__sym0);
+                let __nt = super::__action111::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtComma_3cVarIdentifier_3e(__nt), __end));
@@ -1419,7 +1427,7 @@ mod __parse__Filter {
                 // Comma<VarIdentifier> =  => ActionFn(112);
                 let __start = __symbols.last().map(|s| s.2.clone()).unwrap_or_default();
                 let __end = __lookahead_start.cloned().unwrap_or_else(|| __start.clone());
-                let __nt = super::__action112::<>(&__start, &__end);
+                let __nt = super::__action112::<>(arena, &__start, &__end);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 0);
                 __symbols.push((__start, __Symbol::NtComma_3cVarIdentifier_3e(__nt), __end));
@@ -1431,7 +1439,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Nt_28_3cVarIdentifier_3e_20_22_2c_22_29_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
-                let __nt = super::__action113::<>(__sym0, __sym1);
+                let __nt = super::__action113::<>(arena, __sym0, __sym1);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 2);
                 __symbols.push((__start, __Symbol::NtComma_3cVarIdentifier_3e(__nt), __end));
@@ -1442,7 +1450,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Nt_28_3cVarIdentifier_3e_20_22_2c_22_29_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action114::<>(__sym0);
+                let __nt = super::__action114::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtComma_3cVarIdentifier_3e(__nt), __end));
@@ -1453,7 +1461,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22_3e_3d_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action26::<>(__sym0);
+                let __nt = super::__action26::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtComparisonOperator(__nt), __end));
@@ -1464,7 +1472,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22_3e_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action27::<>(__sym0);
+                let __nt = super::__action27::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtComparisonOperator(__nt), __end));
@@ -1475,7 +1483,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22_3c_3d_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action28::<>(__sym0);
+                let __nt = super::__action28::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtComparisonOperator(__nt), __end));
@@ -1486,7 +1494,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22_3c_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action29::<>(__sym0);
+                let __nt = super::__action29::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtComparisonOperator(__nt), __end));
@@ -1497,7 +1505,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22_3d_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action30::<>(__sym0);
+                let __nt = super::__action30::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtComparisonOperator(__nt), __end));
@@ -1509,7 +1517,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtComparisonOperator(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
-                let __nt = super::__action25::<>(__sym0, __sym1);
+                let __nt = super::__action25::<>(arena, __sym0, __sym1);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 2);
                 __symbols.push((__start, __Symbol::NtCondition(__nt), __end));
@@ -1522,7 +1530,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_TermConstant(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action13::<>(__sym0, __sym1, __sym2);
+                let __nt = super::__action13::<>(arena, __sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::NtConditionStmt(__nt), __end));
@@ -1534,7 +1542,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22Show_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
-                let __nt = super::__action99::<>(__sym0, __sym1);
+                let __nt = super::__action99::<>(arena, __sym0, __sym1);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 2);
                 __symbols.push((__start, __Symbol::NtContentBlock(__nt), __end));
@@ -1547,7 +1555,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22Show_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action100::<>(__sym0, __sym1, __sym2);
+                let __nt = super::__action100::<>(arena, __sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::NtContentBlock(__nt), __end));
@@ -1559,7 +1567,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22Hide_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
-                let __nt = super::__action101::<>(__sym0, __sym1);
+                let __nt = super::__action101::<>(arena, __sym0, __sym1);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 2);
                 __symbols.push((__start, __Symbol::NtContentBlock(__nt), __end));
@@ -1572,7 +1580,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22Hide_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action102::<>(__sym0, __sym1, __sym2);
+                let __nt = super::__action102::<>(arena, __sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::NtContentBlock(__nt), __end));
@@ -1588,7 +1596,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22Mixin_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym5.2.clone();
-                let __nt = super::__action103::<>(__sym0, __sym1, __sym2, __sym3, __sym4, __sym5);
+                let __nt = super::__action103::<>(arena, __sym0, __sym1, __sym2, __sym3, __sym4, __sym5);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 6);
                 __symbols.push((__start, __Symbol::NtContentBlock(__nt), __end));
@@ -1605,7 +1613,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22Mixin_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym6.2.clone();
-                let __nt = super::__action104::<>(__sym0, __sym1, __sym2, __sym3, __sym4, __sym5, __sym6);
+                let __nt = super::__action104::<>(arena, __sym0, __sym1, __sym2, __sym3, __sym4, __sym5, __sym6);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 7);
                 __symbols.push((__start, __Symbol::NtContentBlock(__nt), __end));
@@ -1618,7 +1626,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22Mixin_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action105::<>(__sym0, __sym1, __sym2);
+                let __nt = super::__action105::<>(arena, __sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::NtContentBlock(__nt), __end));
@@ -1632,7 +1640,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22Mixin_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym3.2.clone();
-                let __nt = super::__action106::<>(__sym0, __sym1, __sym2, __sym3);
+                let __nt = super::__action106::<>(arena, __sym0, __sym1, __sym2, __sym3);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 4);
                 __symbols.push((__start, __Symbol::NtContentBlock(__nt), __end));
@@ -1643,7 +1651,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtVarDefinition(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action3::<>(__sym0);
+                let __nt = super::__action3::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtDefinitionBlock(__nt), __end));
@@ -1654,7 +1662,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtImportBlock(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action4::<>(__sym0);
+                let __nt = super::__action4::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtDefinitionBlock(__nt), __end));
@@ -1664,7 +1672,7 @@ mod __parse__Filter {
                 // DefinitionBlock* =  => ActionFn(55);
                 let __start = __symbols.last().map(|s| s.2.clone()).unwrap_or_default();
                 let __end = __lookahead_start.cloned().unwrap_or_else(|| __start.clone());
-                let __nt = super::__action55::<>(&__start, &__end);
+                let __nt = super::__action55::<>(arena, &__start, &__end);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 0);
                 __symbols.push((__start, __Symbol::NtDefinitionBlock_2a(__nt), __end));
@@ -1675,7 +1683,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtDefinitionBlock_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action56::<>(__sym0);
+                let __nt = super::__action56::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtDefinitionBlock_2a(__nt), __end));
@@ -1686,7 +1694,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtDefinitionBlock(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action57::<>(__sym0);
+                let __nt = super::__action57::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtDefinitionBlock_2b(__nt), __end));
@@ -1698,7 +1706,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtDefinitionBlock_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
-                let __nt = super::__action58::<>(__sym0, __sym1);
+                let __nt = super::__action58::<>(arena, __sym0, __sym1);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 2);
                 __symbols.push((__start, __Symbol::NtDefinitionBlock_2b(__nt), __end));
@@ -1709,7 +1717,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtContentBlock(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action93::<>(__sym0);
+                let __nt = super::__action93::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtFilter(__nt), __end));
@@ -1721,7 +1729,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtDefinitionBlock_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
-                let __nt = super::__action94::<>(__sym0, __sym1);
+                let __nt = super::__action94::<>(arena, __sym0, __sym1);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 2);
                 __symbols.push((__start, __Symbol::NtFilter(__nt), __end));
@@ -1733,7 +1741,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtContentBlock(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
-                let __nt = super::__action95::<>(__sym0, __sym1);
+                let __nt = super::__action95::<>(arena, __sym0, __sym1);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 2);
                 __symbols.push((__start, __Symbol::NtFilter(__nt), __end));
@@ -1746,7 +1754,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtDefinitionBlock_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action96::<>(__sym0, __sym1, __sym2);
+                let __nt = super::__action96::<>(arena, __sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::NtFilter(__nt), __end));
@@ -1756,7 +1764,7 @@ mod __parse__Filter {
                 // Filter =  => ActionFn(97);
                 let __start = __symbols.last().map(|s| s.2.clone()).unwrap_or_default();
                 let __end = __lookahead_start.cloned().unwrap_or_else(|| __start.clone());
-                let __nt = super::__action97::<>(&__start, &__end);
+                let __nt = super::__action97::<>(arena, &__start, &__end);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 0);
                 __symbols.push((__start, __Symbol::NtFilter(__nt), __end));
@@ -1767,7 +1775,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtDefinitionBlock_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action98::<>(__sym0);
+                let __nt = super::__action98::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtFilter(__nt), __end));
@@ -1780,7 +1788,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22Import_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action5::<>(__sym0, __sym1, __sym2);
+                let __nt = super::__action5::<>(arena, __sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::NtImportBlock(__nt), __end));
@@ -1796,7 +1804,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22_2b_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym5.2.clone();
-                let __nt = super::__action78::<>(__sym0, __sym1, __sym2, __sym3, __sym4, __sym5);
+                let __nt = super::__action78::<>(arena, __sym0, __sym1, __sym2, __sym3, __sym4, __sym5);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 6);
                 __symbols.push((__start, __Symbol::NtMixinCall(__nt), __end));
@@ -1809,7 +1817,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22_2b_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action79::<>(__sym0, __sym1, __sym2);
+                let __nt = super::__action79::<>(arena, __sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::NtMixinCall(__nt), __end));
@@ -1822,7 +1830,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtNumExpression(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action31::<>(__sym0, __sym1, __sym2);
+                let __nt = super::__action31::<>(arena, __sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::NtNumExpression(__nt), __end));
@@ -1835,7 +1843,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtNumExpression(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action32::<>(__sym0, __sym1, __sym2);
+                let __nt = super::__action32::<>(arena, __sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::NtNumExpression(__nt), __end));
@@ -1846,7 +1854,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtNumFactor(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action33::<>(__sym0);
+                let __nt = super::__action33::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtNumExpression(__nt), __end));
@@ -1859,7 +1867,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtNumFactor(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action34::<>(__sym0, __sym1, __sym2);
+                let __nt = super::__action34::<>(arena, __sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::NtNumFactor(__nt), __end));
@@ -1872,7 +1880,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtNumFactor(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action35::<>(__sym0, __sym1, __sym2);
+                let __nt = super::__action35::<>(arena, __sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::NtNumFactor(__nt), __end));
@@ -1883,7 +1891,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtNumTerm(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action36::<>(__sym0);
+                let __nt = super::__action36::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtNumFactor(__nt), __end));
@@ -1894,7 +1902,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_TermNum(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action37::<>(__sym0);
+                let __nt = super::__action37::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtNumTerm(__nt), __end));
@@ -1907,7 +1915,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_Term_22_28_22(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action38::<>(__sym0, __sym1, __sym2);
+                let __nt = super::__action38::<>(arena, __sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::NtNumTerm(__nt), __end));
@@ -1920,7 +1928,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_TermConstant(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym2.2.clone();
-                let __nt = super::__action12::<>(__sym0, __sym1, __sym2);
+                let __nt = super::__action12::<>(arena, __sym0, __sym1, __sym2);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 3);
                 __symbols.push((__start, __Symbol::NtSetValueStmt(__nt), __end));
@@ -1931,7 +1939,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtSetValueStmt(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action15::<>(__sym0);
+                let __nt = super::__action15::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtStatement(__nt), __end));
@@ -1942,29 +1950,29 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtConditionStmt(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action16::<>(__sym0);
+                let __nt = super::__action16::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtStatement(__nt), __end));
                 30
             }
             74 => {
-                // Statement = VarDefinition => ActionFn(17);
-                let __sym0 = __pop_NtVarDefinition(__symbols);
+                // Statement = MixinCall => ActionFn(17);
+                let __sym0 = __pop_NtMixinCall(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action17::<>(__sym0);
+                let __nt = super::__action17::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtStatement(__nt), __end));
                 30
             }
             75 => {
-                // Statement = MixinCall => ActionFn(18);
-                let __sym0 = __pop_NtMixinCall(__symbols);
+                // Statement = VarDefinition => ActionFn(18);
+                let __sym0 = __pop_NtVarDefinition(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action18::<>(__sym0);
+                let __nt = super::__action18::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtStatement(__nt), __end));
@@ -1974,7 +1982,7 @@ mod __parse__Filter {
                 // Statement* =  => ActionFn(51);
                 let __start = __symbols.last().map(|s| s.2.clone()).unwrap_or_default();
                 let __end = __lookahead_start.cloned().unwrap_or_else(|| __start.clone());
-                let __nt = super::__action51::<>(&__start, &__end);
+                let __nt = super::__action51::<>(arena, &__start, &__end);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 0);
                 __symbols.push((__start, __Symbol::NtStatement_2a(__nt), __end));
@@ -1985,7 +1993,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtStatement_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action52::<>(__sym0);
+                let __nt = super::__action52::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtStatement_2a(__nt), __end));
@@ -1996,7 +2004,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtStatement(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action61::<>(__sym0);
+                let __nt = super::__action61::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtStatement_2b(__nt), __end));
@@ -2008,7 +2016,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtStatement_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
-                let __nt = super::__action62::<>(__sym0, __sym1);
+                let __nt = super::__action62::<>(arena, __sym0, __sym1);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 2);
                 __symbols.push((__start, __Symbol::NtStatement_2b(__nt), __end));
@@ -2019,7 +2027,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_TermQuotedStrLiteral(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action23::<>(__sym0);
+                let __nt = super::__action23::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtStrLiteral(__nt), __end));
@@ -2030,7 +2038,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_TermConstant(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action24::<>(__sym0);
+                let __nt = super::__action24::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtStrLiteral(__nt), __end));
@@ -2041,7 +2049,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtStrLiteral(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action22::<>(__sym0);
+                let __nt = super::__action22::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtStringExpression(__nt), __end));
@@ -2052,7 +2060,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtNumExpression(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action19::<>(__sym0);
+                let __nt = super::__action19::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtValue(__nt), __end));
@@ -2063,7 +2071,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtStringExpression(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action20::<>(__sym0);
+                let __nt = super::__action20::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtValue(__nt), __end));
@@ -2074,7 +2082,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_TermVarIdentifier(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action21::<>(__sym0);
+                let __nt = super::__action21::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtValue(__nt), __end));
@@ -2085,7 +2093,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtValue(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action45::<>(__sym0);
+                let __nt = super::__action45::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtValue_2b(__nt), __end));
@@ -2097,7 +2105,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtValue_2b(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym1.2.clone();
-                let __nt = super::__action46::<>(__sym0, __sym1);
+                let __nt = super::__action46::<>(arena, __sym0, __sym1);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 2);
                 __symbols.push((__start, __Symbol::NtValue_2b(__nt), __end));
@@ -2108,7 +2116,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtValue(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action68::<>(__sym0);
+                let __nt = super::__action68::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtValue_3f(__nt), __end));
@@ -2118,7 +2126,7 @@ mod __parse__Filter {
                 // Value? =  => ActionFn(69);
                 let __start = __symbols.last().map(|s| s.2.clone()).unwrap_or_default();
                 let __end = __lookahead_start.cloned().unwrap_or_else(|| __start.clone());
-                let __nt = super::__action69::<>(&__start, &__end);
+                let __nt = super::__action69::<>(arena, &__start, &__end);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 0);
                 __symbols.push((__start, __Symbol::NtValue_3f(__nt), __end));
@@ -2132,7 +2140,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_TermVarIdentifier(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym3.2.clone();
-                let __nt = super::__action11::<>(__sym0, __sym1, __sym2, __sym3);
+                let __nt = super::__action11::<>(arena, __sym0, __sym1, __sym2, __sym3);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 4);
                 __symbols.push((__start, __Symbol::NtVarDefinition(__nt), __end));
@@ -2143,7 +2151,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_TermVarIdentifier(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action63::<>(__sym0);
+                let __nt = super::__action63::<>(arena, __sym0);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 1);
                 __symbols.push((__start, __Symbol::NtVarIdentifier_3f(__nt), __end));
@@ -2153,7 +2161,7 @@ mod __parse__Filter {
                 // VarIdentifier? =  => ActionFn(64);
                 let __start = __symbols.last().map(|s| s.2.clone()).unwrap_or_default();
                 let __end = __lookahead_start.cloned().unwrap_or_else(|| __start.clone());
-                let __nt = super::__action64::<>(&__start, &__end);
+                let __nt = super::__action64::<>(arena, &__start, &__end);
                 let __states_len = __states.len();
                 __states.truncate(__states_len - 0);
                 __symbols.push((__start, __Symbol::NtVarIdentifier_3f(__nt), __end));
@@ -2164,7 +2172,7 @@ mod __parse__Filter {
                 let __sym0 = __pop_NtFilter(__symbols);
                 let __start = __sym0.0.clone();
                 let __end = __sym0.2.clone();
-                let __nt = super::__action0::<>(__sym0);
+                let __nt = super::__action0::<>(arena, __sym0);
                 return Some(Ok(__nt));
             }
             _ => panic!("invalid action code {}", __action)
@@ -2175,8 +2183,9 @@ mod __parse__Filter {
         None
     }
     fn __pop_Term_22_28_22<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, Tok, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Term_22_28_22(__v), __r) => (__l, __v, __r),
@@ -2184,8 +2193,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_Term_22_29_22<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, Tok, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Term_22_29_22(__v), __r) => (__l, __v, __r),
@@ -2193,8 +2203,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_Term_22_2a_22<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, Tok, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Term_22_2a_22(__v), __r) => (__l, __v, __r),
@@ -2202,8 +2213,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_Term_22_2b_22<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, Tok, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Term_22_2b_22(__v), __r) => (__l, __v, __r),
@@ -2211,8 +2223,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_Term_22_2c_22<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, Tok, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Term_22_2c_22(__v), __r) => (__l, __v, __r),
@@ -2220,8 +2233,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_Term_22_2d_22<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, Tok, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Term_22_2d_22(__v), __r) => (__l, __v, __r),
@@ -2229,8 +2243,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_Term_22_2f_22<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, Tok, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Term_22_2f_22(__v), __r) => (__l, __v, __r),
@@ -2238,8 +2253,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_Term_22_3c_22<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, Tok, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Term_22_3c_22(__v), __r) => (__l, __v, __r),
@@ -2247,8 +2263,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_Term_22_3c_3d_22<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, Tok, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Term_22_3c_3d_22(__v), __r) => (__l, __v, __r),
@@ -2256,8 +2273,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_Term_22_3d_22<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, Tok, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Term_22_3d_22(__v), __r) => (__l, __v, __r),
@@ -2265,8 +2283,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_Term_22_3e_22<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, Tok, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Term_22_3e_22(__v), __r) => (__l, __v, __r),
@@ -2274,8 +2293,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_Term_22_3e_3d_22<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, Tok, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Term_22_3e_3d_22(__v), __r) => (__l, __v, __r),
@@ -2283,8 +2303,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_Term_22Hide_22<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, Tok, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Term_22Hide_22(__v), __r) => (__l, __v, __r),
@@ -2292,8 +2313,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_Term_22Import_22<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, Tok, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Term_22Import_22(__v), __r) => (__l, __v, __r),
@@ -2301,8 +2323,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_Term_22Mixin_22<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, Tok, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Term_22Mixin_22(__v), __r) => (__l, __v, __r),
@@ -2310,8 +2333,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_Term_22Show_22<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, Tok, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Term_22Show_22(__v), __r) => (__l, __v, __r),
@@ -2319,8 +2343,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_Term_22_5c_5cn_22<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, Tok, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Term_22_5c_5cn_22(__v), __r) => (__l, __v, __r),
@@ -2328,8 +2353,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_TermConstant<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, String, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::TermConstant(__v), __r) => (__l, __v, __r),
@@ -2337,8 +2363,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_TermNum<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, i32, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::TermNum(__v), __r) => (__l, __v, __r),
@@ -2346,8 +2373,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_TermQuotedStrLiteral<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, String, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::TermQuotedStrLiteral(__v), __r) => (__l, __v, __r),
@@ -2355,8 +2383,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_TermVarIdentifier<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, String, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::TermVarIdentifier(__v), __r) => (__l, __v, __r),
@@ -2364,8 +2393,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_Termerror<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, __lalrpop_util::ErrorRecovery<TokenLocation, Tok, char>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Termerror(__v), __r) => (__l, __v, __r),
@@ -2373,26 +2403,29 @@ mod __parse__Filter {
         }
     }
     fn __pop_Nt_28_22_28_22_20_3cComma_3cValue_3e_3e_20_22_29_22_29<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, Vec<ast::Value>, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, Vec<&'ast Node<'ast>>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Nt_28_22_28_22_20_3cComma_3cValue_3e_3e_20_22_29_22_29(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_Nt_28_22_28_22_20_3cComma_3cValue_3e_3e_20_22_29_22_29_3f<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ::std::option::Option<Vec<ast::Value>>, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, ::std::option::Option<Vec<&'ast Node<'ast>>>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Nt_28_22_28_22_20_3cComma_3cValue_3e_3e_20_22_29_22_29_3f(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_Nt_28_22_28_22_20_3cComma_3cVarIdentifier_3e_3e_20_22_29_22_29<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, Vec<String>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Nt_28_22_28_22_20_3cComma_3cVarIdentifier_3e_3e_20_22_29_22_29(__v), __r) => (__l, __v, __r),
@@ -2400,8 +2433,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_Nt_28_22_28_22_20_3cComma_3cVarIdentifier_3e_3e_20_22_29_22_29_3f<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, ::std::option::Option<Vec<String>>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Nt_28_22_28_22_20_3cComma_3cVarIdentifier_3e_3e_20_22_29_22_29_3f(__v), __r) => (__l, __v, __r),
@@ -2409,35 +2443,39 @@ mod __parse__Filter {
         }
     }
     fn __pop_Nt_28_3cValue_3e_20_22_2c_22_29<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ast::Value, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, &'ast Node<'ast>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Nt_28_3cValue_3e_20_22_2c_22_29(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_Nt_28_3cValue_3e_20_22_2c_22_29_2a<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ::std::vec::Vec<ast::Value>, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Nt_28_3cValue_3e_20_22_2c_22_29_2a(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_Nt_28_3cValue_3e_20_22_2c_22_29_2b<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ::std::vec::Vec<ast::Value>, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Nt_28_3cValue_3e_20_22_2c_22_29_2b(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_Nt_28_3cVarIdentifier_3e_20_22_2c_22_29<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, String, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Nt_28_3cVarIdentifier_3e_20_22_2c_22_29(__v), __r) => (__l, __v, __r),
@@ -2445,8 +2483,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_Nt_28_3cVarIdentifier_3e_20_22_2c_22_29_2a<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, ::std::vec::Vec<String>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Nt_28_3cVarIdentifier_3e_20_22_2c_22_29_2a(__v), __r) => (__l, __v, __r),
@@ -2454,8 +2493,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_Nt_28_3cVarIdentifier_3e_20_22_2c_22_29_2b<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, ::std::vec::Vec<String>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Nt_28_3cVarIdentifier_3e_20_22_2c_22_29_2b(__v), __r) => (__l, __v, __r),
@@ -2463,53 +2503,59 @@ mod __parse__Filter {
         }
     }
     fn __pop_NtAnyBlock<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ast::Block, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, &'ast Node<'ast>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtAnyBlock(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtAnyBlock_2a<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtAnyBlock_2a(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtAnyBlock_2b<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtAnyBlock_2b(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtColor<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ast::Color, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, &'ast Node<'ast>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtColor(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtComma_3cValue_3e<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, Vec<ast::Value>, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, Vec<&'ast Node<'ast>>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtComma_3cValue_3e(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtComma_3cVarIdentifier_3e<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, Vec<String>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtComma_3cVarIdentifier_3e(__v), __r) => (__l, __v, __r),
@@ -2517,8 +2563,9 @@ mod __parse__Filter {
         }
     }
     fn __pop_NtComparisonOperator<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, stm::ComparisonOperator, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtComparisonOperator(__v), __r) => (__l, __v, __r),
@@ -2526,152 +2573,169 @@ mod __parse__Filter {
         }
     }
     fn __pop_NtCondition<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, stm::Condition, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, stm::Condition<'ast>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtCondition(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtConditionStmt<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, stm::ConditionStatement, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, &'ast Node<'ast>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtConditionStmt(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtContentBlock<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ast::Block, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, &'ast Node<'ast>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtContentBlock(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtDefinitionBlock<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ast::Block, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, &'ast Node<'ast>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtDefinitionBlock(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtDefinitionBlock_2a<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtDefinitionBlock_2a(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtDefinitionBlock_2b<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtDefinitionBlock_2b(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtFilter<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, Box<Vec<ast::Block>>, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, Vec<&'ast Node<'ast>>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtFilter(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtImportBlock<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ast::Block, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, &'ast Node<'ast>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtImportBlock(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtMixinCall<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ast::mixin::MixinCall, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, &'ast Node<'ast>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtMixinCall(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtNumExpression<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ast::numbers::NumberExpression, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, &'ast Node<'ast>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtNumExpression(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtNumFactor<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ast::numbers::NumberExpression, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, &'ast Node<'ast>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtNumFactor(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtNumTerm<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ast::numbers::NumberExpression, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, &'ast Node<'ast>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtNumTerm(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtSetValueStmt<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, stm::SetValueStatement, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, &'ast Node<'ast>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtSetValueStmt(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtStatement<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, stm::Statement, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, &'ast Node<'ast>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtStatement(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtStatement_2a<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ::std::vec::Vec<stm::Statement>, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtStatement_2a(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtStatement_2b<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ::std::vec::Vec<stm::Statement>, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtStatement_2b(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtStrLiteral<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, String, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtStrLiteral(__v), __r) => (__l, __v, __r),
@@ -2679,53 +2743,59 @@ mod __parse__Filter {
         }
     }
     fn __pop_NtStringExpression<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ast::strings::StringBox, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, &'ast Node<'ast>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtStringExpression(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtValue<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ast::Value, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, &'ast Node<'ast>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtValue(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtValue_2b<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ::std::vec::Vec<ast::Value>, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtValue_2b(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtValue_3f<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ::std::option::Option<ast::Value>, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, ::std::option::Option<&'ast Node<'ast>>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtValue_3f(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtVarDefinition<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, ast::VarDefinition, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, ast::VarDefinition<'ast>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtVarDefinition(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
         }
     }
     fn __pop_NtVarIdentifier_3f<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
     ) -> (TokenLocation, ::std::option::Option<String>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtVarIdentifier_3f(__v), __r) => (__l, __v, __r),
@@ -2733,9 +2803,10 @@ mod __parse__Filter {
         }
     }
     fn __pop_Nt____Filter<
+      'ast,
     >(
-        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<>,TokenLocation)>
-    ) -> (TokenLocation, Box<Vec<ast::Block>>, TokenLocation) {
+        __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
+    ) -> (TokenLocation, Vec<&'ast Node<'ast>>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Nt____Filter(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
@@ -2744,91 +2815,122 @@ mod __parse__Filter {
 }
 pub use self::__parse__Filter::parse_Filter;
 
+#[allow(unused_variables)]
 pub fn __action0<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, Box<Vec<ast::Block>>, TokenLocation),
-) -> Box<Vec<ast::Block>>
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, Vec<&'ast Node<'ast>>, TokenLocation),
+) -> Vec<&'ast Node<'ast>>
 {
     (__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action1<
+    'ast,
 >(
-    (_, defs, _): (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation),
-    (_, first, _): (TokenLocation, ast::Block, TokenLocation),
-    (_, rest, _): (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation),
-) -> Box<Vec<ast::Block>>
+    arena: &'ast Arena<'ast>,
+    (_, defs, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+    (_, first, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+    (_, rest, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+) -> Vec<&'ast Node<'ast>>
 {
     {
         let mut v = defs;
         v.push(first);
         v.extend(rest);
-        Box::new(v)
+        v
     }
 }
 
+#[allow(unused_variables)]
 pub fn __action2<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation),
-) -> Box<Vec<ast::Block>>
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+) -> Vec<&'ast Node<'ast>>
 {
-    Box::new(__0)
+    __0
 }
 
+#[allow(unused_variables)]
 pub fn __action3<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, ast::VarDefinition, TokenLocation),
-) -> ast::Block
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, ast::VarDefinition<'ast>, TokenLocation),
+) -> &'ast Node<'ast>
 {
-    ast::Block::Var(__0)
+    arena.alloc(Node::VarDefinition(__0))
 }
 
+#[allow(unused_variables)]
 pub fn __action4<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, ast::Block, TokenLocation),
-) -> ast::Block
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> &'ast Node<'ast>
 {
     (__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action5<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, __0, _): (TokenLocation, String, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
-) -> ast::Block
+) -> &'ast Node<'ast>
 {
-    ast::Block::Import(__0)
+    arena.alloc(Node::Block(ast::Block::Import(__0)))
 }
 
+#[allow(unused_variables)]
 pub fn __action6<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
-    (_, __0, _): (TokenLocation, ::std::vec::Vec<stm::Statement>, TokenLocation),
-) -> ast::Block
+    (_, __0, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+) -> &'ast Node<'ast>
 {
-    ast::Block::Show(__0)
+    arena.alloc(Node::Block(
+        ast::Block::Show(__0.into_iter().map(|e| e as &stm::BlockStatement).collect())
+    ))
 }
 
+#[allow(unused_variables)]
 pub fn __action7<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
-    (_, __0, _): (TokenLocation, ::std::vec::Vec<stm::Statement>, TokenLocation),
-) -> ast::Block
+    (_, __0, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+) -> &'ast Node<'ast>
 {
-    ast::Block::Hide(__0)
+    arena.alloc(Node::Block(
+        ast::Block::Hide(__0.into_iter().map(|e| e as &stm::BlockStatement).collect())
+    ))
 }
 
+#[allow(unused_variables)]
 pub fn __action8<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, name, _): (TokenLocation, String, TokenLocation),
     (_, args, _): (TokenLocation, ::std::option::Option<Vec<String>>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
-    (_, instructions, _): (TokenLocation, ::std::vec::Vec<stm::Statement>, TokenLocation),
-) -> ast::Block
+    (_, instructions, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+) -> &'ast Node<'ast>
 {
     {
         let params = args
@@ -2836,340 +2938,480 @@ pub fn __action8<
             .iter()
             .map(|param_name| ast::mixin::Param { name: param_name.clone(), default: None })
             .collect();
-        ast::Block::Mixin(
-            ast::mixin::Mixin{
-                name: name,
-                parameters: params,
-                statements: instructions
-            }
-        )
+        arena.alloc(Node::Block(
+            ast::Block::Mixin(
+                ast::mixin::Mixin{
+                    name: name,
+                    parameters: params,
+                    statements: instructions.into_iter().map(|e| e as &stm::BlockStatement).collect()
+                }
+            )
+        ))
     }
 }
 
+#[allow(unused_variables)]
 pub fn __action9<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, ast::Block, TokenLocation),
-) -> ast::Block
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> &'ast Node<'ast>
 {
     (__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action10<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, ast::Block, TokenLocation),
-) -> ast::Block
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> &'ast Node<'ast>
 {
     (__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action11<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, id, _): (TokenLocation, String, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
-    (_, v, _): (TokenLocation, ::std::vec::Vec<ast::Value>, TokenLocation),
+    (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
-) -> ast::VarDefinition
+) -> ast::VarDefinition<'ast>
 {
-    ast::VarDefinition { identifier: id, values: v }
+    ast::VarDefinition {
+        identifier: id,
+        values: v.into_iter().map(|e| e as &ast::Value).collect()
+    }
 }
 
+#[allow(unused_variables)]
 pub fn __action12<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, n, _): (TokenLocation, String, TokenLocation),
-    (_, val, _): (TokenLocation, ::std::vec::Vec<ast::Value>, TokenLocation),
+    (_, val, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
-) -> stm::SetValueStatement
+) -> &'ast Node<'ast>
 {
-    stm::SetValueStatement { name: n, values: val }
+    arena.alloc(Node::SetValueStmt(
+        stm::SetValueStatement {
+            name: n,
+            values: val.into_iter().map(|e| e as &ast::Value).collect()
+        }
+    ))
 }
 
+#[allow(unused_variables)]
 pub fn __action13<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, n, _): (TokenLocation, String, TokenLocation),
-    (_, cond, _): (TokenLocation, stm::Condition, TokenLocation),
+    (_, cond, _): (TokenLocation, stm::Condition<'ast>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
-) -> stm::ConditionStatement
+) -> &'ast Node<'ast>
 {
-    stm::ConditionStatement { name: n, condition: cond }
+    arena.alloc(Node::ConditionStmt(
+        stm::ConditionStatement {
+            name: n,
+            condition: cond
+        }
+    ))
 }
 
+#[allow(unused_variables)]
 pub fn __action14<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, n, _): (TokenLocation, String, TokenLocation),
-    (_, params, _): (TokenLocation, ::std::option::Option<Vec<ast::Value>>, TokenLocation),
+    (_, params, _): (TokenLocation, ::std::option::Option<Vec<&'ast Node<'ast>>>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
-) -> ast::mixin::MixinCall
+) -> &'ast Node<'ast>
 {
-    ast::mixin::MixinCall { name: n, parameters: params.unwrap_or(vec![]) }
+    arena.alloc(Node::MixinCall(
+        ast::mixin::MixinCall {
+            name: n,
+            parameters: params.unwrap_or(vec![]).into_iter().map(|e| e as &ast::Value).collect()
+}
+    ))
 }
 
+#[allow(unused_variables)]
 pub fn __action15<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, stm::SetValueStatement, TokenLocation),
-) -> stm::Statement
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> &'ast Node<'ast>
 {
-    stm::Statement::SetValue(__0)
+    (__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action16<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, stm::ConditionStatement, TokenLocation),
-) -> stm::Statement
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> &'ast Node<'ast>
 {
-    stm::Statement::Condition(__0)
+    (__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action17<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, ast::VarDefinition, TokenLocation),
-) -> stm::Statement
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> &'ast Node<'ast>
 {
-    stm::Statement::Var(__0)
+    (__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action18<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, ast::mixin::MixinCall, TokenLocation),
-) -> stm::Statement
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, ast::VarDefinition<'ast>, TokenLocation),
+) -> &'ast Node<'ast>
 {
-    stm::Statement::Include(__0)
+    arena.alloc(Node::VarDefinition(__0))
 }
 
+#[allow(unused_variables)]
 pub fn __action19<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, ast::numbers::NumberExpression, TokenLocation),
-) -> ast::Value
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> &'ast Node<'ast>
 {
-    ast::Value::Num(__0)
+    (__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action20<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, ast::strings::StringBox, TokenLocation),
-) -> ast::Value
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> &'ast Node<'ast>
 {
-    ast::Value::Str(__0)
+    (__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action21<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, __0, _): (TokenLocation, String, TokenLocation),
-) -> ast::Value
+) -> &'ast Node<'ast>
 {
-    ast::Value::Var(__0)
+    arena.alloc(Node::VarRef(ast::var::VarReference { identifier: __0 }))
 }
 
+#[allow(unused_variables)]
 pub fn __action22<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, __0, _): (TokenLocation, String, TokenLocation),
-) -> ast::strings::StringBox
+) -> &'ast Node<'ast>
 {
-    ast::strings::StringBox::Value(__0)
+    arena.alloc(Node::StringBox(ast::strings::StringBox::Value(__0)))
 }
 
+#[allow(unused_variables)]
 pub fn __action23<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, __0, _): (TokenLocation, String, TokenLocation),
 ) -> String
 {
     String::from(__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action24<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, __0, _): (TokenLocation, String, TokenLocation),
 ) -> String
 {
     String::from(__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action25<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, op, _): (TokenLocation, stm::ComparisonOperator, TokenLocation),
-    (_, v, _): (TokenLocation, ast::Value, TokenLocation),
-) -> stm::Condition
+    (_, v, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> stm::Condition<'ast>
 {
     stm::Condition { value: v, operator: op }
 }
 
+#[allow(unused_variables)]
 pub fn __action26<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> stm::ComparisonOperator
 {
     stm::ComparisonOperator::Gte
 }
 
+#[allow(unused_variables)]
 pub fn __action27<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> stm::ComparisonOperator
 {
     stm::ComparisonOperator::Gt
 }
 
+#[allow(unused_variables)]
 pub fn __action28<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> stm::ComparisonOperator
 {
     stm::ComparisonOperator::Lte
 }
 
+#[allow(unused_variables)]
 pub fn __action29<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> stm::ComparisonOperator
 {
     stm::ComparisonOperator::Lt
 }
 
+#[allow(unused_variables)]
 pub fn __action30<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> stm::ComparisonOperator
 {
     stm::ComparisonOperator::Eql
 }
 
+#[allow(unused_variables)]
 pub fn __action31<
+    'ast,
 >(
-    (_, l, _): (TokenLocation, ast::numbers::NumberExpression, TokenLocation),
+    arena: &'ast Arena<'ast>,
+    (_, l, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
-    (_, r, _): (TokenLocation, ast::numbers::NumberExpression, TokenLocation),
-) -> ast::numbers::NumberExpression
+    (_, r, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> &'ast Node<'ast>
 {
-    ast::numbers::NumberExpression::Op(Box::new(l), ast::numbers::NumberOperation::Add, Box::new(r))
+    arena.alloc(Node::NumExpression(
+        NumberExpression::Op(l, ast::numbers::NumberOperation::Add, r)
+    ))
 }
 
+#[allow(unused_variables)]
 pub fn __action32<
+    'ast,
 >(
-    (_, l, _): (TokenLocation, ast::numbers::NumberExpression, TokenLocation),
+    arena: &'ast Arena<'ast>,
+    (_, l, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
-    (_, r, _): (TokenLocation, ast::numbers::NumberExpression, TokenLocation),
-) -> ast::numbers::NumberExpression
+    (_, r, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> &'ast Node<'ast>
 {
-    ast::numbers::NumberExpression::Op(Box::new(l), ast::numbers::NumberOperation::Sub, Box::new(r))
+    arena.alloc(Node::NumExpression(
+        NumberExpression::Op(l, ast::numbers::NumberOperation::Sub, r)
+    ))
 }
 
+#[allow(unused_variables)]
 pub fn __action33<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, ast::numbers::NumberExpression, TokenLocation),
-) -> ast::numbers::NumberExpression
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> &'ast Node<'ast>
 {
     (__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action34<
+    'ast,
 >(
-    (_, l, _): (TokenLocation, ast::numbers::NumberExpression, TokenLocation),
+    arena: &'ast Arena<'ast>,
+    (_, l, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
-    (_, r, _): (TokenLocation, ast::numbers::NumberExpression, TokenLocation),
-) -> ast::numbers::NumberExpression
+    (_, r, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> &'ast Node<'ast>
 {
-    ast::numbers::NumberExpression::Op(Box::new(l), ast::numbers::NumberOperation::Mul, Box::new(r))
+    arena.alloc(Node::NumExpression(
+        NumberExpression::Op(l, ast::numbers::NumberOperation::Mul, r)
+    ))
 }
 
+#[allow(unused_variables)]
 pub fn __action35<
+    'ast,
 >(
-    (_, l, _): (TokenLocation, ast::numbers::NumberExpression, TokenLocation),
+    arena: &'ast Arena<'ast>,
+    (_, l, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
-    (_, r, _): (TokenLocation, ast::numbers::NumberExpression, TokenLocation),
-) -> ast::numbers::NumberExpression
+    (_, r, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> &'ast Node<'ast>
 {
-    ast::numbers::NumberExpression::Op(Box::new(l), ast::numbers::NumberOperation::Div, Box::new(r))
+    arena.alloc(Node::NumExpression(
+        NumberExpression::Op(l, ast::numbers::NumberOperation::Div, r)
+    ))
 }
 
+#[allow(unused_variables)]
 pub fn __action36<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, ast::numbers::NumberExpression, TokenLocation),
-) -> ast::numbers::NumberExpression
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> &'ast Node<'ast>
 {
     (__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action37<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, __0, _): (TokenLocation, i32, TokenLocation),
-) -> ast::numbers::NumberExpression
+) -> &'ast Node<'ast>
 {
-    ast::numbers::NumberExpression::Number(ast::numbers::NumberBox::IntValue(__0))
+    arena.alloc(Node::NumExpression(
+        NumberExpression::Number(ast::numbers::NumberBox::IntValue(__0))
+    ))
 }
 
+#[allow(unused_variables)]
 pub fn __action38<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, _, _): (TokenLocation, Tok, TokenLocation),
-    (_, __0, _): (TokenLocation, ast::numbers::NumberExpression, TokenLocation),
+    (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
-) -> ast::numbers::NumberExpression
+) -> &'ast Node<'ast>
 {
     __0
 }
 
+#[allow(unused_variables)]
 pub fn __action39<
+    'ast,
 >(
-    (_, r, _): (TokenLocation, ast::numbers::NumberExpression, TokenLocation),
-    (_, g, _): (TokenLocation, ast::numbers::NumberExpression, TokenLocation),
-    (_, b, _): (TokenLocation, ast::numbers::NumberExpression, TokenLocation),
-    (_, a, _): (TokenLocation, ast::numbers::NumberExpression, TokenLocation),
-) -> ast::Color
+    arena: &'ast Arena<'ast>,
+    (_, r, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+    (_, g, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+    (_, b, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+    (_, a, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> &'ast Node<'ast>
 {
-    ast::Color {
+    arena.alloc(Node::Color(ast::Color {
         r: r,
         g: g,
         b: b,
         a: a
-    }
+    }))
 }
 
+#[allow(unused_variables)]
 pub fn __action40<
+    'ast,
 >(
-    (_, r, _): (TokenLocation, ast::numbers::NumberExpression, TokenLocation),
-    (_, g, _): (TokenLocation, ast::numbers::NumberExpression, TokenLocation),
-    (_, b, _): (TokenLocation, ast::numbers::NumberExpression, TokenLocation),
-) -> ast::Color
+    arena: &'ast Arena<'ast>,
+    (_, r, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+    (_, g, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+    (_, b, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> &'ast Node<'ast>
 {
-    ast::Color {
+    arena.alloc(Node::Color(ast::Color {
         r: r,
         g: g,
         b: b,
-        a: ast::numbers::NumberExpression::Number(ast::numbers::NumberBox::IntValue(255))
-    }
+        a: arena.alloc(Node::NumExpression(
+            NumberExpression::Number(ast::numbers::NumberBox::IntValue(255))
+        ))
+    }))
 }
 
+#[allow(unused_variables)]
 pub fn __action41<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, Vec<ast::Value>, TokenLocation),
-) -> ::std::option::Option<Vec<ast::Value>>
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, Vec<&'ast Node<'ast>>, TokenLocation),
+) -> ::std::option::Option<Vec<&'ast Node<'ast>>>
 {
     Some(__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action42<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
-) -> ::std::option::Option<Vec<ast::Value>>
+) -> ::std::option::Option<Vec<&'ast Node<'ast>>>
 {
     None
 }
 
+#[allow(unused_variables)]
 pub fn __action43<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, _, _): (TokenLocation, Tok, TokenLocation),
-    (_, __0, _): (TokenLocation, Vec<ast::Value>, TokenLocation),
+    (_, __0, _): (TokenLocation, Vec<&'ast Node<'ast>>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
-) -> Vec<ast::Value>
+) -> Vec<&'ast Node<'ast>>
 {
     (__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action44<
+    'ast,
 >(
-    (_, v, _): (TokenLocation, ::std::vec::Vec<ast::Value>, TokenLocation),
-    (_, e, _): (TokenLocation, ::std::option::Option<ast::Value>, TokenLocation),
-) -> Vec<ast::Value>
+    arena: &'ast Arena<'ast>,
+    (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+    (_, e, _): (TokenLocation, ::std::option::Option<&'ast Node<'ast>>, TokenLocation),
+) -> Vec<&'ast Node<'ast>>
 {
     match e {
         None => v,
@@ -3181,33 +3423,45 @@ pub fn __action44<
     }
 }
 
+#[allow(unused_variables)]
 pub fn __action45<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, ast::Value, TokenLocation),
-) -> ::std::vec::Vec<ast::Value>
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
     vec![__0]
 }
 
+#[allow(unused_variables)]
 pub fn __action46<
+    'ast,
 >(
-    (_, v, _): (TokenLocation, ::std::vec::Vec<ast::Value>, TokenLocation),
-    (_, e, _): (TokenLocation, ast::Value, TokenLocation),
-) -> ::std::vec::Vec<ast::Value>
+    arena: &'ast Arena<'ast>,
+    (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+    (_, e, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
     { let mut v = v; v.push(e); v }
 }
 
+#[allow(unused_variables)]
 pub fn __action47<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, __0, _): (TokenLocation, Vec<String>, TokenLocation),
 ) -> ::std::option::Option<Vec<String>>
 {
     Some(__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action48<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::option::Option<Vec<String>>
@@ -3215,8 +3469,11 @@ pub fn __action48<
     None
 }
 
+#[allow(unused_variables)]
 pub fn __action49<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, __0, _): (TokenLocation, Vec<String>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
@@ -3225,8 +3482,11 @@ pub fn __action49<
     (__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action50<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
     (_, e, _): (TokenLocation, ::std::option::Option<String>, TokenLocation),
 ) -> Vec<String>
@@ -3241,118 +3501,160 @@ pub fn __action50<
     }
 }
 
+#[allow(unused_variables)]
 pub fn __action51<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
-) -> ::std::vec::Vec<stm::Statement>
+) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
     vec![]
 }
 
+#[allow(unused_variables)]
 pub fn __action52<
+    'ast,
 >(
-    (_, v, _): (TokenLocation, ::std::vec::Vec<stm::Statement>, TokenLocation),
-) -> ::std::vec::Vec<stm::Statement>
+    arena: &'ast Arena<'ast>,
+    (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
     v
 }
 
+#[allow(unused_variables)]
 pub fn __action53<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
-) -> ::std::vec::Vec<ast::Block>
+) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
     vec![]
 }
 
+#[allow(unused_variables)]
 pub fn __action54<
+    'ast,
 >(
-    (_, v, _): (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation),
-) -> ::std::vec::Vec<ast::Block>
+    arena: &'ast Arena<'ast>,
+    (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
     v
 }
 
+#[allow(unused_variables)]
 pub fn __action55<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
-) -> ::std::vec::Vec<ast::Block>
+) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
     vec![]
 }
 
+#[allow(unused_variables)]
 pub fn __action56<
+    'ast,
 >(
-    (_, v, _): (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation),
-) -> ::std::vec::Vec<ast::Block>
+    arena: &'ast Arena<'ast>,
+    (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
     v
 }
 
+#[allow(unused_variables)]
 pub fn __action57<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, ast::Block, TokenLocation),
-) -> ::std::vec::Vec<ast::Block>
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
     vec![__0]
 }
 
+#[allow(unused_variables)]
 pub fn __action58<
+    'ast,
 >(
-    (_, v, _): (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation),
-    (_, e, _): (TokenLocation, ast::Block, TokenLocation),
-) -> ::std::vec::Vec<ast::Block>
+    arena: &'ast Arena<'ast>,
+    (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+    (_, e, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
     { let mut v = v; v.push(e); v }
 }
 
+#[allow(unused_variables)]
 pub fn __action59<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, ast::Block, TokenLocation),
-) -> ::std::vec::Vec<ast::Block>
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
     vec![__0]
 }
 
+#[allow(unused_variables)]
 pub fn __action60<
+    'ast,
 >(
-    (_, v, _): (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation),
-    (_, e, _): (TokenLocation, ast::Block, TokenLocation),
-) -> ::std::vec::Vec<ast::Block>
+    arena: &'ast Arena<'ast>,
+    (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+    (_, e, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
     { let mut v = v; v.push(e); v }
 }
 
+#[allow(unused_variables)]
 pub fn __action61<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, stm::Statement, TokenLocation),
-) -> ::std::vec::Vec<stm::Statement>
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
     vec![__0]
 }
 
+#[allow(unused_variables)]
 pub fn __action62<
+    'ast,
 >(
-    (_, v, _): (TokenLocation, ::std::vec::Vec<stm::Statement>, TokenLocation),
-    (_, e, _): (TokenLocation, stm::Statement, TokenLocation),
-) -> ::std::vec::Vec<stm::Statement>
+    arena: &'ast Arena<'ast>,
+    (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+    (_, e, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
     { let mut v = v; v.push(e); v }
 }
 
+#[allow(unused_variables)]
 pub fn __action63<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, __0, _): (TokenLocation, String, TokenLocation),
 ) -> ::std::option::Option<String>
 {
     Some(__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action64<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::option::Option<String>
@@ -3360,8 +3662,11 @@ pub fn __action64<
     None
 }
 
+#[allow(unused_variables)]
 pub fn __action65<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::vec::Vec<String>
@@ -3369,16 +3674,22 @@ pub fn __action65<
     vec![]
 }
 
+#[allow(unused_variables)]
 pub fn __action66<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
 ) -> ::std::vec::Vec<String>
 {
     v
 }
 
+#[allow(unused_variables)]
 pub fn __action67<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, __0, _): (TokenLocation, String, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
 ) -> String
@@ -3386,76 +3697,103 @@ pub fn __action67<
     (__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action68<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, ast::Value, TokenLocation),
-) -> ::std::option::Option<ast::Value>
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> ::std::option::Option<&'ast Node<'ast>>
 {
     Some(__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action69<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
-) -> ::std::option::Option<ast::Value>
+) -> ::std::option::Option<&'ast Node<'ast>>
 {
     None
 }
 
+#[allow(unused_variables)]
 pub fn __action70<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
-) -> ::std::vec::Vec<ast::Value>
+) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
     vec![]
 }
 
+#[allow(unused_variables)]
 pub fn __action71<
+    'ast,
 >(
-    (_, v, _): (TokenLocation, ::std::vec::Vec<ast::Value>, TokenLocation),
-) -> ::std::vec::Vec<ast::Value>
+    arena: &'ast Arena<'ast>,
+    (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
     v
 }
 
+#[allow(unused_variables)]
 pub fn __action72<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, ast::Value, TokenLocation),
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
-) -> ast::Value
+) -> &'ast Node<'ast>
 {
     (__0)
 }
 
+#[allow(unused_variables)]
 pub fn __action73<
+    'ast,
 >(
-    (_, __0, _): (TokenLocation, ast::Value, TokenLocation),
-) -> ::std::vec::Vec<ast::Value>
+    arena: &'ast Arena<'ast>,
+    (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
     vec![__0]
 }
 
+#[allow(unused_variables)]
 pub fn __action74<
+    'ast,
 >(
-    (_, v, _): (TokenLocation, ::std::vec::Vec<ast::Value>, TokenLocation),
-    (_, e, _): (TokenLocation, ast::Value, TokenLocation),
-) -> ::std::vec::Vec<ast::Value>
+    arena: &'ast Arena<'ast>,
+    (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+    (_, e, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
     { let mut v = v; v.push(e); v }
 }
 
+#[allow(unused_variables)]
 pub fn __action75<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, __0, _): (TokenLocation, String, TokenLocation),
 ) -> ::std::vec::Vec<String>
 {
     vec![__0]
 }
 
+#[allow(unused_variables)]
 pub fn __action76<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
     (_, e, _): (TokenLocation, String, TokenLocation),
 ) -> ::std::vec::Vec<String>
@@ -3463,45 +3801,55 @@ pub fn __action76<
     { let mut v = v; v.push(e); v }
 }
 
+#[allow(unused_variables)]
 pub fn __action77<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, Tok, TokenLocation),
-    __1: (TokenLocation, Vec<ast::Value>, TokenLocation),
+    __1: (TokenLocation, Vec<&'ast Node<'ast>>, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
-) -> ::std::option::Option<Vec<ast::Value>>
+) -> ::std::option::Option<Vec<&'ast Node<'ast>>>
 {
     let __start0 = __0.0.clone();
     let __end0 = __2.2.clone();
     let __temp0 = __action43(
+        arena,
         __0,
         __1,
         __2,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action41(
+        arena,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action78<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
-    __3: (TokenLocation, Vec<ast::Value>, TokenLocation),
+    __3: (TokenLocation, Vec<&'ast Node<'ast>>, TokenLocation),
     __4: (TokenLocation, Tok, TokenLocation),
     __5: (TokenLocation, Tok, TokenLocation),
-) -> ast::mixin::MixinCall
+) -> &'ast Node<'ast>
 {
     let __start0 = __2.0.clone();
     let __end0 = __4.2.clone();
     let __temp0 = __action77(
+        arena,
         __2,
         __3,
         __4,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action14(
+        arena,
         __0,
         __1,
         __temp0,
@@ -3509,21 +3857,26 @@ pub fn __action78<
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action79<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
-) -> ast::mixin::MixinCall
+) -> &'ast Node<'ast>
 {
     let __start0 = __1.2.clone();
     let __end0 = __2.0.clone();
     let __temp0 = __action42(
+        arena,
         &__start0,
         &__end0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action14(
+        arena,
         __0,
         __1,
         __temp0,
@@ -3531,8 +3884,11 @@ pub fn __action79<
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action80<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, Vec<String>, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -3541,36 +3897,43 @@ pub fn __action80<
     let __start0 = __0.0.clone();
     let __end0 = __2.2.clone();
     let __temp0 = __action49(
+        arena,
         __0,
         __1,
         __2,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action47(
+        arena,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action81<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
     __3: (TokenLocation, Vec<String>, TokenLocation),
     __4: (TokenLocation, Tok, TokenLocation),
     __5: (TokenLocation, Tok, TokenLocation),
-    __6: (TokenLocation, ::std::vec::Vec<stm::Statement>, TokenLocation),
-) -> ast::Block
+    __6: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+) -> &'ast Node<'ast>
 {
     let __start0 = __2.0.clone();
     let __end0 = __4.2.clone();
     let __temp0 = __action80(
+        arena,
         __2,
         __3,
         __4,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action8(
+        arena,
         __0,
         __1,
         __temp0,
@@ -3579,22 +3942,27 @@ pub fn __action81<
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action82<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
-    __3: (TokenLocation, ::std::vec::Vec<stm::Statement>, TokenLocation),
-) -> ast::Block
+    __3: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+) -> &'ast Node<'ast>
 {
     let __start0 = __1.2.clone();
     let __end0 = __2.0.clone();
     let __temp0 = __action48(
+        arena,
         &__start0,
         &__end0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action8(
+        arena,
         __0,
         __1,
         __temp0,
@@ -3603,82 +3971,105 @@ pub fn __action82<
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action83<
+    'ast,
 >(
-    __0: (TokenLocation, ast::Value, TokenLocation),
+    arena: &'ast Arena<'ast>,
+    __0: (TokenLocation, &'ast Node<'ast>, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
-) -> ::std::vec::Vec<ast::Value>
+) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
     let __start0 = __0.0.clone();
     let __end0 = __1.2.clone();
     let __temp0 = __action72(
+        arena,
         __0,
         __1,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action73(
+        arena,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action84<
+    'ast,
 >(
-    __0: (TokenLocation, ::std::vec::Vec<ast::Value>, TokenLocation),
-    __1: (TokenLocation, ast::Value, TokenLocation),
+    arena: &'ast Arena<'ast>,
+    __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+    __1: (TokenLocation, &'ast Node<'ast>, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
-) -> ::std::vec::Vec<ast::Value>
+) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
     let __start0 = __1.0.clone();
     let __end0 = __2.2.clone();
     let __temp0 = __action72(
+        arena,
         __1,
         __2,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action74(
+        arena,
         __0,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action85<
+    'ast,
 >(
-    __0: (TokenLocation, ::std::option::Option<ast::Value>, TokenLocation),
-) -> Vec<ast::Value>
+    arena: &'ast Arena<'ast>,
+    __0: (TokenLocation, ::std::option::Option<&'ast Node<'ast>>, TokenLocation),
+) -> Vec<&'ast Node<'ast>>
 {
     let __start0 = __0.0.clone();
     let __end0 = __0.0.clone();
     let __temp0 = __action70(
+        arena,
         &__start0,
         &__end0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action44(
+        arena,
         __temp0,
         __0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action86<
+    'ast,
 >(
-    __0: (TokenLocation, ::std::vec::Vec<ast::Value>, TokenLocation),
-    __1: (TokenLocation, ::std::option::Option<ast::Value>, TokenLocation),
-) -> Vec<ast::Value>
+    arena: &'ast Arena<'ast>,
+    __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+    __1: (TokenLocation, ::std::option::Option<&'ast Node<'ast>>, TokenLocation),
+) -> Vec<&'ast Node<'ast>>
 {
     let __start0 = __0.0.clone();
     let __end0 = __0.2.clone();
     let __temp0 = __action71(
+        arena,
         __0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action44(
+        arena,
         __temp0,
         __1,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action87<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, String, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
 ) -> ::std::vec::Vec<String>
@@ -3686,17 +4077,22 @@ pub fn __action87<
     let __start0 = __0.0.clone();
     let __end0 = __1.2.clone();
     let __temp0 = __action67(
+        arena,
         __0,
         __1,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action75(
+        arena,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action88<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -3705,36 +4101,46 @@ pub fn __action88<
     let __start0 = __1.0.clone();
     let __end0 = __2.2.clone();
     let __temp0 = __action67(
+        arena,
         __1,
         __2,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action76(
+        arena,
         __0,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action89<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, ::std::option::Option<String>, TokenLocation),
 ) -> Vec<String>
 {
     let __start0 = __0.0.clone();
     let __end0 = __0.0.clone();
     let __temp0 = __action65(
+        arena,
         &__start0,
         &__end0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action50(
+        arena,
         __temp0,
         __0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action90<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
     __1: (TokenLocation, ::std::option::Option<String>, TokenLocation),
 ) -> Vec<String>
@@ -3742,263 +4148,330 @@ pub fn __action90<
     let __start0 = __0.0.clone();
     let __end0 = __0.2.clone();
     let __temp0 = __action66(
+        arena,
         __0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action50(
+        arena,
         __temp0,
         __1,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action91<
+    'ast,
 >(
-    __0: (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation),
-    __1: (TokenLocation, ast::Block, TokenLocation),
-) -> Box<Vec<ast::Block>>
+    arena: &'ast Arena<'ast>,
+    __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+    __1: (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> Vec<&'ast Node<'ast>>
 {
     let __start0 = __1.2.clone();
     let __end0 = __1.2.clone();
     let __temp0 = __action53(
+        arena,
         &__start0,
         &__end0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action1(
+        arena,
         __0,
         __1,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action92<
+    'ast,
 >(
-    __0: (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation),
-    __1: (TokenLocation, ast::Block, TokenLocation),
-    __2: (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation),
-) -> Box<Vec<ast::Block>>
+    arena: &'ast Arena<'ast>,
+    __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+    __1: (TokenLocation, &'ast Node<'ast>, TokenLocation),
+    __2: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+) -> Vec<&'ast Node<'ast>>
 {
     let __start0 = __2.0.clone();
     let __end0 = __2.2.clone();
     let __temp0 = __action54(
+        arena,
         __2,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action1(
+        arena,
         __0,
         __1,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action93<
+    'ast,
 >(
-    __0: (TokenLocation, ast::Block, TokenLocation),
-) -> Box<Vec<ast::Block>>
+    arena: &'ast Arena<'ast>,
+    __0: (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> Vec<&'ast Node<'ast>>
 {
     let __start0 = __0.0.clone();
     let __end0 = __0.0.clone();
     let __temp0 = __action55(
+        arena,
         &__start0,
         &__end0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action91(
+        arena,
         __temp0,
         __0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action94<
+    'ast,
 >(
-    __0: (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation),
-    __1: (TokenLocation, ast::Block, TokenLocation),
-) -> Box<Vec<ast::Block>>
+    arena: &'ast Arena<'ast>,
+    __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+    __1: (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> Vec<&'ast Node<'ast>>
 {
     let __start0 = __0.0.clone();
     let __end0 = __0.2.clone();
     let __temp0 = __action56(
+        arena,
         __0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action91(
+        arena,
         __temp0,
         __1,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action95<
+    'ast,
 >(
-    __0: (TokenLocation, ast::Block, TokenLocation),
-    __1: (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation),
-) -> Box<Vec<ast::Block>>
+    arena: &'ast Arena<'ast>,
+    __0: (TokenLocation, &'ast Node<'ast>, TokenLocation),
+    __1: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+) -> Vec<&'ast Node<'ast>>
 {
     let __start0 = __0.0.clone();
     let __end0 = __0.0.clone();
     let __temp0 = __action55(
+        arena,
         &__start0,
         &__end0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action92(
+        arena,
         __temp0,
         __0,
         __1,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action96<
+    'ast,
 >(
-    __0: (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation),
-    __1: (TokenLocation, ast::Block, TokenLocation),
-    __2: (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation),
-) -> Box<Vec<ast::Block>>
+    arena: &'ast Arena<'ast>,
+    __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+    __1: (TokenLocation, &'ast Node<'ast>, TokenLocation),
+    __2: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+) -> Vec<&'ast Node<'ast>>
 {
     let __start0 = __0.0.clone();
     let __end0 = __0.2.clone();
     let __temp0 = __action56(
+        arena,
         __0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action92(
+        arena,
         __temp0,
         __1,
         __2,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action97<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
-) -> Box<Vec<ast::Block>>
+) -> Vec<&'ast Node<'ast>>
 {
     let __start0 = __lookbehind.clone();
     let __end0 = __lookahead.clone();
     let __temp0 = __action55(
+        arena,
         &__start0,
         &__end0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action2(
+        arena,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action98<
+    'ast,
 >(
-    __0: (TokenLocation, ::std::vec::Vec<ast::Block>, TokenLocation),
-) -> Box<Vec<ast::Block>>
+    arena: &'ast Arena<'ast>,
+    __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+) -> Vec<&'ast Node<'ast>>
 {
     let __start0 = __0.0.clone();
     let __end0 = __0.2.clone();
     let __temp0 = __action56(
+        arena,
         __0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action2(
+        arena,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action99<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
-) -> ast::Block
+) -> &'ast Node<'ast>
 {
     let __start0 = __1.2.clone();
     let __end0 = __1.2.clone();
     let __temp0 = __action51(
+        arena,
         &__start0,
         &__end0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action6(
+        arena,
         __0,
         __1,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action100<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
-    __2: (TokenLocation, ::std::vec::Vec<stm::Statement>, TokenLocation),
-) -> ast::Block
+    __2: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+) -> &'ast Node<'ast>
 {
     let __start0 = __2.0.clone();
     let __end0 = __2.2.clone();
     let __temp0 = __action52(
+        arena,
         __2,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action6(
+        arena,
         __0,
         __1,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action101<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
-) -> ast::Block
+) -> &'ast Node<'ast>
 {
     let __start0 = __1.2.clone();
     let __end0 = __1.2.clone();
     let __temp0 = __action51(
+        arena,
         &__start0,
         &__end0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action7(
+        arena,
         __0,
         __1,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action102<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
-    __2: (TokenLocation, ::std::vec::Vec<stm::Statement>, TokenLocation),
-) -> ast::Block
+    __2: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+) -> &'ast Node<'ast>
 {
     let __start0 = __2.0.clone();
     let __end0 = __2.2.clone();
     let __temp0 = __action52(
+        arena,
         __2,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action7(
+        arena,
         __0,
         __1,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action103<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
     __3: (TokenLocation, Vec<String>, TokenLocation),
     __4: (TokenLocation, Tok, TokenLocation),
     __5: (TokenLocation, Tok, TokenLocation),
-) -> ast::Block
+) -> &'ast Node<'ast>
 {
     let __start0 = __5.2.clone();
     let __end0 = __5.2.clone();
     let __temp0 = __action51(
+        arena,
         &__start0,
         &__end0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action81(
+        arena,
         __0,
         __1,
         __2,
@@ -4009,24 +4482,29 @@ pub fn __action103<
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action104<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
     __3: (TokenLocation, Vec<String>, TokenLocation),
     __4: (TokenLocation, Tok, TokenLocation),
     __5: (TokenLocation, Tok, TokenLocation),
-    __6: (TokenLocation, ::std::vec::Vec<stm::Statement>, TokenLocation),
-) -> ast::Block
+    __6: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+) -> &'ast Node<'ast>
 {
     let __start0 = __6.0.clone();
     let __end0 = __6.2.clone();
     let __temp0 = __action52(
+        arena,
         __6,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action81(
+        arena,
         __0,
         __1,
         __2,
@@ -4037,21 +4515,26 @@ pub fn __action104<
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action105<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
-) -> ast::Block
+) -> &'ast Node<'ast>
 {
     let __start0 = __2.2.clone();
     let __end0 = __2.2.clone();
     let __temp0 = __action51(
+        arena,
         &__start0,
         &__end0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action82(
+        arena,
         __0,
         __1,
         __2,
@@ -4059,21 +4542,26 @@ pub fn __action105<
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action106<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
-    __3: (TokenLocation, ::std::vec::Vec<stm::Statement>, TokenLocation),
-) -> ast::Block
+    __3: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+) -> &'ast Node<'ast>
 {
     let __start0 = __3.0.clone();
     let __end0 = __3.2.clone();
     let __temp0 = __action52(
+        arena,
         __3,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action82(
+        arena,
         __0,
         __1,
         __2,
@@ -4081,94 +4569,122 @@ pub fn __action106<
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action107<
+    'ast,
 >(
-    __0: (TokenLocation, ast::Value, TokenLocation),
-) -> Vec<ast::Value>
+    arena: &'ast Arena<'ast>,
+    __0: (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> Vec<&'ast Node<'ast>>
 {
     let __start0 = __0.0.clone();
     let __end0 = __0.2.clone();
     let __temp0 = __action68(
+        arena,
         __0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action85(
+        arena,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action108<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
-) -> Vec<ast::Value>
+) -> Vec<&'ast Node<'ast>>
 {
     let __start0 = __lookbehind.clone();
     let __end0 = __lookahead.clone();
     let __temp0 = __action69(
+        arena,
         &__start0,
         &__end0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action85(
+        arena,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action109<
+    'ast,
 >(
-    __0: (TokenLocation, ::std::vec::Vec<ast::Value>, TokenLocation),
-    __1: (TokenLocation, ast::Value, TokenLocation),
-) -> Vec<ast::Value>
+    arena: &'ast Arena<'ast>,
+    __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+    __1: (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> Vec<&'ast Node<'ast>>
 {
     let __start0 = __1.0.clone();
     let __end0 = __1.2.clone();
     let __temp0 = __action68(
+        arena,
         __1,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action86(
+        arena,
         __0,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action110<
+    'ast,
 >(
-    __0: (TokenLocation, ::std::vec::Vec<ast::Value>, TokenLocation),
-) -> Vec<ast::Value>
+    arena: &'ast Arena<'ast>,
+    __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
+) -> Vec<&'ast Node<'ast>>
 {
     let __start0 = __0.2.clone();
     let __end0 = __0.2.clone();
     let __temp0 = __action69(
+        arena,
         &__start0,
         &__end0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action86(
+        arena,
         __0,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action111<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, String, TokenLocation),
 ) -> Vec<String>
 {
     let __start0 = __0.0.clone();
     let __end0 = __0.2.clone();
     let __temp0 = __action63(
+        arena,
         __0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action89(
+        arena,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action112<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> Vec<String>
@@ -4176,17 +4692,22 @@ pub fn __action112<
     let __start0 = __lookbehind.clone();
     let __end0 = __lookahead.clone();
     let __temp0 = __action64(
+        arena,
         &__start0,
         &__end0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action89(
+        arena,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action113<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
 ) -> Vec<String>
@@ -4194,45 +4715,52 @@ pub fn __action113<
     let __start0 = __1.0.clone();
     let __end0 = __1.2.clone();
     let __temp0 = __action63(
+        arena,
         __1,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action90(
+        arena,
         __0,
         __temp0,
     )
 }
 
+#[allow(unused_variables)]
 pub fn __action114<
+    'ast,
 >(
+    arena: &'ast Arena<'ast>,
     __0: (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
 ) -> Vec<String>
 {
     let __start0 = __0.2.clone();
     let __end0 = __0.2.clone();
     let __temp0 = __action64(
+        arena,
         &__start0,
         &__end0,
     );
     let __temp0 = (__start0, __temp0, __end0);
     __action90(
+        arena,
         __0,
         __temp0,
     )
 }
 
-pub trait __ToTriple<> {
+pub trait __ToTriple<'ast, > {
     type Error;
     fn to_triple(value: Self) -> Result<(TokenLocation,Tok,TokenLocation),Self::Error>;
 }
 
-impl<> __ToTriple<> for (TokenLocation, Tok, TokenLocation) {
+impl<'ast, > __ToTriple<'ast, > for (TokenLocation, Tok, TokenLocation) {
     type Error = char;
     fn to_triple(value: Self) -> Result<(TokenLocation,Tok,TokenLocation),char> {
         Ok(value)
     }
 }
-impl<> __ToTriple<> for Result<(TokenLocation, Tok, TokenLocation),char> {
+impl<'ast, > __ToTriple<'ast, > for Result<(TokenLocation, Tok, TokenLocation),char> {
     type Error = char;
     fn to_triple(value: Self) -> Result<(TokenLocation,Tok,TokenLocation),char> {
         value
