@@ -1,5 +1,6 @@
 //! Abstract syntax tree structures
 
+
 pub mod expressions;
 pub mod mixin;
 pub mod strings;
@@ -18,7 +19,22 @@ use std::fmt::Debug;
 use std::rc::Rc;
 use std::cell::RefCell;
 
+use arena::TypedArena;
+
 pub trait Value<'a> : Debug + Expression<'a> {}
+
+#[derive(Debug)]
+pub struct Filter<'ast> {
+    pub nodes: Vec<&'ast Node<'ast>>
+}
+
+impl <'ast> Filter<'ast> {
+    pub fn transform<'t>(&self, transformed_arena : &'t TypedArena<TransformedNode<'t>>)
+        -> &'t TransformedNode<'t> {
+        //self.nodes.iter().map(|node| node.transform());
+        return transformed_arena.alloc(TransformedNode::Root(vec![]));
+    }
+}
 
 #[derive(Debug)]
 pub enum Node<'ast> {
@@ -41,9 +57,31 @@ pub enum Node<'ast> {
     Color(Color<'ast>),
 }
 
-impl <'a> Expression<'a> for Node<'a> {}
+#[derive(Debug)]
+pub enum TransformedNode<'ast> {
+    Root(Vec<&'ast TransformedNode<'ast>>),
+    Block(PlainBlock<'ast>),
+    SetValueStmt(PlainSetValueStatement),
+
+    String(String)
+}
+
+impl <'a> Expression<'a> for Node<'a> {
+    fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
+        -> Result<&'t TransformedNode<'t>, TransformErr> {
+        // TODO: make this a macro instead of
+        match self {
+            &Node::Block(ref n) => n.transform(parent_scope, transformed_arena),
+            &Node::SetValueStmt(ref n) => n.transform(parent_scope, transformed_arena),
+            _ => unimplemented!()
+        }
+    }
+}
 impl <'a> Value<'a> for Node<'a> {}
 impl <'a> BlockStatement<'a> for Node<'a> {}
+
+impl <'ast> TransformedExpression for TransformedNode<'ast> {
+}
 
 /// Top level statements, can be Blocks of instructions
 /// like Show/Hide/Mixin or single top-level statements,
@@ -57,53 +95,36 @@ pub enum Block<'a> {
     Import(String),
 }
 
-pub struct Arena<'ast> {
-    data: RefCell<Vec<Box<Node<'ast>>>>
+#[derive(Debug, Clone)]
+pub enum PlainBlock<'a> {
+    Show(Vec<&'a TransformedNode<'a>>),
+    Hide(Vec<&'a TransformedNode<'a>>),
 }
-
-impl<'ast> Arena<'ast> {
-    pub fn new() -> Arena<'ast> {
-        Arena { data: RefCell::new(vec![]) }
-    }
-
-    pub fn alloc(&'ast self, n: Node<'ast>) -> &'ast Node<'ast> {
-        let b = Box::new(n);
-        let p: *const Node<'ast> = &*b;
-        self.data.borrow_mut().push(b);
-        unsafe { &*p }
-    }
-}
-
-pub struct TransformedBlock<'a> {
-    stmts: Vec<Box<TransformedExpression<'a>>>
-}
-
-impl <'a> TransformedExpression<'a> for TransformedBlock<'a> {}
 
 impl <'a> Expression<'a> for Block<'a> {
-    fn transform<'b, 'c>(&'a self, parent_scope: &'b ScopeData<'b>) -> Result<Rc<TransformedExpression<'c>>, TransformErr> {
-        /*let mut block_scope = parent_scope.new_child_scope();
+    fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
+        -> Result<&'t TransformedNode<'t>, TransformErr> {
+        let block_scope = Rc::new(RefCell::new(ScopeData::new(Some(parent_scope))));
 
-        //let mut t_statements = Vec::new();
-
-        match *self {
-            Block::Show(statements) | Block::Hide(statements) => {
-                for mut statement in statements {
-                    match statement.transform(&block_scope) {
-                        Ok(t_expression) => {
-                            if let Some(exported_scope) = t_expression.export_scope() {
-                                block_scope.extend(exported_scope)
-                            }
-                        }
-                    }
+        // collect transformed statements from lines in this block
+        let mut t_statements : Vec<&TransformedNode> = Vec::new();
+        match self {
+            &Block::Show(ref statements) | &Block::Hide(ref statements) => {
+                for statement in statements {
+                    t_statements.push(statement.transform(block_scope.clone(), transformed_arena)?);
                 }
             }
-            _ => panic!()
+            // TODO: handle mixin blocks, var def blocks
+            _ => unimplemented!()
         }
-        Ok(Rc::new(TransformedBlock {
-            stmts: Vec::new(),
-        }))*/
-        unimplemented!();
+
+        Ok(transformed_arena.alloc(TransformedNode::Block(
+            match self {
+                &Block::Show(_) => PlainBlock::Show(t_statements),
+                &Block::Hide(_) => PlainBlock::Hide(t_statements),
+                _ => unimplemented!()
+            }
+        )))
     }
 }
 

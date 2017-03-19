@@ -2,7 +2,10 @@
 //! structures.
 
 use translate::*;
-use ast::Block;
+use ast::TransformedNode;
+use arena::TypedArena;
+use std::rc::Rc;
+use std::cell::RefCell;
 
 /// This trait needs to be implemented for any abstract syntax tree structure, it contains the
 /// functions to transform the structure's representation into the final structure before it gets
@@ -10,17 +13,15 @@ use ast::Block;
 pub trait Expression<'a> {
     /// Perform any transformations that need to be done before rendering this structure into
     /// plain GGG loot filter syntax
-    fn transform<'b, 'c>(&'a self, parent_scope: &'b ScopeData<'b>) -> Result<Rc<TransformedExpression<'c>>, TransformErr> {
+    fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
+        -> Result<&'t TransformedNode<'t>, TransformErr> {
         unimplemented!();
     }
 }
 
-pub trait TransformedExpression<'a> {
-    fn return_value(&self) -> &'a ExpressionValue {
-        unimplemented!();
-    }
-    fn export_scope(&self) -> Option<&'a ScopeData<'a>> {
-        None
+pub trait TransformedExpression {
+    fn return_value(&self) -> ExpressionValue {
+        ExpressionValue::None
     }
     fn render(&self) -> Result<String, TransformErr> {
         unimplemented!();

@@ -12,7 +12,6 @@ lazy_static = "0.2"
 [build-dependencies]
 lalrpop = "0.12.0"
 
-
 [lib]
 name = "superfilter"
 path = "src/lib.rs"

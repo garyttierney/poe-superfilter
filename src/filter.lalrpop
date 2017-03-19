@@ -3,12 +3,13 @@ use ast;
 use ast::numbers::NumberExpression;
 
 use ast::block_statements as stm;
-use ast::{Arena, Node};
+use ast::Node;
 use tok::Location as TokenLocation;
 use tok::Tok;
+use arena::TypedArena;
 
 //#[LALR]
-grammar<'ast>(arena: &'ast Arena<'ast>);
+grammar<'ast>(arena: &'ast TypedArena<Node<'ast>>);
 
 extern {
     type Location = TokenLocation;
@@ -39,14 +40,14 @@ extern {
     }
 }
 
-pub Filter : Vec<&'ast Node<'ast>> = {
+pub Filter : ast::Filter<'ast> = {
     <defs:DefinitionBlock*> <first:ContentBlock> <rest:AnyBlock*> => {
-        let mut v = defs;
-        v.push(first);
-        v.extend(rest);
-        v
+        let mut nodes = defs;
+        nodes.push(first);
+        nodes.extend(rest);
+        ast::Filter { nodes: nodes }
     },
-    DefinitionBlock* => <>,
+    DefinitionBlock* => ast::Filter { nodes: <> },
 };
 
 DefinitionBlock : &'ast Node<'ast> = {

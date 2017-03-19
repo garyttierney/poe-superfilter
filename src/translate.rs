@@ -2,68 +2,55 @@ use ast::mixin::Mixin;
 use std::collections::BTreeMap;
 use std::error::Error;
 use std::fmt;
+use std::cell::RefCell;
+use std::rc::Rc;
 
-#[derive(Clone,Debug)]
-pub struct ScopeData<'s> {
-    pub parent: Option<&'s ScopeData<'s>>,
+#[derive(Clone)]
+pub struct ScopeData<'ast> {
+    pub parent: Option<Rc<RefCell<ScopeData<'ast>>>>,
     pub vars: BTreeMap<String, ExpressionValue>,
-    pub mixins: BTreeMap<String, Mixin<'s>>,
+    pub mixins: BTreeMap<String, Mixin<'ast>>,
 }
 
-impl <'s> ScopeData<'s> {
-    pub fn new<'a>() -> ScopeData<'a> {
+impl <'ast> ScopeData<'ast> {
+    pub fn new(parent: Option<Rc<RefCell<ScopeData<'ast>>>>) -> ScopeData<'ast> {
         ScopeData {
-            parent: None,
+            parent: parent,
             vars: BTreeMap::new(),
             mixins: BTreeMap::new(),
         }
     }
 
-    pub fn new_child_scope(&'s self) -> ScopeData<'s> {
-        ScopeData {
-            parent: Some(self),
-            vars: BTreeMap::new(),
-            mixins: BTreeMap::new(),
-        }
-    }
-}
-
-impl <'s> ScopeData<'s> {
-    pub fn parent(&self) -> Option<&'s ScopeData<'s>> { self.parent }
+    pub fn parent(&self) -> Option<Rc<RefCell<ScopeData<'ast>>>> { self.parent.clone() }
 
     pub fn push_var(&mut self, ident:String, value: ExpressionValue) { self.vars.insert(ident, value); }
-    pub fn var(&self, ident:&String) -> Option<&ExpressionValue> {
+    pub fn var(&self, ident:&String) -> Option<ExpressionValue> {
         // return from current scope if found
         if let Some(var) = self.vars.get(ident) {
-            return Some(var);
+            return Some(var.clone());
         }
 
         // bubble up to parent scope otherwise
         if let Some(v) = self.parent() {
-            return v.var(&ident);
+            return v.borrow().var(&ident).clone();
         } else {
             return None;
         }
     }
 
-    pub fn push_mixin(&mut self, ident:String, value:Mixin<'s>) { self.mixins.insert(ident, value); }
-    pub fn mixin(&'s self, ident:&String) -> Option<&'s Mixin> {
+    pub fn push_mixin(&mut self, ident:String, value:Mixin<'ast>) { self.mixins.insert(ident, value); }
+    pub fn mixin(&self, ident:&String) -> Option<Mixin<'ast>> {
         // return from current scope if found
         if let Some(mixin) = self.mixins.get(ident) {
-            return Some(mixin);
+            return Some(mixin.clone());
         }
 
         // bubble up to parent scope otherwise
         if let Some(parent) = self.parent() {
-            return parent.mixin(&ident);
+            return parent.borrow().mixin(&ident).clone();
         } else {
             return None;
         }
-    }
-
-    pub fn extend(&mut self, other:&ScopeData<'s>) {
-        self.vars.extend(other.vars.clone());
-        self.mixins.extend(other.mixins.clone());
     }
 }
 
@@ -78,7 +65,8 @@ pub enum ExpressionValue {
 
 #[derive(Debug)]
 pub enum TransformErr {
-    Unknown(String)
+    Unknown(String),
+    TypeError(String)
 }
 
 impl <'e> fmt::Display for TransformErr {
@@ -90,13 +78,15 @@ impl <'e> fmt::Display for TransformErr {
 impl Error for TransformErr {
     fn description(&self) -> &str {
         match *self {
-            TransformErr::Unknown(ref msg) => &msg
+            TransformErr::Unknown(ref msg) => &msg,
+            TransformErr::TypeError(ref msg) => &msg
         }
     }
 
     fn cause(&self) -> Option<&Error> {
         match *self {
-            TransformErr::Unknown(_) => None
+            TransformErr::Unknown(_) => None,
+            TransformErr::TypeError(_) => None,
         }
     }
 }
