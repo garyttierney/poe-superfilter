@@ -1,6 +1,10 @@
-$test = 5
+$num = 5
+$str1 = test
+$str2 = "test test"
 
 Show
 	SetTextColor 100 100 255 255
 	SetFontSize 38 # comment
-	ItemLevel <= $test
+	ItemLevel <= $num
+	ItemClass $str1
+	BaseType $str2

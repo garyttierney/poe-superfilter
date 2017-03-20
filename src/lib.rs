@@ -12,6 +12,8 @@ extern crate regex;
 extern crate arena;
 
 use arena::TypedArena;
+use ast::expressions::TransformedExpression;
+use std::io::Write;
 
 #[allow(dead_code,unused_imports)]
 mod filter;
@@ -29,14 +31,12 @@ mod tests;
 mod translate;
 
 /// Compiles a complete filter into vanilla loot filter syntax
-pub fn compile(contents: &str) -> Box<String> {
+pub fn compile(contents: &str, out_buf: &mut Write) {
     let tokens = Box::new(tok::tokenize(contents));
     let ast_arena = TypedArena::new();
     let filter = filter::parse_Filter(&ast_arena, tokens.into_iter());
     let transformed_ast_arena = TypedArena::new();
     println!("{:?}", filter);
-    let transformed_tree = filter.unwrap().transform(&transformed_ast_arena);
-    println!("{:?}", transformed_tree);
-    // TODO: return actual compiled result
-    Box::new(String::from(""))
+    let transformed_tree = filter.unwrap().transform(&transformed_ast_arena).unwrap();
+    transformed_tree.render(out_buf).unwrap();
 }

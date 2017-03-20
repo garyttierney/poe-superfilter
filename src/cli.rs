@@ -9,11 +9,12 @@ extern crate superfilter;
 
 use std::fs::File;
 use std::io::prelude::*;
+use std::io;
 
 /// Compiles one or several files
 pub fn main() {
     let mut file = File::open("examples/vars_only.sf").unwrap();
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
-    println!("{:?}", superfilter::compile(&contents));
+    println!("{:?}", superfilter::compile(&contents, &mut io::stdout()));
 }

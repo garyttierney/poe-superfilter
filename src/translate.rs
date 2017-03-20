@@ -5,6 +5,9 @@ use std::fmt;
 use std::cell::RefCell;
 use std::rc::Rc;
 use ast::expressions::TransformedExpression;
+use std::io::Write;
+use ast::expressions::RenderErr;
+use std::convert::From;
 
 #[derive(Clone)]
 pub struct ScopeData<'ast> {
@@ -79,6 +82,22 @@ impl ExpressionValue {
 impl TransformedExpression for ExpressionValue {
     fn return_value(&self) -> ExpressionValue {
         self.clone()
+    }
+
+    fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
+        match *self {
+            ExpressionValue::String(ref v) => { v.render(buf)?; },
+            ExpressionValue::Decimal(ref v) => { buf.write((v.round() as i64).to_string().as_ref())?; },
+            ExpressionValue::Int(ref v) => { buf.write(v.to_string().as_ref())?; },
+            ExpressionValue::List(ref list) => {
+                for val in list {
+                    val.render(buf)?;
+                    buf.write(" ".as_ref())?;
+                };
+            },
+            ExpressionValue::None => ()
+        };
+        Ok(())
     }
 }
 

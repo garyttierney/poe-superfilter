@@ -6,6 +6,8 @@ use ast::expressions::{Expression, TransformedExpression};
 use std::rc::Rc;
 use std::cell::RefCell;
 use arena::TypedArena;
+use std::io::Write;
+use ast::expressions::RenderErr;
 
 /// String value or variable reference
 #[derive(Debug, Clone)]
@@ -19,8 +21,16 @@ impl <'a> TransformedExpression for String {
         ExpressionValue::String(self.clone())
     }
 
-    fn render(&self) -> Result<String, TransformErr> {
-        Ok(self.clone())
+    fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
+        let quotes_needed = self.contains(" ");
+        if quotes_needed {
+            buf.write("\"".as_ref())?;
+        }
+        buf.write(self.as_ref())?;
+        if quotes_needed {
+            buf.write("\"".as_ref())?;
+        }
+        Ok(())
     }
 }
 
@@ -49,13 +59,4 @@ impl <'a> Expression<'a> for StringBox {
             ))
         }
     }
-
-    /*fn render(&self) -> Result<String, TransformErr> {
-        match *self {
-            StringBox::Value(ref s) => {
-                return Ok(format!("\"{}\"", s));
-            },
-            _ => unreachable!()
-        }
-    }*/
 }

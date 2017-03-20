@@ -8,6 +8,9 @@ use std::fmt::Debug;
 use arena::TypedArena;
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::io::Write;
+use std::string::ToString;
+use ast::expressions::RenderErr;
 
 pub trait BlockStatement<'a> : Debug + Expression<'a> {}
 
@@ -42,7 +45,17 @@ impl <'a> Expression<'a> for SetValueStatement<'a> {
     }
 }
 
-impl TransformedExpression for PlainSetValueStatement {}
+impl TransformedExpression for PlainSetValueStatement {
+    fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
+        buf.write(self.name.as_ref())?;
+        for val in &self.values {
+            buf.write(" ".as_ref())?;
+            val.render(buf)?;
+        }
+        buf.write("\n".as_ref())?;
+        Ok(())
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct ConditionStatement<'a> {
@@ -70,7 +83,17 @@ impl <'a> Expression<'a> for ConditionStatement<'a> {
     }
 }
 
-impl TransformedExpression for PlainConditionStatement {}
+impl TransformedExpression for PlainConditionStatement {
+    fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
+        buf.write(self.name.as_ref())?;
+        buf.write(" ".as_ref())?;
+        self.condition.operator.render(buf)?;
+        buf.write(" ".as_ref())?;
+        self.condition.value.render(buf)?;
+        buf.write("\n".as_ref())?;
+        Ok(())
+    }
+}
 
 #[derive(Debug, Clone)]
 pub struct Condition<'a> {
@@ -91,4 +114,17 @@ pub enum ComparisonOperator {
     Lte,
     Gt,
     Gte
+}
+
+impl TransformedExpression for ComparisonOperator {
+    fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
+        buf.write(match *self {
+            ComparisonOperator::Eql => "=",
+            ComparisonOperator::Gt => ">",
+            ComparisonOperator::Gte => ">=",
+            ComparisonOperator::Lt => "<",
+            ComparisonOperator::Lte => "<=",
+        }.as_ref())?;
+        Ok(())
+    }
 }

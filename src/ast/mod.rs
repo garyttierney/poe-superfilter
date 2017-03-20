@@ -18,6 +18,8 @@ use translate::{TransformErr, ScopeData, ExpressionValue};
 use std::fmt::Debug;
 use std::rc::Rc;
 use std::cell::RefCell;
+use std::io::Write;
+use ast::expressions::RenderErr;
 
 use arena::TypedArena;
 
@@ -84,6 +86,7 @@ impl <'a> Expression<'a> for Node<'a> {
             Node::VarRef(ref n) => n.transform(parent_scope, transformed_arena),
             Node::NumExpression(ref n) => n.transform(parent_scope, transformed_arena),
             Node::ConditionStmt(ref n) => n.transform(parent_scope, transformed_arena),
+            Node::StringBox(ref n) => n.transform(parent_scope, transformed_arena),
             ref node => {
                 println!("Unimplemented node type: {:?}", node);
                 unimplemented!();
@@ -97,13 +100,37 @@ impl <'a> BlockStatement<'a> for Node<'a> {}
 impl <'ast> TransformedExpression for TransformedNode<'ast> {
     fn return_value(&self) -> ExpressionValue {
         match *self {
+            // TODO: use a macro for this.
             TransformedNode::Empty => ExpressionValue::None,
-            TransformedNode::Root(ref node) => ExpressionValue::None,
+            TransformedNode::Root(_) => ExpressionValue::None,
             TransformedNode::Block(ref node) => node.return_value(),
             TransformedNode::SetValueStmt(ref node) => node.return_value(),
             TransformedNode::ConditionStmt(ref node) => node.return_value(),
             TransformedNode::Value(ref node) => node.return_value()
         }
+    }
+
+    fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
+        match *self {
+            // TODO: use a macro for this.
+            TransformedNode::Root(ref node) => node.render(buf)?,
+            TransformedNode::Block(ref node) => node.render(buf)?,
+            TransformedNode::SetValueStmt(ref node) => node.render(buf)?,
+            TransformedNode::ConditionStmt(ref node) => node.render(buf)?,
+            TransformedNode::Value(ref node) => node.render(buf)?,
+            TransformedNode::Empty => ()
+        }
+        Ok(())
+    }
+}
+
+impl <'ast> TransformedExpression for Vec<&'ast TransformedNode<'ast>> {
+    fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
+        for node in self {
+            node.render(buf)?;
+        }
+        buf.write("\n".as_ref())?;
+        Ok(())
     }
 }
 
@@ -152,7 +179,24 @@ impl <'a> Expression<'a> for Block<'a> {
     }
 }
 
-impl <'a> TransformedExpression for PlainBlock<'a> {}
+impl <'a> TransformedExpression for PlainBlock<'a> {
+    fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
+        let nodes = match *self {
+            PlainBlock::Show(ref nodes) => {
+                buf.write("Show\n".as_ref())?;
+                nodes
+            },
+            PlainBlock::Hide(ref nodes) => {
+                buf.write("Hide\n".as_ref())?;
+                nodes
+            }
+        };
+        for n in nodes {
+            n.render(buf)?;
+        }
+        Ok(())
+    }
+}
 
 /// Variable definition
 #[derive(Debug, Clone)]
