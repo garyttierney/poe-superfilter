@@ -42,14 +42,35 @@ impl <'a> Expression<'a> for SetValueStatement<'a> {
     }
 }
 
+impl TransformedExpression for PlainSetValueStatement {}
+
 #[derive(Debug, Clone)]
 pub struct ConditionStatement<'a> {
     pub name : String,
     pub condition : Condition<'a>
 }
 
+#[derive(Debug, Clone)]
+pub struct PlainConditionStatement {
+    pub name : String,
+    pub condition: PlainCondition
+}
+
 impl <'a> BlockStatement<'a> for ConditionStatement<'a> {}
-impl <'a> Expression<'a> for ConditionStatement<'a> {}
+impl <'a> Expression<'a> for ConditionStatement<'a> {
+    fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
+        -> Result<&'t TransformedNode<'t>, TransformErr> {
+        let t_value = self.condition.value.transform(parent_scope.clone(), transformed_arena)?;
+        Ok(transformed_arena.alloc(TransformedNode::ConditionStmt(
+            PlainConditionStatement {
+                name: self.name.clone(),
+                condition: PlainCondition { value: t_value.return_value(), operator: self.condition.operator },
+            }
+        )))
+    }
+}
+
+impl TransformedExpression for PlainConditionStatement {}
 
 #[derive(Debug, Clone)]
 pub struct Condition<'a> {
@@ -58,6 +79,12 @@ pub struct Condition<'a> {
 }
 
 #[derive(Debug, Clone)]
+pub struct PlainCondition {
+    pub value: ExpressionValue,
+    pub operator: ComparisonOperator
+}
+
+#[derive(Debug, Clone, Copy)]
 pub enum ComparisonOperator {
     Eql,
     Lt,

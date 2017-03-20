@@ -33,7 +33,7 @@ extern {
         "<=" => Tok::Lte,
         "<" => Tok::Lt,
         "=" => Tok::Eql,
-        Num => Tok::Num(<i32>),
+        Num => Tok::Num(<i64>),
         QuotedStrLiteral => Tok::StrLiteral(<String>),
         Constant => Tok::Constant(<String>),
         VarIdentifier => Tok::VarIdentifier(<String>)

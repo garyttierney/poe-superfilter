@@ -30,9 +30,14 @@ pub struct Filter<'ast> {
 
 impl <'ast> Filter<'ast> {
     pub fn transform<'t>(&self, transformed_arena : &'t TypedArena<TransformedNode<'t>>)
-        -> &'t TransformedNode<'t> {
-        //self.nodes.iter().map(|node| node.transform());
-        return transformed_arena.alloc(TransformedNode::Root(vec![]));
+        -> Result<&'t TransformedNode<'t>, TransformErr> {
+        let mut transformed_nodes : Vec<&'t TransformedNode<'t>> =  Vec::with_capacity(self.nodes.len());
+        let root_scope = Rc::new(RefCell::new(ScopeData::new(None)));
+        for node in &self.nodes {
+            let t_node = try!(node.transform(root_scope.clone(), transformed_arena));
+            transformed_nodes.push(t_node);
+        }
+        return Ok(transformed_arena.alloc(TransformedNode::Root(transformed_nodes)));
     }
 }
 
@@ -59,21 +64,30 @@ pub enum Node<'ast> {
 
 #[derive(Debug)]
 pub enum TransformedNode<'ast> {
+    Empty,
     Root(Vec<&'ast TransformedNode<'ast>>),
     Block(PlainBlock<'ast>),
     SetValueStmt(PlainSetValueStatement),
+    ConditionStmt(PlainConditionStatement),
 
-    String(String)
+    Value(ExpressionValue)
 }
 
 impl <'a> Expression<'a> for Node<'a> {
     fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
         -> Result<&'t TransformedNode<'t>, TransformErr> {
-        // TODO: make this a macro instead of
-        match self {
-            &Node::Block(ref n) => n.transform(parent_scope, transformed_arena),
-            &Node::SetValueStmt(ref n) => n.transform(parent_scope, transformed_arena),
-            _ => unimplemented!()
+        // TODO: make this a macro instead of listing all the options manually
+        match *self {
+            Node::Block(ref n) => n.transform(parent_scope, transformed_arena),
+            Node::SetValueStmt(ref n) => n.transform(parent_scope, transformed_arena),
+            Node::VarDefinition(ref n) => n.transform(parent_scope, transformed_arena),
+            Node::VarRef(ref n) => n.transform(parent_scope, transformed_arena),
+            Node::NumExpression(ref n) => n.transform(parent_scope, transformed_arena),
+            Node::ConditionStmt(ref n) => n.transform(parent_scope, transformed_arena),
+            ref node => {
+                println!("Unimplemented node type: {:?}", node);
+                unimplemented!();
+            }
         }
     }
 }
@@ -81,6 +95,16 @@ impl <'a> Value<'a> for Node<'a> {}
 impl <'a> BlockStatement<'a> for Node<'a> {}
 
 impl <'ast> TransformedExpression for TransformedNode<'ast> {
+    fn return_value(&self) -> ExpressionValue {
+        match *self {
+            TransformedNode::Empty => ExpressionValue::None,
+            TransformedNode::Root(ref node) => ExpressionValue::None,
+            TransformedNode::Block(ref node) => node.return_value(),
+            TransformedNode::SetValueStmt(ref node) => node.return_value(),
+            TransformedNode::ConditionStmt(ref node) => node.return_value(),
+            TransformedNode::Value(ref node) => node.return_value()
+        }
+    }
 }
 
 /// Top level statements, can be Blocks of instructions
@@ -128,6 +152,8 @@ impl <'a> Expression<'a> for Block<'a> {
     }
 }
 
+impl <'a> TransformedExpression for PlainBlock<'a> {}
+
 /// Variable definition
 #[derive(Debug, Clone)]
 pub struct VarDefinition<'a> {
@@ -138,27 +164,14 @@ pub struct VarDefinition<'a> {
 impl <'a> BlockStatement<'a> for VarDefinition<'a> {}
 
 impl <'a> Expression<'a> for VarDefinition<'a> {
-    /*fn transform(&self, parent_scope: &ScopeData) -> Result<Box<TransformedExpression<'a>>, TransformErr> {
-        let mut evaluated_expressions : Vec<ExpressionValue> = Vec::new();
-        evaluated_expressions.reserve(self.values.len());
-
-        for mut val in self.values.iter_mut() {
-            match val.transform(parent_scope) {
-                Ok(result) => {
-                    evaluated_expressions.push(result.return_value);
-                    parent_scope = result.parent_scope;
-                },
-                Err(e) => return Err(e)
-            }
+    fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
+        -> Result<&'t TransformedNode<'t>, TransformErr> {
+        for val in &self.values {
+            let t_val = try!(val.transform(parent_scope.clone(), transformed_arena));
+            parent_scope.borrow_mut().push_var(self.identifier.clone(), t_val.return_value());
         }
-
-        if evaluated_expressions.len() > 1 {
-            parent_scope.push_var(self.identifier.clone(), ExpressionValue::List(evaluated_expressions))
-        } else {
-            parent_scope.push_var(self.identifier.clone(), evaluated_expressions[0].clone())
-        }
-        return Ok(TransformResult::returns_nothing(parent_scope))
-    }*/
+        Ok(transformed_arena.alloc(TransformedNode::Empty))
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -169,5 +182,19 @@ pub struct Color<'a> {
     pub a: &'a Node<'a>
 }
 
+impl <'a> Color<'a> {
+}
+
+pub struct PlainColor {
+    pub r: u8,
+    pub g: u8,
+    pub b: u8,
+    pub a: u8
+}
+
 impl <'a> Value<'a> for Color<'a> {}
-impl <'a> Expression<'a> for Color<'a> {}
+impl <'a> Expression<'a> for Color<'a> {
+    fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>) -> Result<&'t TransformedNode<'t>, TransformErr> {
+        unimplemented!();
+    }
+}

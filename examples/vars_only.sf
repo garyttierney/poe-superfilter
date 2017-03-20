@@ -1,0 +1,6 @@
+$test = 5
+
+Show
+	SetTextColor 100 100 255 255
+	SetFontSize 38 # comment
+	ItemLevel <= $test

@@ -4,6 +4,7 @@ use std::error::Error;
 use std::fmt;
 use std::cell::RefCell;
 use std::rc::Rc;
+use ast::expressions::TransformedExpression;
 
 #[derive(Clone)]
 pub struct ScopeData<'ast> {
@@ -63,30 +64,37 @@ pub enum ExpressionValue {
     None
 }
 
-#[derive(Debug)]
-pub enum TransformErr {
-    Unknown(String),
-    TypeError(String)
-}
-
-impl <'e> fmt::Display for TransformErr {
-    fn fmt(&self, f:&mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.description())
-    }
-}
-
-impl Error for TransformErr {
-    fn description(&self) -> &str {
+impl ExpressionValue {
+    pub fn type_name(&self) -> &'static str {
         match *self {
-            TransformErr::Unknown(ref msg) => &msg,
-            TransformErr::TypeError(ref msg) => &msg
+            ExpressionValue::String(_) => "String",
+            ExpressionValue::Int(_) => "Integer",
+            ExpressionValue::Decimal(_) => "Decimal",
+            ExpressionValue::List(_) => "List",
+            ExpressionValue::None => "None",
         }
     }
+}
 
-    fn cause(&self) -> Option<&Error> {
-        match *self {
-            TransformErr::Unknown(_) => None,
-            TransformErr::TypeError(_) => None,
+impl TransformedExpression for ExpressionValue {
+    fn return_value(&self) -> ExpressionValue {
+        self.clone()
+    }
+}
+
+quick_error! {
+    #[derive(Debug)]
+    pub enum TransformErr {
+        Unknown {
+            description("Unknown error")
+        }
+        TypeMismatch(expected: &'static str, actual: &'static str, identifier: String) {
+            description("Type mismatch")
+            display("Type mismatch: Expected {} to be {}, but got {}", identifier, expected, actual)
+        }
+        MissingVarRef(identifier: String) {
+            description("Missing variable reference")
+            display("Unresolved variable reference: {}", identifier)
         }
     }
 }

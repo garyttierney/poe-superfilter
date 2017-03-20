@@ -4,33 +4,37 @@
 //! in the game.
 
 #![feature(rustc_private)]
+#![feature(plugin)]
+#![plugin(indoc)]
 #[macro_use] extern crate lazy_static;
+#[macro_use] extern crate quick_error;
 extern crate regex;
 extern crate arena;
 
 use arena::TypedArena;
 
-#[allow(dead_code)]
+#[allow(dead_code,unused_imports)]
 mod filter;
 
-#[allow(dead_code)]
+#[allow(dead_code,unused_imports)]
 pub mod ast;
 
-#[allow(dead_code)]
+#[allow(dead_code,unused_imports)]
 mod tok;
 
-#[allow(dead_code)]
+#[cfg(test)]
+mod tests;
+
+#[allow(dead_code,unused_imports)]
 mod translate;
 
 /// Compiles a complete filter into vanilla loot filter syntax
 pub fn compile(contents: &str) -> Box<String> {
     let tokens = Box::new(tok::tokenize(contents));
-    for tok in tokens.iter() {
-        println!("{:?}", tok);
-    }
     let ast_arena = TypedArena::new();
     let filter = filter::parse_Filter(&ast_arena, tokens.into_iter());
     let transformed_ast_arena = TypedArena::new();
+    println!("{:?}", filter);
     let transformed_tree = filter.unwrap().transform(&transformed_ast_arena);
     println!("{:?}", transformed_tree);
     // TODO: return actual compiled result

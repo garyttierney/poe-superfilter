@@ -14,7 +14,15 @@ pub enum StringBox {
     Var(String)
 }
 
-impl <'a> TransformedExpression for String {}
+impl <'a> TransformedExpression for String {
+    fn return_value(&self) -> ExpressionValue {
+        ExpressionValue::String(self.clone())
+    }
+
+    fn render(&self) -> Result<String, TransformErr> {
+        Ok(self.clone())
+    }
+}
 
 impl <'a> ast::Value<'a> for StringBox {}
 impl <'a> Expression<'a> for StringBox {
@@ -26,20 +34,19 @@ impl <'a> Expression<'a> for StringBox {
                     match value {
                         ExpressionValue::String(ref s) => {
                             return Ok(transformed_arena.alloc(
-                                TransformedNode::String(s.clone())
+                                TransformedNode::Value(ExpressionValue::String(s.clone()))
                             ));
                         },
-                        _ => {
-                            let e = TransformErr::TypeError("Invalid type: expected string value from $".to_owned() + &identifier);
-                            return Err(e);
-                        }
+                        val => Err(TransformErr::TypeMismatch("String", val.type_name(), identifier.clone()))
                     }
                 } else {
-                    let e = TransformErr::Unknown("Variable reference not found: $".to_owned() + &identifier);
+                    let e = TransformErr::MissingVarRef(identifier.clone());
                     return Err(e);
                 }
             },
-            &StringBox::Value(ref val) => Ok(transformed_arena.alloc(TransformedNode::String(val.clone())))
+            &StringBox::Value(ref val) => Ok(transformed_arena.alloc(
+                TransformedNode::Value(ExpressionValue::String(val.clone()))
+            ))
         }
     }
 

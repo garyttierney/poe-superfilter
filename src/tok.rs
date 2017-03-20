@@ -7,7 +7,7 @@ pub enum Tok {
     StrLiteral(String),
     Constant(String),
     VarIdentifier(String),
-    Num(i32),
+    Num(i64),
     LParen,
     RParen,
     Minus,
@@ -187,7 +187,7 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
                 },
                 _ if c.is_digit(10) => {
                     let tmp = self.take_while(c, |c| c.is_digit(10));
-                    self.push(Tok::Num(i32::from_str(&tmp).unwrap()), tmp.len() as isize);
+                    self.push(Tok::Num(i64::from_str(&tmp).unwrap()), tmp.len() as isize);
                     return;
                 }
                 _ => {

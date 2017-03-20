@@ -39,7 +39,7 @@ mod __parse__Filter {
         Term_22Show_22(Tok),
         Term_22_5c_5cn_22(Tok),
         TermConstant(String),
-        TermNum(i32),
+        TermNum(i64),
         TermQuotedStrLiteral(String),
         TermVarIdentifier(String),
         Termerror(__lalrpop_util::ErrorRecovery<TokenLocation, Tok, char>),
@@ -2368,7 +2368,7 @@ mod __parse__Filter {
       'ast,
     >(
         __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
-    ) -> (TokenLocation, i32, TokenLocation) {
+    ) -> (TokenLocation, i64, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::TermNum(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
@@ -3310,7 +3310,7 @@ pub fn __action37<
     'ast,
 >(
     arena: &'ast TypedArena<Node<'ast>>,
-    (_, __0, _): (TokenLocation, i32, TokenLocation),
+    (_, __0, _): (TokenLocation, i64, TokenLocation),
 ) -> &'ast Node<'ast>
 {
     arena.alloc(Node::NumExpression(
