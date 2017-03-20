@@ -2889,7 +2889,7 @@ pub fn __action5<
     (_, _, _): (TokenLocation, Tok, TokenLocation),
 ) -> &'ast Node<'ast>
 {
-    arena.alloc(Node::Block(ast::Block::Import(__0)))
+    arena.alloc(Node::Block(ast::block::Block::Import(__0)))
 }
 
 #[allow(unused_variables)]
@@ -2903,7 +2903,7 @@ pub fn __action6<
 ) -> &'ast Node<'ast>
 {
     arena.alloc(Node::Block(
-        ast::Block::Show(__0.into_iter().map(|e| e as &stm::BlockStatement).collect())
+        ast::block::Block::Show(__0.into_iter().map(|e| e as &stm::BlockStatement).collect())
     ))
 }
 
@@ -2918,7 +2918,7 @@ pub fn __action7<
 ) -> &'ast Node<'ast>
 {
     arena.alloc(Node::Block(
-        ast::Block::Hide(__0.into_iter().map(|e| e as &stm::BlockStatement).collect())
+        ast::block::Block::Hide(__0.into_iter().map(|e| e as &stm::BlockStatement).collect())
     ))
 }
 
@@ -2941,7 +2941,7 @@ pub fn __action8<
             .map(|param_name| ast::mixin::Param { name: param_name.clone(), default: None })
             .collect();
         arena.alloc(Node::Block(
-            ast::Block::Mixin(
+            ast::block::Block::Mixin(
                 ast::mixin::Mixin{
                     name: name,
                     parameters: params,
@@ -3342,7 +3342,7 @@ pub fn __action39<
     (_, a, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
-    arena.alloc(Node::Color(ast::Color {
+    arena.alloc(Node::Color(ast::color::Color {
         r: r,
         g: g,
         b: b,
@@ -3360,7 +3360,7 @@ pub fn __action40<
     (_, b, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
-    arena.alloc(Node::Color(ast::Color {
+    arena.alloc(Node::Color(ast::color::Color {
         r: r,
         g: g,
         b: b,

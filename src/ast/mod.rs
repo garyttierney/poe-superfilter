@@ -1,29 +1,31 @@
 //! Abstract syntax tree structures
 
 
-pub mod expressions;
+pub mod transform;
 pub mod mixin;
 pub mod strings;
 pub mod numbers;
 pub mod block_statements;
 pub mod var;
+pub mod color;
+pub mod block;
 
 use ast::strings::*;
 use ast::numbers::*;
 use ast::block_statements::*;
 use ast::mixin::*;
 use ast::var::*;
-use ast::expressions::{Expression, TransformedExpression};
-use translate::{TransformErr, ScopeData, ExpressionValue};
+use ast::transform::{Transform, TransformResult};
+use scope::{ScopeData, ScopeValue};
 use std::fmt::Debug;
 use std::rc::Rc;
 use std::cell::RefCell;
 use std::io::Write;
-use ast::expressions::RenderErr;
-
+use std::io::Error as IoError;
+use std::convert::From;
 use arena::TypedArena;
 
-pub trait Value<'a> : Debug + Expression<'a> {}
+pub trait Value<'a> : Debug + Transform<'a> {}
 
 #[derive(Debug)]
 pub struct Filter<'ast> {
@@ -45,7 +47,7 @@ impl <'ast> Filter<'ast> {
 
 #[derive(Debug)]
 pub enum Node<'ast> {
-    Block(Block<'ast>),
+    Block(block::Block<'ast>),
     SetValueStmt(SetValueStatement<'ast>),
     ConditionStmt(ConditionStatement<'ast>),
     Condition(Condition<'ast>),
@@ -61,21 +63,21 @@ pub enum Node<'ast> {
     VarDefinition(VarDefinition<'ast>),
 
     MixinCall(MixinCall<'ast>),
-    Color(Color<'ast>),
+    Color(color::Color<'ast>),
 }
 
 #[derive(Debug)]
 pub enum TransformedNode<'ast> {
     Empty,
     Root(Vec<&'ast TransformedNode<'ast>>),
-    Block(PlainBlock<'ast>),
+    Block(block::PlainBlock<'ast>),
     SetValueStmt(PlainSetValueStatement),
     ConditionStmt(PlainConditionStatement),
 
-    Value(ExpressionValue)
+    Value(ScopeValue)
 }
 
-impl <'a> Expression<'a> for Node<'a> {
+impl <'a> Transform<'a> for Node<'a> {
     fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
         -> Result<&'t TransformedNode<'t>, TransformErr> {
         // TODO: make this a macro instead of listing all the options manually
@@ -97,12 +99,12 @@ impl <'a> Expression<'a> for Node<'a> {
 impl <'a> Value<'a> for Node<'a> {}
 impl <'a> BlockStatement<'a> for Node<'a> {}
 
-impl <'ast> TransformedExpression for TransformedNode<'ast> {
-    fn return_value(&self) -> ExpressionValue {
+impl <'ast> TransformResult for TransformedNode<'ast> {
+    fn return_value(&self) -> ScopeValue {
         match *self {
             // TODO: use a macro for this.
-            TransformedNode::Empty => ExpressionValue::None,
-            TransformedNode::Root(_) => ExpressionValue::None,
+            TransformedNode::Empty => ScopeValue::None,
+            TransformedNode::Root(_) => ScopeValue::None,
             TransformedNode::Block(ref node) => node.return_value(),
             TransformedNode::SetValueStmt(ref node) => node.return_value(),
             TransformedNode::ConditionStmt(ref node) => node.return_value(),
@@ -124,76 +126,12 @@ impl <'ast> TransformedExpression for TransformedNode<'ast> {
     }
 }
 
-impl <'ast> TransformedExpression for Vec<&'ast TransformedNode<'ast>> {
+impl <'ast> TransformResult for Vec<&'ast TransformedNode<'ast>> {
     fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
         for node in self {
             node.render(buf)?;
         }
         buf.write("\n".as_ref())?;
-        Ok(())
-    }
-}
-
-/// Top level statements, can be Blocks of instructions
-/// like Show/Hide/Mixin or single top-level statements,
-/// e.g. variable definitions and imports
-#[derive(Debug, Clone)]
-pub enum Block<'a> {
-    Show(Vec<&'a BlockStatement<'a>>),
-    Hide(Vec<&'a BlockStatement<'a>>),
-    Mixin(Mixin<'a>),
-    Var(VarDefinition<'a>),
-    Import(String),
-}
-
-#[derive(Debug, Clone)]
-pub enum PlainBlock<'a> {
-    Show(Vec<&'a TransformedNode<'a>>),
-    Hide(Vec<&'a TransformedNode<'a>>),
-}
-
-impl <'a> Expression<'a> for Block<'a> {
-    fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
-        -> Result<&'t TransformedNode<'t>, TransformErr> {
-        let block_scope = Rc::new(RefCell::new(ScopeData::new(Some(parent_scope))));
-
-        // collect transformed statements from lines in this block
-        let mut t_statements : Vec<&TransformedNode> = Vec::new();
-        match self {
-            &Block::Show(ref statements) | &Block::Hide(ref statements) => {
-                for statement in statements {
-                    t_statements.push(statement.transform(block_scope.clone(), transformed_arena)?);
-                }
-            }
-            // TODO: handle mixin blocks, var def blocks
-            _ => unimplemented!()
-        }
-
-        Ok(transformed_arena.alloc(TransformedNode::Block(
-            match self {
-                &Block::Show(_) => PlainBlock::Show(t_statements),
-                &Block::Hide(_) => PlainBlock::Hide(t_statements),
-                _ => unimplemented!()
-            }
-        )))
-    }
-}
-
-impl <'a> TransformedExpression for PlainBlock<'a> {
-    fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
-        let nodes = match *self {
-            PlainBlock::Show(ref nodes) => {
-                buf.write("Show\n".as_ref())?;
-                nodes
-            },
-            PlainBlock::Hide(ref nodes) => {
-                buf.write("Hide\n".as_ref())?;
-                nodes
-            }
-        };
-        for n in nodes {
-            n.render(buf)?;
-        }
         Ok(())
     }
 }
@@ -207,38 +145,47 @@ pub struct VarDefinition<'a> {
 
 impl <'a> BlockStatement<'a> for VarDefinition<'a> {}
 
-impl <'a> Expression<'a> for VarDefinition<'a> {
+impl <'a> Transform<'a> for VarDefinition<'a> {
     fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
         -> Result<&'t TransformedNode<'t>, TransformErr> {
         for val in &self.values {
-            let t_val = try!(val.transform(parent_scope.clone(), transformed_arena));
+            let t_val = val.transform(parent_scope.clone(), transformed_arena)?;
             parent_scope.borrow_mut().push_var(self.identifier.clone(), t_val.return_value());
         }
         Ok(transformed_arena.alloc(TransformedNode::Empty))
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct Color<'a> {
-    pub r: &'a Node<'a>,
-    pub g: &'a Node<'a>,
-    pub b: &'a Node<'a>,
-    pub a: &'a Node<'a>
+quick_error! {
+    #[derive(Debug)]
+    pub enum RenderErr {
+        Io(inner: IoError) {
+            description("IO Error")
+            display("IO Error: {}", inner)
+            cause(inner)
+        }
+    }
 }
 
-impl <'a> Color<'a> {
+impl From<IoError> for RenderErr {
+    fn from(io_err: IoError) -> RenderErr {
+        RenderErr::Io(io_err)
+    }
 }
 
-pub struct PlainColor {
-    pub r: u8,
-    pub g: u8,
-    pub b: u8,
-    pub a: u8
-}
-
-impl <'a> Value<'a> for Color<'a> {}
-impl <'a> Expression<'a> for Color<'a> {
-    fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>) -> Result<&'t TransformedNode<'t>, TransformErr> {
-        unimplemented!();
+quick_error! {
+    #[derive(Debug)]
+    pub enum TransformErr {
+        Unknown {
+            description("Unknown error")
+        }
+        TypeMismatch(expected: &'static str, actual: &'static str, identifier: String) {
+            description("Type mismatch")
+            display("Type mismatch: Expected {} to be {}, but got {}", identifier, expected, actual)
+        }
+        MissingVarRef(identifier: String) {
+            description("Missing variable reference")
+            display("Unresolved variable reference: {}", identifier)
+        }
     }
 }

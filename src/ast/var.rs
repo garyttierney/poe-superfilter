@@ -1,7 +1,7 @@
 use ast;
-use ast::TransformedNode;
-use ast::expressions::Expression;
-use translate::{TransformErr, ScopeData, ExpressionValue};
+use ast::{TransformedNode,TransformErr};
+use ast::transform::Transform;
+use scope::{ScopeData, ScopeValue};
 use std::rc::Rc;
 use std::cell::RefCell;
 use arena::TypedArena;
@@ -11,7 +11,7 @@ pub struct VarReference {
     pub identifier: String
 }
 impl <'a> ast::Value<'a> for VarReference {}
-impl <'a> Expression<'a> for VarReference {
+impl <'a> Transform<'a> for VarReference {
     fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
                      -> Result<&'t TransformedNode<'t>, TransformErr> {
         // try to resolve variable reference

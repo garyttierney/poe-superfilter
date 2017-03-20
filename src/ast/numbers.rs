@@ -1,8 +1,8 @@
 
 use ast;
-use ast::{Node, TransformedNode};
-use ast::expressions::Expression;
-use translate::{TransformErr, ScopeData, ExpressionValue};
+use ast::{Node, TransformedNode, TransformErr};
+use ast::transform::Transform;
+use scope::{ScopeData, ScopeValue};
 use arena::TypedArena;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -23,7 +23,7 @@ pub enum NumberExpression<'ast> {
 }
 
 impl <'a> ast::Value<'a> for NumberExpression<'a> {}
-impl <'a> Expression<'a> for NumberExpression<'a> {
+impl <'a> Transform<'a> for NumberExpression<'a> {
     fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
         -> Result<&'t TransformedNode<'t>, TransformErr> {
         match *self {
@@ -41,24 +41,24 @@ pub enum NumberBox {
     Var(String)
 }
 
-impl <'a> Expression<'a> for NumberBox {
+impl <'a> Transform<'a> for NumberBox {
     fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
         -> Result<&'t TransformedNode<'t>, TransformErr> {
         match *self {
             NumberBox::Decimal(num) => Ok(transformed_arena.alloc(
-                TransformedNode::Value(ExpressionValue::Decimal(num))
+                TransformedNode::Value(ScopeValue::Decimal(num))
             )),
             NumberBox::IntValue(num) => Ok(transformed_arena.alloc(
-                TransformedNode::Value(ExpressionValue::Int(num))
+                TransformedNode::Value(ScopeValue::Int(num))
             )),
             NumberBox::Var(ref identifier) => {
                 if let Some(var_content) = parent_scope.borrow().var(&identifier) {
                     match var_content {
-                        ExpressionValue::Int(num) => Ok(transformed_arena.alloc(
-                            TransformedNode::Value(ExpressionValue::Int(num))
+                        ScopeValue::Int(num) => Ok(transformed_arena.alloc(
+                            TransformedNode::Value(ScopeValue::Int(num))
                         )),
-                        ExpressionValue::Decimal(num) => Ok(transformed_arena.alloc(
-                            TransformedNode::Value(ExpressionValue::Decimal(num))
+                        ScopeValue::Decimal(num) => Ok(transformed_arena.alloc(
+                            TransformedNode::Value(ScopeValue::Decimal(num))
                         )),
                         other => Err(TransformErr::TypeMismatch("Int or Decimal", other.type_name(), "Anonymous".to_owned()))
                     }

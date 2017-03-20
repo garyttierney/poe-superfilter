@@ -1,7 +1,7 @@
-use ast::{Value,TransformedNode};
+use ast::{Value, TransformedNode, TransformErr};
 use ast::block_statements::BlockStatement;
-use ast::expressions::Expression;
-use translate::{TransformErr, ScopeData, ExpressionValue};
+use ast::transform::Transform;
+use scope::{ScopeData, ScopeValue};
 use std::cell::RefCell;
 use std::rc::Rc;
 use arena::TypedArena;
@@ -29,7 +29,8 @@ pub struct MixinCall<'a> {
     pub parameters: Vec<&'a Value<'a>>
 }
 
-impl <'a> Expression<'a> for MixinCall<'a> {
+impl <'a> Transform<'a> for MixinCall<'a> {
+    #[allow(unused_variables)]
     fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
         -> Result<&'t TransformedNode<'t>, TransformErr> {
         unimplemented!()

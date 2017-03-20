@@ -1,18 +1,18 @@
 
-use ast::{Value, TransformedNode};
-use ast::expressions::{Expression, TransformedExpression};
+use ast::{Value, TransformedNode, TransformErr};
+use ast::transform::{Transform, TransformResult};
 use ast::mixin::MixinCall;
 use ast::VarDefinition;
-use translate::{TransformErr, ScopeData, ExpressionValue};
+use scope::{ScopeData, ScopeValue};
 use std::fmt::Debug;
 use arena::TypedArena;
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::io::Write;
 use std::string::ToString;
-use ast::expressions::RenderErr;
+use ast::RenderErr;
 
-pub trait BlockStatement<'a> : Debug + Expression<'a> {}
+pub trait BlockStatement<'a> : Debug + Transform<'a> {}
 
 #[derive(Debug, Clone)]
 pub struct SetValueStatement<'a> {
@@ -23,14 +23,14 @@ pub struct SetValueStatement<'a> {
 #[derive(Debug)]
 pub struct PlainSetValueStatement {
     pub name: String,
-    pub values: Vec<ExpressionValue>
+    pub values: Vec<ScopeValue>
 }
 
 impl <'a> BlockStatement<'a> for SetValueStatement<'a> {}
-impl <'a> Expression<'a> for SetValueStatement<'a> {
+impl <'a> Transform<'a> for SetValueStatement<'a> {
     fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
         -> Result<&'t TransformedNode<'t>, TransformErr> {
-        let mut transformed_values: Vec<ExpressionValue> = vec![];
+        let mut transformed_values: Vec<ScopeValue> = vec![];
         for value in &self.values {
             let t_value = try!(value.transform(parent_scope.clone(), transformed_arena));
             transformed_values.push(t_value.return_value());
@@ -45,7 +45,7 @@ impl <'a> Expression<'a> for SetValueStatement<'a> {
     }
 }
 
-impl TransformedExpression for PlainSetValueStatement {
+impl TransformResult for PlainSetValueStatement {
     fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
         buf.write(self.name.as_ref())?;
         for val in &self.values {
@@ -70,7 +70,7 @@ pub struct PlainConditionStatement {
 }
 
 impl <'a> BlockStatement<'a> for ConditionStatement<'a> {}
-impl <'a> Expression<'a> for ConditionStatement<'a> {
+impl <'a> Transform<'a> for ConditionStatement<'a> {
     fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
         -> Result<&'t TransformedNode<'t>, TransformErr> {
         let t_value = self.condition.value.transform(parent_scope.clone(), transformed_arena)?;
@@ -83,7 +83,7 @@ impl <'a> Expression<'a> for ConditionStatement<'a> {
     }
 }
 
-impl TransformedExpression for PlainConditionStatement {
+impl TransformResult for PlainConditionStatement {
     fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
         buf.write(self.name.as_ref())?;
         buf.write(" ".as_ref())?;
@@ -103,7 +103,7 @@ pub struct Condition<'a> {
 
 #[derive(Debug, Clone)]
 pub struct PlainCondition {
-    pub value: ExpressionValue,
+    pub value: ScopeValue,
     pub operator: ComparisonOperator
 }
 
@@ -116,7 +116,7 @@ pub enum ComparisonOperator {
     Gte
 }
 
-impl TransformedExpression for ComparisonOperator {
+impl TransformResult for ComparisonOperator {
     fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
         buf.write(match *self {
             ComparisonOperator::Eql => "=",

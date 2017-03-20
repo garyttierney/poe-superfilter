@@ -12,7 +12,7 @@ extern crate regex;
 extern crate arena;
 
 use arena::TypedArena;
-use ast::expressions::TransformedExpression;
+use ast::transform::TransformResult;
 use std::io::Write;
 
 #[allow(dead_code,unused_imports)]
@@ -28,7 +28,7 @@ mod tok;
 mod tests;
 
 #[allow(dead_code,unused_imports)]
-mod translate;
+mod scope;
 
 /// Compiles a complete filter into vanilla loot filter syntax
 pub fn compile(contents: &str, out_buf: &mut Write) {

@@ -55,14 +55,14 @@ DefinitionBlock : &'ast Node<'ast> = {
     ImportBlock
 };
 
-ImportBlock : &'ast Node<'ast> = "Import" <StrLiteral> "\n" => arena.alloc(Node::Block(ast::Block::Import(<>)));
+ImportBlock : &'ast Node<'ast> = "Import" <StrLiteral> "\n" => arena.alloc(Node::Block(ast::block::Block::Import(<>)));
 
 ContentBlock : &'ast Node<'ast> = {
     "Show" "\n" <Statement*> => arena.alloc(Node::Block(
-        ast::Block::Show(<>.into_iter().map(|e| e as &stm::BlockStatement).collect())
+        ast::block::Block::Show(<>.into_iter().map(|e| e as &stm::BlockStatement).collect())
     )),
     "Hide" "\n" <Statement*> => arena.alloc(Node::Block(
-        ast::Block::Hide(<>.into_iter().map(|e| e as &stm::BlockStatement).collect())
+        ast::block::Block::Hide(<>.into_iter().map(|e| e as &stm::BlockStatement).collect())
     )),
     "Mixin" <name:Constant> <args:("(" <Comma<VarIdentifier>> ")")?> "\n" <instructions:Statement*> => {
         let params = args
@@ -71,7 +71,7 @@ ContentBlock : &'ast Node<'ast> = {
             .map(|param_name| ast::mixin::Param { name: param_name.clone(), default: None })
             .collect();
         arena.alloc(Node::Block(
-            ast::Block::Mixin(
+            ast::block::Block::Mixin(
                 ast::mixin::Mixin{
                     name: name,
                     parameters: params,
@@ -191,13 +191,13 @@ NumTerm : &'ast Node<'ast> = {
 };
 
 Color: &'ast Node<'ast> = {
-    <r:NumExpression> <g:NumExpression> <b:NumExpression> <a:NumExpression> => arena.alloc(Node::Color(ast::Color {
+    <r:NumExpression> <g:NumExpression> <b:NumExpression> <a:NumExpression> => arena.alloc(Node::Color(ast::color::Color {
         r: r,
         g: g,
         b: b,
         a: a
     })),
-    <r:NumExpression> <g:NumExpression> <b:NumExpression> => arena.alloc(Node::Color(ast::Color {
+    <r:NumExpression> <g:NumExpression> <b:NumExpression> => arena.alloc(Node::Color(ast::color::Color {
         r: r,
         g: g,
         b: b,

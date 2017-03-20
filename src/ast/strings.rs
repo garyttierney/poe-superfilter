@@ -1,13 +1,13 @@
 
 use ast;
-use ast::TransformedNode;
-use translate::{TransformErr, ScopeData, ExpressionValue};
-use ast::expressions::{Expression, TransformedExpression};
+use ast::{TransformedNode, TransformErr};
+use scope::{ScopeData, ScopeValue};
+use ast::transform::{Transform, TransformResult};
 use std::rc::Rc;
 use std::cell::RefCell;
 use arena::TypedArena;
 use std::io::Write;
-use ast::expressions::RenderErr;
+use ast::RenderErr;
 
 /// String value or variable reference
 #[derive(Debug, Clone)]
@@ -16,9 +16,9 @@ pub enum StringBox {
     Var(String)
 }
 
-impl <'a> TransformedExpression for String {
-    fn return_value(&self) -> ExpressionValue {
-        ExpressionValue::String(self.clone())
+impl <'a> TransformResult for String {
+    fn return_value(&self) -> ScopeValue {
+        ScopeValue::String(self.clone())
     }
 
     fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
@@ -35,16 +35,16 @@ impl <'a> TransformedExpression for String {
 }
 
 impl <'a> ast::Value<'a> for StringBox {}
-impl <'a> Expression<'a> for StringBox {
+impl <'a> Transform<'a> for StringBox {
     fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
         -> Result<&'t TransformedNode<'t>, TransformErr> {
         match self {
             &StringBox::Var(ref identifier) => {
                 if let Some(value) = parent_scope.borrow().var(identifier) {
                     match value {
-                        ExpressionValue::String(ref s) => {
+                        ScopeValue::String(ref s) => {
                             return Ok(transformed_arena.alloc(
-                                TransformedNode::Value(ExpressionValue::String(s.clone()))
+                                TransformedNode::Value(ScopeValue::String(s.clone()))
                             ));
                         },
                         val => Err(TransformErr::TypeMismatch("String", val.type_name(), identifier.clone()))
@@ -55,7 +55,7 @@ impl <'a> Expression<'a> for StringBox {
                 }
             },
             &StringBox::Value(ref val) => Ok(transformed_arena.alloc(
-                TransformedNode::Value(ExpressionValue::String(val.clone()))
+                TransformedNode::Value(ScopeValue::String(val.clone()))
             ))
         }
     }
