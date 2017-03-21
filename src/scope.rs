@@ -8,6 +8,7 @@ use ast::transform::TransformResult;
 use std::io::Write;
 use ast::RenderErr;
 use std::convert::From;
+use std::ops::{Add, Sub, Mul, Div};
 
 #[derive(Debug, Clone)]
 pub struct ScopeData<'ast> {
@@ -75,6 +76,22 @@ impl ScopeValue {
             ScopeValue::Decimal(_) => "Decimal",
             ScopeValue::List(_) => "List",
             ScopeValue::None => "None",
+        }
+    }
+}
+
+impl Add for ScopeValue {
+    type Output = ScopeValue;
+
+    fn add(self, other: ScopeValue) -> ScopeValue {
+        match self {
+            ScopeValue::Int(a) => {
+                match other {
+                    ScopeValue::Int(b) => ScopeValue::Int(a + b),
+                    _ => unimplemented!()
+                }
+            },
+            _ => unimplemented!()
         }
     }
 }

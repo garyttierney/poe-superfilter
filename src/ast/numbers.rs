@@ -1,7 +1,7 @@
 
 use ast;
 use ast::{Node, TransformedNode, TransformErr};
-use ast::transform::Transform;
+use ast::transform::{Transform, TransformResult};
 use scope::{ScopeData, ScopeValue};
 use arena::TypedArena;
 use std::cell::RefCell;
@@ -28,7 +28,29 @@ impl <'a> Transform<'a> for NumberExpression<'a> {
         -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
         match *self {
             NumberExpression::Number(ref num_box) => num_box.transform(parent_scope.clone(), transformed_arena),
-            _ => unimplemented!()
+            NumberExpression::Op(ref a, ref op, ref b) => {
+                let t_a = a.transform(parent_scope.clone(), transformed_arena)?;
+                if let None = t_a {
+                    return Err(TransformErr::MissingValue(format!("{:?}", t_a)))
+                }
+
+                let t_b = b.transform(parent_scope.clone(), transformed_arena)?;
+                if let None = t_b {
+                    return Err(TransformErr::MissingValue(format!("{:?}", t_b)))
+                }
+
+                let a_val = t_a.unwrap().return_value();
+                let b_val = t_b.unwrap().return_value();
+
+                match *op {
+                    NumberOperation::Add => {
+                        Ok(Some(transformed_arena.alloc(TransformedNode::Value(
+                            a_val + b_val
+                        ))))
+                    },
+                    _ => unimplemented!()
+                }
+            }
         }
     }
 }

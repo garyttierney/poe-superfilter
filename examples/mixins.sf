@@ -8,4 +8,4 @@ Mixin FlaskMagic($type)
 
 Show
 	+FlaskMagic("Small")
-	ItemLevel <= 5
+	ItemLevel <= 5 + 3
