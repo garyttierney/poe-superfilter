@@ -35,8 +35,8 @@ pub fn compile(contents: &str, out_buf: &mut Write) {
     let tokens = Box::new(tok::tokenize(contents));
     let ast_arena = TypedArena::new();
     let filter = filter::parse_Filter(&ast_arena, tokens.into_iter());
-    let transformed_ast_arena = TypedArena::new();
     println!("{:?}", filter);
-    let transformed_tree = filter.unwrap().transform(&transformed_ast_arena).unwrap();
-    transformed_tree.render(out_buf).unwrap();
+    if let Some(transformed_tree) = filter.unwrap().transform().unwrap() {
+        transformed_tree.render(out_buf).unwrap();
+    }
 }

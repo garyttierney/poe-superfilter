@@ -15,8 +15,8 @@ use ast::{RenderErr,TransformErr,TransformedNode};
 pub trait Transform<'a> {
     /// Perform any transformations that need to be done before rendering this structure into
     /// plain GGG loot filter syntax
-    fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
-        -> Result<&'t TransformedNode<'t>, TransformErr>;
+    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
+        -> Result<Option<&'a TransformedNode<'a>>, TransformErr>;
 }
 
 pub trait TransformResult {

@@ -24,24 +24,36 @@ use std::io::Write;
 use std::io::Error as IoError;
 use std::convert::From;
 use arena::TypedArena;
+use std::fmt::Formatter;
+use std::fmt::Error as FmtError;
 
 pub trait Value<'a> : Debug + Transform<'a> {}
 
-#[derive(Debug)]
 pub struct Filter<'ast> {
-    pub nodes: Vec<&'ast Node<'ast>>
+    pub nodes: Vec<&'ast Node<'ast>>,
+    pub transformed_arena: TypedArena<TransformedNode<'ast>>
 }
 
-impl <'ast> Filter<'ast> {
-    pub fn transform<'t>(&self, transformed_arena : &'t TypedArena<TransformedNode<'t>>)
-        -> Result<&'t TransformedNode<'t>, TransformErr> {
-        let mut transformed_nodes : Vec<&'t TransformedNode<'t>> =  Vec::with_capacity(self.nodes.len());
+impl <'ast> Debug for Filter<'ast> {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), FmtError> {
+        self.nodes.fmt(f)?;
+        Ok(())
+    }
+}
+
+impl <'a> Filter<'a> {
+    pub fn transform(&'a self)
+        -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
+        let mut transformed_nodes : Vec<&TransformedNode<'a>> =  Vec::with_capacity(self.nodes.len());
         let root_scope = Rc::new(RefCell::new(ScopeData::new(None)));
         for node in &self.nodes {
-            let t_node = try!(node.transform(root_scope.clone(), transformed_arena));
-            transformed_nodes.push(t_node);
+            if let Some(t_node) = try!(node.transform(root_scope.clone(), &self.transformed_arena)) {
+                transformed_nodes.push(t_node);
+            }
         }
-        return Ok(transformed_arena.alloc(TransformedNode::Root(transformed_nodes)));
+        return Ok(Some(
+            self.transformed_arena.alloc(TransformedNode::Root(transformed_nodes))
+        ));
     }
 }
 
@@ -62,24 +74,24 @@ pub enum Node<'ast> {
     VarRef(VarReference),
     VarDefinition(VarDefinition<'ast>),
 
+    Mixin(Mixin<'ast>),
     MixinCall(MixinCall<'ast>),
     Color(color::Color<'ast>),
 }
 
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub enum TransformedNode<'ast> {
-    Empty,
     Root(Vec<&'ast TransformedNode<'ast>>),
     Block(block::PlainBlock<'ast>),
     SetValueStmt(PlainSetValueStatement),
     ConditionStmt(PlainConditionStatement),
-
-    Value(ScopeValue)
+    Value(ScopeValue),
+    ResolvedMixin(ResolvedMixin<'ast>)
 }
 
 impl <'a> Transform<'a> for Node<'a> {
-    fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
-        -> Result<&'t TransformedNode<'t>, TransformErr> {
+    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
+        -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
         // TODO: make this a macro instead of listing all the options manually
         match *self {
             Node::Block(ref n) => n.transform(parent_scope, transformed_arena),
@@ -89,6 +101,8 @@ impl <'a> Transform<'a> for Node<'a> {
             Node::NumExpression(ref n) => n.transform(parent_scope, transformed_arena),
             Node::ConditionStmt(ref n) => n.transform(parent_scope, transformed_arena),
             Node::StringBox(ref n) => n.transform(parent_scope, transformed_arena),
+            Node::Mixin(ref n) => n.transform(parent_scope, transformed_arena),
+            Node::MixinCall(ref n) => n.transform(parent_scope, transformed_arena),
             ref node => {
                 println!("Unimplemented node type: {:?}", node);
                 unimplemented!();
@@ -103,12 +117,12 @@ impl <'ast> TransformResult for TransformedNode<'ast> {
     fn return_value(&self) -> ScopeValue {
         match *self {
             // TODO: use a macro for this.
-            TransformedNode::Empty => ScopeValue::None,
             TransformedNode::Root(_) => ScopeValue::None,
             TransformedNode::Block(ref node) => node.return_value(),
             TransformedNode::SetValueStmt(ref node) => node.return_value(),
             TransformedNode::ConditionStmt(ref node) => node.return_value(),
-            TransformedNode::Value(ref node) => node.return_value()
+            TransformedNode::Value(ref node) => node.return_value(),
+            TransformedNode::ResolvedMixin(ref node) => node.return_value()
         }
     }
 
@@ -120,7 +134,7 @@ impl <'ast> TransformResult for TransformedNode<'ast> {
             TransformedNode::SetValueStmt(ref node) => node.render(buf)?,
             TransformedNode::ConditionStmt(ref node) => node.render(buf)?,
             TransformedNode::Value(ref node) => node.render(buf)?,
-            TransformedNode::Empty => ()
+            TransformedNode::ResolvedMixin(ref node) => node.render(buf)?
         }
         Ok(())
     }
@@ -133,26 +147,6 @@ impl <'ast> TransformResult for Vec<&'ast TransformedNode<'ast>> {
         }
         buf.write("\n".as_ref())?;
         Ok(())
-    }
-}
-
-/// Variable definition
-#[derive(Debug, Clone)]
-pub struct VarDefinition<'a> {
-    pub identifier: String,
-    pub values: Vec<&'a Value<'a>>
-}
-
-impl <'a> BlockStatement<'a> for VarDefinition<'a> {}
-
-impl <'a> Transform<'a> for VarDefinition<'a> {
-    fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
-        -> Result<&'t TransformedNode<'t>, TransformErr> {
-        for val in &self.values {
-            let t_val = val.transform(parent_scope.clone(), transformed_arena)?;
-            parent_scope.borrow_mut().push_var(self.identifier.clone(), t_val.return_value());
-        }
-        Ok(transformed_arena.alloc(TransformedNode::Empty))
     }
 }
 
@@ -186,6 +180,14 @@ quick_error! {
         MissingVarRef(identifier: String) {
             description("Missing variable reference")
             display("Unresolved variable reference: {}", identifier)
+        }
+        MissingValue(node: String) {
+            description("Expected expression to return value, none found")
+            display("Expected Expression to return a value: {:?}", node)
+        }
+        WrongParameterCount(node: String, expected: usize, actual: usize) {
+            description("Wrong mixin call parameter count")
+            display("Wrong mixin call parameter count in {:?}: expected {}, got {}", node, expected, actual)
         }
     }
 }

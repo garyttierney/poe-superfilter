@@ -45,9 +45,9 @@ pub Filter : ast::Filter<'ast> = {
         let mut nodes = defs;
         nodes.push(first);
         nodes.extend(rest);
-        ast::Filter { nodes: nodes }
+        ast::Filter { nodes: nodes, transformed_arena: TypedArena::new() }
     },
-    DefinitionBlock* => ast::Filter { nodes: <> },
+    DefinitionBlock* => ast::Filter { nodes: <>, transformed_arena: TypedArena::new() },
 };
 
 DefinitionBlock : &'ast Node<'ast> = {
@@ -70,14 +70,12 @@ ContentBlock : &'ast Node<'ast> = {
             .iter()
             .map(|param_name| ast::mixin::Param { name: param_name.clone(), default: None })
             .collect();
-        arena.alloc(Node::Block(
-            ast::block::Block::Mixin(
-                ast::mixin::Mixin{
-                    name: name,
-                    parameters: params,
-                    statements: instructions.into_iter().map(|e| e as &stm::BlockStatement).collect()
-                }
-            )
+        arena.alloc(Node::Mixin(
+            ast::mixin::Mixin{
+                name: name,
+                parameters: params,
+                statements: instructions.into_iter().map(|e| e as &stm::BlockStatement).collect()
+            }
         ))
     }
 };
@@ -95,8 +93,8 @@ Comma<T>: Vec<T> = {
     }
 };
 
-VarDefinition : ast::VarDefinition<'ast>  = {
-    <id:VarIdentifier> "=" <v:Value+> "\n" => ast::VarDefinition {
+VarDefinition : ast::var::VarDefinition<'ast>  = {
+    <id:VarIdentifier> "=" <v:Value+> "\n" => ast::var::VarDefinition {
         identifier: id,
         values: v.into_iter().map(|e| e as &ast::Value).collect()
     }

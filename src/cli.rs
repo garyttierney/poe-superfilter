@@ -13,7 +13,7 @@ use std::io;
 
 /// Compiles one or several files
 pub fn main() {
-    let mut file = File::open("examples/vars_only.sf").unwrap();
+    let mut file = File::open("examples/mixins.sf").unwrap();
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
     println!("{:?}", superfilter::compile(&contents, &mut io::stdout()));

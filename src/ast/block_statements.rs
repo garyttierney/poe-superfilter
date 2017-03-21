@@ -20,7 +20,7 @@ pub struct SetValueStatement<'a> {
     pub values : Vec<&'a Value<'a>>
 }
 
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub struct PlainSetValueStatement {
     pub name: String,
     pub values: Vec<ScopeValue>
@@ -28,20 +28,21 @@ pub struct PlainSetValueStatement {
 
 impl <'a> BlockStatement<'a> for SetValueStatement<'a> {}
 impl <'a> Transform<'a> for SetValueStatement<'a> {
-    fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
-        -> Result<&'t TransformedNode<'t>, TransformErr> {
+    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
+        -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
         let mut transformed_values: Vec<ScopeValue> = vec![];
         for value in &self.values {
-            let t_value = try!(value.transform(parent_scope.clone(), transformed_arena));
-            transformed_values.push(t_value.return_value());
+            if let Some(t_value) = try!(value.transform(parent_scope.clone(), transformed_arena)) {
+                transformed_values.push(t_value.return_value());
+            }
         }
 
-        Ok(transformed_arena.alloc(TransformedNode::SetValueStmt(
+        Ok(Some(transformed_arena.alloc(TransformedNode::SetValueStmt(
             PlainSetValueStatement {
                 name: self.name.clone(),
                 values: transformed_values
             }
-        )))
+        ))))
     }
 }
 
@@ -71,15 +72,17 @@ pub struct PlainConditionStatement {
 
 impl <'a> BlockStatement<'a> for ConditionStatement<'a> {}
 impl <'a> Transform<'a> for ConditionStatement<'a> {
-    fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
-        -> Result<&'t TransformedNode<'t>, TransformErr> {
-        let t_value = self.condition.value.transform(parent_scope.clone(), transformed_arena)?;
-        Ok(transformed_arena.alloc(TransformedNode::ConditionStmt(
-            PlainConditionStatement {
-                name: self.name.clone(),
-                condition: PlainCondition { value: t_value.return_value(), operator: self.condition.operator },
-            }
-        )))
+    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
+        -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
+        if let Some(t_value) = self.condition.value.transform(parent_scope.clone(), transformed_arena)? {
+            return Ok(Some(transformed_arena.alloc(TransformedNode::ConditionStmt(
+                PlainConditionStatement {
+                    name: self.name.clone(),
+                    condition: PlainCondition { value: t_value.return_value(), operator: self.condition.operator },
+                }
+            ))));
+        }
+        return Err(TransformErr::Unknown);
     }
 }
 

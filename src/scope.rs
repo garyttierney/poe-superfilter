@@ -1,4 +1,4 @@
-use ast::mixin::Mixin;
+use ast::mixin::PreparedMixin;
 use std::collections::BTreeMap;
 use std::error::Error;
 use std::fmt;
@@ -9,11 +9,11 @@ use std::io::Write;
 use ast::RenderErr;
 use std::convert::From;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct ScopeData<'ast> {
     pub parent: Option<Rc<RefCell<ScopeData<'ast>>>>,
     pub vars: BTreeMap<String, ScopeValue>,
-    pub mixins: BTreeMap<String, Mixin<'ast>>,
+    pub mixins: BTreeMap<String, PreparedMixin<'ast>>,
 }
 
 impl <'ast> ScopeData<'ast> {
@@ -42,8 +42,8 @@ impl <'ast> ScopeData<'ast> {
         }
     }
 
-    pub fn push_mixin(&mut self, ident:String, value:Mixin<'ast>) { self.mixins.insert(ident, value); }
-    pub fn mixin(&self, ident:&String) -> Option<Mixin<'ast>> {
+    pub fn push_mixin(&mut self, ident:String, value:PreparedMixin<'ast>) { self.mixins.insert(ident, value); }
+    pub fn mixin(&self, ident:&String) -> Option<PreparedMixin<'ast>> {
         // return from current scope if found
         if let Some(mixin) = self.mixins.get(ident) {
             return Some(mixin.clone());

@@ -16,8 +16,6 @@ use ast::block_statements::BlockStatement;
 pub enum Block<'a> {
     Show(Vec<&'a BlockStatement<'a>>),
     Hide(Vec<&'a BlockStatement<'a>>),
-    Mixin(Mixin<'a>),
-    Var(VarDefinition<'a>),
     Import(String),
 }
 
@@ -28,8 +26,8 @@ pub enum PlainBlock<'a> {
 }
 
 impl <'a> Transform<'a> for Block<'a> {
-    fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
-                     -> Result<&'t TransformedNode<'t>, TransformErr> {
+    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
+            -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
         let block_scope = Rc::new(RefCell::new(ScopeData::new(Some(parent_scope))));
 
         // collect transformed statements from lines in this block
@@ -37,20 +35,27 @@ impl <'a> Transform<'a> for Block<'a> {
         match self {
             &Block::Show(ref statements) | &Block::Hide(ref statements) => {
                 for statement in statements {
-                    t_statements.push(statement.transform(block_scope.clone(), transformed_arena)?);
+                    if let Some(t_statement) = statement.transform(block_scope.clone(), transformed_arena)? {
+                        t_statements.push(t_statement);
+                    }
                 }
             }
-            // TODO: handle mixin blocks, var def blocks
-            _ => unimplemented!()
+            node => {
+                println!("{:?}", node);
+                unimplemented!()
+            }
         }
 
-        Ok(transformed_arena.alloc(TransformedNode::Block(
+        Ok(Some(transformed_arena.alloc(TransformedNode::Block(
             match self {
                 &Block::Show(_) => PlainBlock::Show(t_statements),
                 &Block::Hide(_) => PlainBlock::Hide(t_statements),
-                _ => unimplemented!()
+                node => {
+                    println!("{:?}", node);
+                    unimplemented!()
+                }
             }
-        )))
+        ))))
     }
 }
 

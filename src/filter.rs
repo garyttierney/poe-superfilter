@@ -81,7 +81,7 @@ mod __parse__Filter {
         NtValue(&'ast Node<'ast>),
         NtValue_2b(::std::vec::Vec<&'ast Node<'ast>>),
         NtValue_3f(::std::option::Option<&'ast Node<'ast>>),
-        NtVarDefinition(ast::VarDefinition<'ast>),
+        NtVarDefinition(ast::var::VarDefinition<'ast>),
         NtVarIdentifier_3f(::std::option::Option<String>),
         Nt____Filter(ast::Filter<'ast>),
     }
@@ -2788,7 +2788,7 @@ mod __parse__Filter {
       'ast,
     >(
         __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
-    ) -> (TokenLocation, ast::VarDefinition<'ast>, TokenLocation) {
+    ) -> (TokenLocation, ast::var::VarDefinition<'ast>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtVarDefinition(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
@@ -2842,7 +2842,7 @@ pub fn __action1<
         let mut nodes = defs;
         nodes.push(first);
         nodes.extend(rest);
-        ast::Filter { nodes: nodes }
+        ast::Filter { nodes: nodes, transformed_arena: TypedArena::new() }
     }
 }
 
@@ -2854,7 +2854,7 @@ pub fn __action2<
     (_, __0, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
 ) -> ast::Filter<'ast>
 {
-    ast::Filter { nodes: __0 }
+    ast::Filter { nodes: __0, transformed_arena: TypedArena::new() }
 }
 
 #[allow(unused_variables)]
@@ -2862,7 +2862,7 @@ pub fn __action3<
     'ast,
 >(
     arena: &'ast TypedArena<Node<'ast>>,
-    (_, __0, _): (TokenLocation, ast::VarDefinition<'ast>, TokenLocation),
+    (_, __0, _): (TokenLocation, ast::var::VarDefinition<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
     arena.alloc(Node::VarDefinition(__0))
@@ -2940,14 +2940,12 @@ pub fn __action8<
             .iter()
             .map(|param_name| ast::mixin::Param { name: param_name.clone(), default: None })
             .collect();
-        arena.alloc(Node::Block(
-            ast::block::Block::Mixin(
-                ast::mixin::Mixin{
-                    name: name,
-                    parameters: params,
-                    statements: instructions.into_iter().map(|e| e as &stm::BlockStatement).collect()
-                }
-            )
+        arena.alloc(Node::Mixin(
+            ast::mixin::Mixin{
+                name: name,
+                parameters: params,
+                statements: instructions.into_iter().map(|e| e as &stm::BlockStatement).collect()
+            }
         ))
     }
 }
@@ -2983,9 +2981,9 @@ pub fn __action11<
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
-) -> ast::VarDefinition<'ast>
+) -> ast::var::VarDefinition<'ast>
 {
-    ast::VarDefinition {
+    ast::var::VarDefinition {
         identifier: id,
         values: v.into_iter().map(|e| e as &ast::Value).collect()
     }
@@ -3084,7 +3082,7 @@ pub fn __action18<
     'ast,
 >(
     arena: &'ast TypedArena<Node<'ast>>,
-    (_, __0, _): (TokenLocation, ast::VarDefinition<'ast>, TokenLocation),
+    (_, __0, _): (TokenLocation, ast::var::VarDefinition<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
     arena.alloc(Node::VarDefinition(__0))

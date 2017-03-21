@@ -36,16 +36,16 @@ impl <'a> TransformResult for String {
 
 impl <'a> ast::Value<'a> for StringBox {}
 impl <'a> Transform<'a> for StringBox {
-    fn transform<'t>(&'a self, parent_scope: Rc<RefCell<ScopeData>>, transformed_arena: &'t TypedArena<TransformedNode<'t>>)
-        -> Result<&'t TransformedNode<'t>, TransformErr> {
+    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
+        -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
         match self {
             &StringBox::Var(ref identifier) => {
                 if let Some(value) = parent_scope.borrow().var(identifier) {
                     match value {
                         ScopeValue::String(ref s) => {
-                            return Ok(transformed_arena.alloc(
+                            return Ok(Some(transformed_arena.alloc(
                                 TransformedNode::Value(ScopeValue::String(s.clone()))
-                            ));
+                            )));
                         },
                         val => Err(TransformErr::TypeMismatch("String", val.type_name(), identifier.clone()))
                     }
@@ -54,9 +54,9 @@ impl <'a> Transform<'a> for StringBox {
                     return Err(e);
                 }
             },
-            &StringBox::Value(ref val) => Ok(transformed_arena.alloc(
+            &StringBox::Value(ref val) => Ok(Some(transformed_arena.alloc(
                 TransformedNode::Value(ScopeValue::String(val.clone()))
-            ))
+            )))
         }
     }
 }
