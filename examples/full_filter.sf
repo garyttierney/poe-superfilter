@@ -1,5 +1,3 @@
-Import "some-other"
-
 $test = "abc"
 $test2 = 1
 

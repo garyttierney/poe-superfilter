@@ -59,15 +59,16 @@ $var = "value"
 
 Variable definitions are allowed in two places.
 
-1. At the start of a filter before any blocks
+1. Anywhere between blocks
 
-    Variables defined here will be visible globally.
+    Variables defined here will be visible in all blocks following the variable definition.
+    Note that the order is significant here, a variable won't be available in a block that precedes it.
 
 2. Inside of a block
 
     If placed inside of a block, the variable will only be visible
     in that block and blocks nested inside of it, and only to instructions
-    *after* the variable definition
+    after the variable definition
 
 ## Arithmetics
 
