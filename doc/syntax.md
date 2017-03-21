@@ -88,25 +88,6 @@ Show
     SetTextColor (100 * $foo) 100 (255 + $bar) 255
 ```
 
-## Nesting
-
-Blocks can be nested, and the inner blocks will inherit any instructions from their
-parent blocks.
-
-```
-Show
-    Class Flask
-    Rarity Magic
-    :Show
-        BaseType "Foo"
-        ItemLevel <= 5
-        ::Show
-            ItemLevel > 9000
-
-    :Hide
-        BaseType "Baz"
-```
-
 This expands to the following:
 
 ```
