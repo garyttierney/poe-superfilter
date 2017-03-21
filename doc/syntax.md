@@ -88,25 +88,3 @@ Show
     # Probably better like that:
     SetTextColor (100 * $foo) 100 (255 + $bar) 255
 ```
-
-This expands to the following:
-
-```
-Show
-    Class Flask
-    Rarity Magic
-Show
-    Class Flask
-    Rarity Magic
-    BaseType "Foo"
-    ItemLevel <= 5
-Show
-    Class Flask
-    Rarity Magic
-    BaseType "Foo"
-    ItemLevel > 9000
-Hide
-    Class Flask
-    Rarity Magic
-    BaseType "Baz"
-```
