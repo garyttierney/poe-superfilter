@@ -17,18 +17,19 @@ pub enum NumberOperation {
 
 /// Number value or expression
 #[derive(Debug, Clone)]
-pub enum NumberExpression<'ast> {
+pub enum ValueExpression<'ast> {
     Number(NumberBox),
     Op(&'ast Node<'ast>, NumberOperation, &'ast Node<'ast>)
 }
 
-impl <'a> ast::Value<'a> for NumberExpression<'a> {}
-impl <'a> Transform<'a> for NumberExpression<'a> {
+impl <'a> ast::Value<'a> for ValueExpression<'a> {}
+impl <'a> Transform<'a> for ValueExpression<'a> {
     fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
         -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
         match *self {
-            NumberExpression::Number(ref num_box) => num_box.transform(parent_scope.clone(), transformed_arena),
-            NumberExpression::Op(ref a, ref op, ref b) => {
+            ValueExpression::Number(ref num_box) => num_box.transform(parent_scope.clone(), transformed_arena),
+            ValueExpression::Op(ref a, ref op, ref b) => {
+                // transform each operand
                 let t_a = a.transform(parent_scope.clone(), transformed_arena)?;
                 if let None = t_a {
                     return Err(TransformErr::MissingValue(format!("{:?}", t_a)))
@@ -42,14 +43,13 @@ impl <'a> Transform<'a> for NumberExpression<'a> {
                 let a_val = t_a.unwrap().return_value();
                 let b_val = t_b.unwrap().return_value();
 
-                match *op {
-                    NumberOperation::Add => {
-                        Ok(Some(transformed_arena.alloc(TransformedNode::Value(
-                            a_val + b_val
-                        ))))
-                    },
-                    _ => unimplemented!()
-                }
+                let result = match *op {
+                    NumberOperation::Add => a_val + b_val,
+                    NumberOperation::Mul => a_val * b_val,
+                    NumberOperation::Div => a_val / b_val,
+                    NumberOperation::Sub => a_val - b_val,
+                };
+                Ok(Some(transformed_arena.alloc(TransformedNode::Value(result))))
             }
         }
     }

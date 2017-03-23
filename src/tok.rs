@@ -2,12 +2,13 @@ use regex::Regex;
 use std::str::FromStr;
 
 /// All tokens that can occur in superfilter syntax 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Tok {
     StrLiteral(String),
     Constant(String),
     VarIdentifier(String),
     Num(i64),
+    Float(f64),
     LParen,
     RParen,
     Minus,
@@ -186,8 +187,12 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
                     return;
                 },
                 _ if c.is_digit(10) => {
-                    let tmp = self.take_while(c, |c| c.is_digit(10));
-                    self.push(Tok::Num(i64::from_str(&tmp).unwrap()), tmp.len() as isize);
+                    let tmp = self.take_while(c, |c| c.is_digit(10) || c == '.');
+                    if tmp.contains(".") {
+                        self.push(Tok::Float(f64::from_str(&tmp).unwrap()), tmp.len() as isize);
+                    } else {
+                        self.push(Tok::Num(i64::from_str(&tmp).unwrap()), tmp.len() as isize);
+                    }
                     return;
                 }
                 _ => {

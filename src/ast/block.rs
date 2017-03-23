@@ -19,7 +19,7 @@ pub enum Block<'a> {
     Import(String),
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum PlainBlock<'a> {
     Show(Vec<&'a TransformedNode<'a>>),
     Hide(Vec<&'a TransformedNode<'a>>),
@@ -36,7 +36,26 @@ impl <'a> Transform<'a> for Block<'a> {
             &Block::Show(ref statements) | &Block::Hide(ref statements) => {
                 for statement in statements {
                     if let Some(t_statement) = statement.transform(block_scope.clone(), transformed_arena)? {
-                        t_statements.push(t_statement);
+                        match *t_statement {
+                            TransformedNode::ResolvedMixin(ref resolved_stmts) => {
+                                for stmt in resolved_stmts {
+                                    // replace existing same statement if possible
+                                    if let Some(index) = t_statements.iter().position(|other| *other == *stmt) {
+                                        t_statements[index] = stmt;
+                                    } else {
+                                        t_statements.push(stmt);
+                                    }
+                                }
+                            },
+                            _ => {
+                                // replace existing same statement if possible
+                                if let Some(index) = t_statements.iter().position(|other| *other == t_statement) {
+                                    t_statements[index] = t_statement;
+                                } else {
+                                    t_statements.push(t_statement);
+                                }
+                            }
+                        }
                     }
                 }
             }

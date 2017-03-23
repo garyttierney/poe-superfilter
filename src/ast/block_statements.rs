@@ -11,6 +11,7 @@ use std::rc::Rc;
 use std::io::Write;
 use std::string::ToString;
 use ast::RenderErr;
+use std::cmp::PartialEq;
 
 pub trait BlockStatement<'a> : Debug + Transform<'a> {}
 
@@ -24,6 +25,12 @@ pub struct SetValueStatement<'a> {
 pub struct PlainSetValueStatement {
     pub name: String,
     pub values: Vec<ScopeValue>
+}
+
+impl PartialEq for PlainSetValueStatement {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name
+    }
 }
 
 impl <'a> BlockStatement<'a> for SetValueStatement<'a> {}
@@ -68,6 +75,12 @@ pub struct ConditionStatement<'a> {
 pub struct PlainConditionStatement {
     pub name : String,
     pub condition: PlainCondition
+}
+
+impl PartialEq for PlainConditionStatement {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name
+    }
 }
 
 impl <'a> BlockStatement<'a> for ConditionStatement<'a> {}

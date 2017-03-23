@@ -1,6 +1,6 @@
 
 use ast;
-use ast::numbers::NumberExpression;
+use ast::numbers::ValueExpression;
 
 use ast::block_statements as stm;
 use ast::Node;
@@ -34,6 +34,7 @@ extern {
         "<" => Tok::Lt,
         "=" => Tok::Eql,
         Num => Tok::Num(<i64>),
+        Float => Tok::Float(<f64>),
         QuotedStrLiteral => Tok::StrLiteral(<String>),
         Constant => Tok::Constant(<String>),
         VarIdentifier => Tok::VarIdentifier(<String>)
@@ -100,6 +101,12 @@ VarDefinition : ast::var::VarDefinition<'ast>  = {
     }
 };
 
+VarReference : &'ast Node<'ast> = {
+    VarIdentifier => arena.alloc(Node::VarRef(
+        ast::var::VarReference { identifier: <> }
+    ))
+};
+
 SetValueStmt : &'ast Node<'ast> = {
     <n:Constant> <val:Value+> "\n" => arena.alloc(Node::SetValueStmt(
         stm::SetValueStatement {
@@ -135,13 +142,7 @@ Statement : &'ast Node<'ast> = {
 };
 
 Value : &'ast Node<'ast> = {
-    NumExpression,
-    StringExpression,
-    VarIdentifier => arena.alloc(Node::VarRef(ast::var::VarReference { identifier: <> }))
-};
-
-StringExpression : &'ast Node<'ast> = {
-    StrLiteral => arena.alloc(Node::StringBox(ast::strings::StringBox::Value(<>))),
+    ValueExpression,
 };
 
 StrLiteral : String = {
@@ -161,46 +162,55 @@ ComparisonOperator : stm::ComparisonOperator = {
     "=" =>  stm::ComparisonOperator::Eql
 };
 
-NumExpression : &'ast Node<'ast> = {
-    <l:NumExpression> "+" <r:NumFactor> => arena.alloc(Node::NumExpression(
-        NumberExpression::Op(l, ast::numbers::NumberOperation::Add, r)
+NumberLiteral : &'ast Node<'ast> = {
+    Num => arena.alloc(Node::ValueExpr(
+        ValueExpression::Number(ast::numbers::NumberBox::IntValue(<>))
     )),
-    <l:NumExpression> "-" <r:NumFactor> => arena.alloc(Node::NumExpression(
-        NumberExpression::Op(l, ast::numbers::NumberOperation::Sub, r)
+    Float => arena.alloc(Node::ValueExpr(
+        ValueExpression::Number(ast::numbers::NumberBox::Decimal(<>))
     )),
-    NumFactor
 };
 
-NumFactor : &'ast Node<'ast> = {
-    <l:NumFactor> "*" <r:NumTerm> => arena.alloc(Node::NumExpression(
-        NumberExpression::Op(l, ast::numbers::NumberOperation::Mul, r)
+ValueExpression : &'ast Node<'ast> = {
+    <l:ValueExpression> "+" <r:ValueFactor> => arena.alloc(Node::ValueExpr(
+        ValueExpression::Op(l, ast::numbers::NumberOperation::Add, r)
     )),
-    <l:NumFactor> "/" <r:NumTerm> => arena.alloc(Node::NumExpression(
-        NumberExpression::Op(l, ast::numbers::NumberOperation::Div, r)
+    <l:ValueExpression> "-" <r:ValueFactor> => arena.alloc(Node::ValueExpr(
+        ValueExpression::Op(l, ast::numbers::NumberOperation::Sub, r)
     )),
-    NumTerm
+    ValueFactor
 };
 
-NumTerm : &'ast Node<'ast> = {
-    Num => arena.alloc(Node::NumExpression(
-        NumberExpression::Number(ast::numbers::NumberBox::IntValue(<>))
+ValueFactor : &'ast Node<'ast> = {
+    <l:ValueFactor> "*" <r:ValueTerm> => arena.alloc(Node::ValueExpr(
+        ValueExpression::Op(l, ast::numbers::NumberOperation::Mul, r)
     )),
-    "(" <NumExpression> ")" => <>
+    <l:ValueFactor> "/" <r:ValueTerm> => arena.alloc(Node::ValueExpr(
+        ValueExpression::Op(l, ast::numbers::NumberOperation::Div, r)
+    )),
+    ValueTerm
+};
+
+ValueTerm : &'ast Node<'ast> = {
+    VarReference,
+    NumberLiteral,
+    StrLiteral => arena.alloc(Node::StringBox(ast::strings::StringBox::Value(<>))),
+    "(" <ValueExpression> ")" => <>
 };
 
 Color: &'ast Node<'ast> = {
-    <r:NumExpression> <g:NumExpression> <b:NumExpression> <a:NumExpression> => arena.alloc(Node::Color(ast::color::Color {
+    <r:ValueTerm> <g:ValueTerm> <b:ValueTerm> <a:ValueTerm> => arena.alloc(Node::Color(ast::color::Color {
         r: r,
         g: g,
         b: b,
         a: a
     })),
-    <r:NumExpression> <g:NumExpression> <b:NumExpression> => arena.alloc(Node::Color(ast::color::Color {
+    <r:ValueTerm> <g:ValueTerm> <b:ValueTerm> => arena.alloc(Node::Color(ast::color::Color {
         r: r,
         g: g,
         b: b,
-        a: arena.alloc(Node::NumExpression(
-            NumberExpression::Number(ast::numbers::NumberBox::IntValue(255))
+        a: arena.alloc(Node::ValueExpr(
+            ValueExpression::Number(ast::numbers::NumberBox::IntValue(255))
         ))
     }))
 };

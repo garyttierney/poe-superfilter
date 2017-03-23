@@ -17,6 +17,8 @@ use ast::mixin::*;
 use ast::var::*;
 use ast::transform::{Transform, TransformResult};
 use scope::{ScopeData, ScopeValue};
+
+use std;
 use std::fmt::Debug;
 use std::rc::Rc;
 use std::cell::RefCell;
@@ -67,9 +69,7 @@ pub enum Node<'ast> {
 
     StringBox(StringBox),
 
-    NumOperation(NumberOperation),
-    NumBox(NumberBox),
-    NumExpression(NumberExpression<'ast>),
+    ValueExpr(ValueExpression<'ast>),
 
     VarRef(VarReference),
     VarDefinition(VarDefinition<'ast>),
@@ -79,7 +79,7 @@ pub enum Node<'ast> {
     Color(color::Color<'ast>),
 }
 
-#[derive(Debug,Clone)]
+#[derive(Debug,Clone,PartialEq)]
 pub enum TransformedNode<'ast> {
     Root(Vec<&'ast TransformedNode<'ast>>),
     Block(block::PlainBlock<'ast>),
@@ -98,7 +98,7 @@ impl <'a> Transform<'a> for Node<'a> {
             Node::SetValueStmt(ref n) => n.transform(parent_scope, transformed_arena),
             Node::VarDefinition(ref n) => n.transform(parent_scope, transformed_arena),
             Node::VarRef(ref n) => n.transform(parent_scope, transformed_arena),
-            Node::NumExpression(ref n) => n.transform(parent_scope, transformed_arena),
+            Node::ValueExpr(ref n) => n.transform(parent_scope, transformed_arena),
             Node::ConditionStmt(ref n) => n.transform(parent_scope, transformed_arena),
             Node::StringBox(ref n) => n.transform(parent_scope, transformed_arena),
             Node::Mixin(ref n) => n.transform(parent_scope, transformed_arena),
@@ -145,7 +145,6 @@ impl <'ast> TransformResult for Vec<&'ast TransformedNode<'ast>> {
         for node in self {
             node.render(buf)?;
         }
-        buf.write("\n".as_ref())?;
         Ok(())
     }
 }

@@ -59,7 +59,7 @@ impl <'ast> ScopeData<'ast> {
     }
 }
 
-#[derive(Clone,Debug)]
+#[derive(Clone,Debug,PartialEq)]
 pub enum ScopeValue {
     String(String),
     Int(i64),
@@ -88,6 +88,88 @@ impl Add for ScopeValue {
             ScopeValue::Int(a) => {
                 match other {
                     ScopeValue::Int(b) => ScopeValue::Int(a + b),
+                    ScopeValue::Decimal(b) => ScopeValue::Decimal(a as f64 + b),
+                    ScopeValue::String(b) => ScopeValue::String(format!("{}{}", a, b)),
+                    _ => unimplemented!()
+                }
+            },
+            ScopeValue::Decimal(a) => {
+                match other {
+                    ScopeValue::Int(b) => ScopeValue::Decimal(a + b as f64),
+                    ScopeValue::Decimal(b) => ScopeValue::Decimal(a + b),
+                    _ => unimplemented!()
+                }
+            },
+            _ => unimplemented!()
+        }
+    }
+}
+
+impl Sub for ScopeValue {
+    type Output = ScopeValue;
+
+    fn sub(self, other: ScopeValue) -> ScopeValue {
+        match self {
+            ScopeValue::Int(a) => {
+                match other {
+                    ScopeValue::Int(b) => ScopeValue::Int(a - b),
+                    ScopeValue::Decimal(b) => ScopeValue::Decimal(a as f64 - b),
+                    _ => unimplemented!()
+                }
+            },
+            ScopeValue::Decimal(a) => {
+                match other {
+                    ScopeValue::Int(b) => ScopeValue::Decimal(a - b as f64),
+                    ScopeValue::Decimal(b) => ScopeValue::Decimal(a - b),
+                    _ => unimplemented!()
+                }
+            },
+            _ => unimplemented!()
+        }
+    }
+}
+
+
+impl Mul for ScopeValue {
+    type Output = ScopeValue;
+
+    fn mul(self, other: ScopeValue) -> ScopeValue {
+        match self {
+            ScopeValue::Int(a) => {
+                match other {
+                    ScopeValue::Int(b) => ScopeValue::Int(a * b),
+                    ScopeValue::Decimal(b) => ScopeValue::Decimal(a as f64 * b),
+                    _ => unimplemented!()
+                }
+            },
+            ScopeValue::Decimal(a) => {
+                match other {
+                    ScopeValue::Int(b) => ScopeValue::Decimal(a * b as f64),
+                    ScopeValue::Decimal(b) => ScopeValue::Decimal(a * b),
+                    _ => unimplemented!()
+                }
+            },
+            _ => unimplemented!()
+        }
+    }
+}
+
+impl Div for ScopeValue {
+    type Output = ScopeValue;
+
+    fn div(self, other: ScopeValue) -> ScopeValue {
+        match self {
+            ScopeValue::Int(a) => {
+                match other {
+                    ScopeValue::Int(b) => ScopeValue::Int(a / b),
+                    ScopeValue::Decimal(b) => ScopeValue::Decimal(a as f64 / b),
+                    _ => unimplemented!()
+                }
+            },
+            ScopeValue::Decimal(a) => {
+                match other {
+                    ScopeValue::Int(b) => ScopeValue::Decimal(a / b as f64),
+                    ScopeValue::Decimal(b) => ScopeValue::Decimal(a / b),
                     _ => unimplemented!()
                 }
             },
@@ -104,7 +186,11 @@ impl TransformResult for ScopeValue {
     fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
         match *self {
             ScopeValue::String(ref v) => { v.render(buf)?; },
-            ScopeValue::Decimal(ref v) => { buf.write((v.round() as i64).to_string().as_ref())?; },
+            ScopeValue::Decimal(ref v) => {
+                // round float output since vanilla GGG filters only contain integers
+                let rounded = v.round();
+                buf.write(rounded.to_string().as_ref())?;
+            },
             ScopeValue::Int(ref v) => { buf.write(v.to_string().as_ref())?; },
             ScopeValue::List(ref list) => {
                 for val in list {
