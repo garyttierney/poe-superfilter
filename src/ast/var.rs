@@ -1,7 +1,7 @@
 use ast;
 use ast::{TransformedNode, TransformErr, Value};
 use ast::transform::{Transform, TransformResult};
-use scope::{ScopeData, ScopeValue};
+use scope::{ScopeData};
 use std::rc::Rc;
 use std::cell::RefCell;
 use arena::TypedArena;

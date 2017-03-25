@@ -16,19 +16,19 @@ use arena::TypedArena;
 use ast::transform::TransformResult;
 use std::io::Write;
 
-#[allow(dead_code,unused_imports)]
+#[allow(dead_code)]
 mod filter;
 
-#[allow(dead_code,unused_imports)]
+#[allow(dead_code)]
 pub mod ast;
 
-#[allow(dead_code,unused_imports)]
+#[allow(dead_code)]
 mod tok;
 
 #[cfg(test)]
 mod tests;
 
-#[allow(dead_code,unused_imports)]
+#[allow(dead_code)]
 mod scope;
 
 /// Compiles a complete filter into vanilla loot filter syntax

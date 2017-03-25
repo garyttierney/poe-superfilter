@@ -18,7 +18,6 @@ use ast::var::*;
 use ast::transform::{Transform, TransformResult};
 use scope::{ScopeData, ScopeValue};
 
-use std;
 use std::fmt::Debug;
 use std::rc::Rc;
 use std::cell::RefCell;

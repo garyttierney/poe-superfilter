@@ -1,12 +1,10 @@
 use ast::{TransformedNode,TransformErr,RenderErr};
 use ast::transform::{Transform, TransformResult};
-use scope::{ScopeData, ScopeValue};
+use scope::{ScopeData};
 use std::rc::Rc;
 use std::cell::RefCell;
 use arena::TypedArena;
 use std::io::Write;
-use ast::VarDefinition;
-use ast::mixin::Mixin;
 use ast::block_statements::BlockStatement;
 
 /// Top level statements, can be Blocks of instructions

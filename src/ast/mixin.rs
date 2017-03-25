@@ -1,12 +1,10 @@
-use ast::{Value, TransformedNode, TransformErr, RenderErr};
+use ast::{Value, TransformedNode, TransformErr};
 use ast::block_statements::BlockStatement;
 use ast::transform::{Transform, TransformResult};
-use scope::{ScopeData, ScopeValue};
+use scope::{ScopeData};
 use std::cell::RefCell;
 use std::rc::Rc;
 use arena::TypedArena;
-use ast::block::PlainBlock;
-use std::io::Write;
 
 /// Name and parameter specs for a mixin
 #[derive(Debug, Clone)]

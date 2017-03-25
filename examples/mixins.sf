@@ -1,13 +1,10 @@
-$fontScale = 1.2
-
 Mixin FlaskMagic($type)
-	Class Flask
-	Rarity Magic
-	BaseType $type
-	SetBorderColor 100 100 100
-	SetFontSize 38 * $fontScale
-
+   Class Flask
+   Rarity Magic
+   BaseType $type
+   SetBorderColor 100 100 100
+   SetFontSize 38
 Show
-	+FlaskMagic("Small")
-	SetBorderColor 200 200 200
-	ItemLevel <= 5
+   +FlaskMagic("Small")
+   SetFontSize 45
+   ItemLevel <= 5

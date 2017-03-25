@@ -8,7 +8,7 @@ use tok::Location as TokenLocation;
 use tok::Tok;
 use arena::TypedArena;
 
-//#[LALR]
+#[LALR]
 grammar<'ast>(arena: &'ast TypedArena<Node<'ast>>);
 
 extern {

@@ -1,15 +1,12 @@
 
 use ast::{Value, TransformedNode, TransformErr};
 use ast::transform::{Transform, TransformResult};
-use ast::mixin::MixinCall;
-use ast::VarDefinition;
 use scope::{ScopeData, ScopeValue};
 use std::fmt::Debug;
 use arena::TypedArena;
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::io::Write;
-use std::string::ToString;
 use ast::RenderErr;
 use std::cmp::PartialEq;
 

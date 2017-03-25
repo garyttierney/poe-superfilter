@@ -1,13 +1,10 @@
 use ast::mixin::PreparedMixin;
 use std::collections::BTreeMap;
-use std::error::Error;
-use std::fmt;
 use std::cell::RefCell;
 use std::rc::Rc;
 use ast::transform::TransformResult;
 use std::io::Write;
 use ast::RenderErr;
-use std::convert::From;
 use std::ops::{Add, Sub, Mul, Div};
 
 #[derive(Debug, Clone)]
