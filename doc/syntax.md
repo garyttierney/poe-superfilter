@@ -59,10 +59,9 @@ $var = "value"
 
 Variable definitions are allowed in two places.
 
-1. Anywhere between blocks
+1. Before the first block
 
-    Variables defined here will be visible in all blocks following the variable definition.
-    Note that the order is significant here, a variable won't be available in a block that precedes it.
+    Variables defined here will be visible globally
 
 2. Inside of a block
 
