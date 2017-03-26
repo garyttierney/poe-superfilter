@@ -1,7 +1,7 @@
 use arena::TypedArena;
 use std::rc::Rc;
 use std::cell::RefCell;
-use ast::{TransformErr,TransformedNode};
+use ast::{CompileErr,TransformedNode};
 use ast::transform::Transform;
 use scope::ScopeData;
 use ast::Node;
@@ -26,7 +26,7 @@ pub struct PlainColor {
 
 impl <'a> Transform<'a> for Color<'a> {
     #[allow(unused_variables)]
-    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>) -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
+    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>) -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         unimplemented!();
     }
 }

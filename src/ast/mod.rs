@@ -27,6 +27,9 @@ use std::convert::From;
 use arena::TypedArena;
 use std::fmt::Formatter;
 use std::fmt::Error as FmtError;
+use lalrpop_util::ParseError;
+use tok::Tok;
+use tok::Location as TokenLocation;
 
 pub struct Filter<'ast> {
     pub nodes: Vec<&'ast Node<'ast>>,
@@ -42,7 +45,7 @@ impl <'ast> Debug for Filter<'ast> {
 
 impl <'a> Filter<'a> {
     pub fn transform(&'a self)
-        -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
+        -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         let mut transformed_nodes : Vec<&TransformedNode<'a>> =  Vec::with_capacity(self.nodes.len());
         let root_scope = Rc::new(RefCell::new(ScopeData::new(None)));
         for node in &self.nodes {
@@ -88,7 +91,7 @@ pub enum TransformedNode<'ast> {
 
 impl <'a> Transform<'a> for Node<'a> {
     fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
-        -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
+        -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         // TODO: make this a macro instead of listing all the options manually
         match *self {
             Node::Block(ref n) => n.transform(parent_scope, transformed_arena),
@@ -121,7 +124,7 @@ impl <'ast> TransformResult for TransformedNode<'ast> {
         }
     }
 
-    fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
+    fn render(&self, buf: &mut Write) -> Result<(), CompileErr> {
         match *self {
             // TODO: use a macro for this.
             TransformedNode::Root(ref node) => node.render(buf)?,
@@ -136,7 +139,7 @@ impl <'ast> TransformResult for TransformedNode<'ast> {
 }
 
 impl <'ast> TransformResult for Vec<&'ast TransformedNode<'ast>> {
-    fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
+    fn render(&self, buf: &mut Write) -> Result<(), CompileErr> {
         for node in self {
             node.render(buf)?;
         }
@@ -146,24 +149,7 @@ impl <'ast> TransformResult for Vec<&'ast TransformedNode<'ast>> {
 
 quick_error! {
     #[derive(Debug)]
-    pub enum RenderErr {
-        Io(inner: IoError) {
-            description("IO Error")
-            display("IO Error: {}", inner)
-            cause(inner)
-        }
-    }
-}
-
-impl From<IoError> for RenderErr {
-    fn from(io_err: IoError) -> RenderErr {
-        RenderErr::Io(io_err)
-    }
-}
-
-quick_error! {
-    #[derive(Debug)]
-    pub enum TransformErr {
+    pub enum CompileErr {
         Unknown {
             description("Unknown error")
         }
@@ -183,5 +169,27 @@ quick_error! {
             description("Wrong mixin call parameter count")
             display("Wrong mixin call parameter count in {:?}: expected {}, got {}", node, expected, actual)
         }
+        Io(inner: IoError) {
+            description("IO Error")
+            display("IO Error: {}", inner)
+            cause(inner)
+        }
+        ParseError(inner: ParseError<TokenLocation, Tok, char>) {
+            description("Parse Error")
+            display("Parse Error: {}", inner)
+            cause(inner)
+        }
+    }
+}
+
+impl From<IoError> for CompileErr {
+    fn from(io_err: IoError) -> CompileErr {
+        CompileErr::Io(io_err)
+    }
+}
+
+impl From<ParseError<TokenLocation, Tok, char>> for CompileErr {
+    fn from(err: ParseError<TokenLocation, Tok, char>) -> CompileErr {
+        CompileErr::ParseError(err)
     }
 }

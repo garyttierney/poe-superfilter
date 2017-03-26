@@ -6,15 +6,46 @@
 //! This crate is a CLI application that exposes the functionality of the compiler library. 
 
 extern crate superfilter;
+extern crate rustc_serialize;
+extern crate docopt;
 
 use std::fs::File;
 use std::io::prelude::*;
 use std::io;
+use docopt::Docopt;
 
-/// Compiles one or several files
+const USAGE: &'static str = "
+PoE Superfilter compiler
+
+Usage:
+  superfilter <name> [--output=<file>]
+  superfilter (-h | --help)
+  superfilter --version
+
+Options:
+  -h --help        Show this screen.
+  --version        Show version.
+  --output=<file>  Output file.
+";
+
+#[derive(Debug, RustcDecodable)]
+struct Args {
+    arg_name: String,
+    flag_output: Option<String>
+}
+
 pub fn main() {
-    let mut file = File::open("examples/mixins.sf").unwrap();
+    let args: Args = Docopt::new(USAGE)
+        .and_then(|d| d.decode())
+        .unwrap_or_else(|e| e.exit());
+
+    let mut file = File::open(args.arg_name).unwrap();
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
-    println!("{:?}", superfilter::compile(&contents, &mut io::stdout()));
+    if let Some(out_file) = args.flag_output {
+        let mut file = File::create(out_file).unwrap();
+        superfilter::compile(&contents, &mut file);
+    } else {
+        superfilter::compile(&contents, &mut io::stdout());
+    }
 }

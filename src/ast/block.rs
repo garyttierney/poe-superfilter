@@ -1,4 +1,4 @@
-use ast::{Node,TransformedNode,TransformErr,RenderErr};
+use ast::{Node,TransformedNode,CompileErr};
 use ast::transform::{Transform, TransformResult};
 use scope::{ScopeData};
 use std::rc::Rc;
@@ -24,7 +24,7 @@ pub enum PlainBlock<'a> {
 
 impl <'a> Transform<'a> for Block<'a> {
     fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
-            -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
+            -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         let block_scope = Rc::new(RefCell::new(ScopeData::new(Some(parent_scope))));
 
         // collect transformed statements from lines in this block
@@ -76,7 +76,7 @@ impl <'a> Transform<'a> for Block<'a> {
 }
 
 impl <'a> TransformResult for PlainBlock<'a> {
-    fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
+    fn render(&self, buf: &mut Write) -> Result<(), CompileErr> {
         let nodes = match *self {
             PlainBlock::Show(ref nodes) => {
                 buf.write("Show\n".as_ref())?;

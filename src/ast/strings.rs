@@ -1,12 +1,11 @@
 
-use ast::{TransformedNode, TransformErr};
+use ast::{TransformedNode, CompileErr};
 use scope::{ScopeData, ScopeValue};
 use ast::transform::{Transform, TransformResult};
 use std::rc::Rc;
 use std::cell::RefCell;
 use arena::TypedArena;
 use std::io::Write;
-use ast::RenderErr;
 
 /// String value or reference to a string value
 #[derive(Debug, Clone)]
@@ -21,7 +20,7 @@ impl <'a> TransformResult for String {
         ScopeValue::String(self.clone())
     }
 
-    fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
+    fn render(&self, buf: &mut Write) -> Result<(), CompileErr> {
         let quotes_needed = self.contains(" ");
         if quotes_needed {
             buf.write("\"".as_ref())?;
@@ -36,7 +35,7 @@ impl <'a> TransformResult for String {
 
 impl <'a> Transform<'a> for StringBox {
     fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
-        -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
+        -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         match self {
             &StringBox::Var(ref identifier) => {
                 if let Some(value) = parent_scope.borrow().var(identifier) {
@@ -46,10 +45,10 @@ impl <'a> Transform<'a> for StringBox {
                                 TransformedNode::Value(ScopeValue::String(s.clone()))
                             )));
                         },
-                        val => Err(TransformErr::TypeMismatch("String", val.type_name(), identifier.clone()))
+                        val => Err(CompileErr::TypeMismatch("String", val.type_name(), identifier.clone()))
                     }
                 } else {
-                    let e = TransformErr::MissingVarRef(identifier.clone());
+                    let e = CompileErr::MissingVarRef(identifier.clone());
                     return Err(e);
                 }
             },

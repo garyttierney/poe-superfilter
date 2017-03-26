@@ -1,5 +1,5 @@
 
-use ast::{Node, TransformedNode, TransformErr};
+use ast::{Node, TransformedNode, CompileErr};
 use ast::transform::{Transform, TransformResult};
 use scope::{ScopeData, ScopeValue};
 use arena::TypedArena;
@@ -23,19 +23,19 @@ pub enum ValueExpression<'ast> {
 
 impl <'a> Transform<'a> for ValueExpression<'a> {
     fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
-        -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
+        -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         match *self {
             ValueExpression::Number(ref num_box) => num_box.transform(parent_scope.clone(), transformed_arena),
             ValueExpression::Op(ref a, ref op, ref b) => {
                 // transform each operand
                 let t_a = a.transform(parent_scope.clone(), transformed_arena)?;
                 if let None = t_a {
-                    return Err(TransformErr::MissingValue(format!("{:?}", t_a)))
+                    return Err(CompileErr::MissingValue(format!("{:?}", t_a)))
                 }
 
                 let t_b = b.transform(parent_scope.clone(), transformed_arena)?;
                 if let None = t_b {
-                    return Err(TransformErr::MissingValue(format!("{:?}", t_b)))
+                    return Err(CompileErr::MissingValue(format!("{:?}", t_b)))
                 }
 
                 let a_val = t_a.unwrap().return_value();
@@ -63,7 +63,7 @@ pub enum NumberBox {
 
 impl <'a> Transform<'a> for NumberBox {
     fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
-        -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
+        -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         match *self {
             NumberBox::Decimal(num) => Ok(Some(transformed_arena.alloc(
                 TransformedNode::Value(ScopeValue::Decimal(num))
@@ -80,10 +80,10 @@ impl <'a> Transform<'a> for NumberBox {
                         ScopeValue::Decimal(num) => Ok(Some(transformed_arena.alloc(
                             TransformedNode::Value(ScopeValue::Decimal(num))
                         ))),
-                        other => Err(TransformErr::TypeMismatch("Int or Decimal", other.type_name(), "Anonymous".to_owned()))
+                        other => Err(CompileErr::TypeMismatch("Int or Decimal", other.type_name(), "Anonymous".to_owned()))
                     }
                 } else {
-                    Err(TransformErr::MissingVarRef(identifier.clone()))
+                    Err(CompileErr::MissingVarRef(identifier.clone()))
                 }
             }
         }

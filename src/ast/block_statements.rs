@@ -1,12 +1,11 @@
 
-use ast::{TransformedNode, TransformErr, Node};
+use ast::{TransformedNode, CompileErr, Node};
 use ast::transform::{Transform, TransformResult};
 use scope::{ScopeData, ScopeValue};
 use arena::TypedArena;
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::io::Write;
-use ast::RenderErr;
 use std::cmp::PartialEq;
 
 /// AST structure for a value set or other instruction statement
@@ -30,7 +29,7 @@ impl PartialEq for PlainSetValueStatement {
 
 impl <'a> Transform<'a> for SetValueStatement<'a> {
     fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
-        -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
+        -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         let mut transformed_values: Vec<ScopeValue> = vec![];
         for value in &self.values {
             if let Some(t_value) = try!(value.transform(parent_scope.clone(), transformed_arena)) {
@@ -48,7 +47,7 @@ impl <'a> Transform<'a> for SetValueStatement<'a> {
 }
 
 impl TransformResult for PlainSetValueStatement {
-    fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
+    fn render(&self, buf: &mut Write) -> Result<(), CompileErr> {
         buf.write(self.name.as_ref())?;
         for val in &self.values {
             buf.write(" ".as_ref())?;
@@ -80,7 +79,7 @@ impl PartialEq for PlainConditionStatement {
 
 impl <'a> Transform<'a> for ConditionStatement<'a> {
     fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
-        -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
+        -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         if let Some(t_value) = self.condition.value.transform(parent_scope.clone(), transformed_arena)? {
             return Ok(Some(transformed_arena.alloc(TransformedNode::ConditionStmt(
                 PlainConditionStatement {
@@ -89,12 +88,12 @@ impl <'a> Transform<'a> for ConditionStatement<'a> {
                 }
             ))));
         }
-        return Err(TransformErr::Unknown);
+        return Err(CompileErr::Unknown);
     }
 }
 
 impl TransformResult for PlainConditionStatement {
-    fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
+    fn render(&self, buf: &mut Write) -> Result<(), CompileErr> {
         buf.write(self.name.as_ref())?;
         buf.write(" ".as_ref())?;
         self.condition.operator.render(buf)?;
@@ -130,7 +129,7 @@ pub enum ComparisonOperator {
 }
 
 impl TransformResult for ComparisonOperator {
-    fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
+    fn render(&self, buf: &mut Write) -> Result<(), CompileErr> {
         buf.write(match *self {
             ComparisonOperator::Eql => "=",
             ComparisonOperator::Gt => ">",

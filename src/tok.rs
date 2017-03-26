@@ -1,5 +1,7 @@
 use regex::Regex;
 use std::str::FromStr;
+use std::fmt::Display;
+use std::fmt;
 
 /// All tokens that can occur in superfilter syntax 
 #[derive(Clone, Debug, PartialEq)]
@@ -28,10 +30,22 @@ pub enum Tok {
     Import,
 }
 
+impl Display for Tok {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct Location {
     line: isize,
     pos: isize
+}
+
+impl Display for Location {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}:{}", self.line, self.pos)
+    }
 }
 
 impl Default for Location {

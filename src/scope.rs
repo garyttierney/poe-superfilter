@@ -4,7 +4,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use ast::transform::TransformResult;
 use std::io::Write;
-use ast::RenderErr;
+use ast::CompileErr;
 use std::ops::{Add, Sub, Mul, Div};
 
 /// Symbol table structure that hold variables and mixins that are available in a scope
@@ -192,7 +192,7 @@ impl TransformResult for ScopeValue {
         self.clone()
     }
 
-    fn render(&self, buf: &mut Write) -> Result<(), RenderErr> {
+    fn render(&self, buf: &mut Write) -> Result<(), CompileErr> {
         match *self {
             ScopeValue::String(ref v) => { v.render(buf)?; },
             ScopeValue::Decimal(ref v) => {

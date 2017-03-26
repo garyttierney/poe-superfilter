@@ -1,4 +1,4 @@
-use ast::{TransformedNode, TransformErr, Node};
+use ast::{TransformedNode, CompileErr, Node};
 use ast::transform::{Transform, TransformResult};
 use scope::{ScopeData};
 use std::rc::Rc;
@@ -12,13 +12,13 @@ pub struct VarReference {
 }
 impl <'a> Transform<'a> for VarReference {
     fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
-                     -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
+                     -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         // try to resolve variable reference
         match parent_scope.borrow().var(&self.identifier) {
             Some(val) => Ok(Some(
                 transformed_arena.alloc(TransformedNode::Value(val))
             )),
-            None => Err(TransformErr::MissingVarRef(self.identifier.clone()))
+            None => Err(CompileErr::MissingVarRef(self.identifier.clone()))
         }
     }
 }
@@ -34,7 +34,7 @@ impl <'a> Transform<'a> for VarDefinition<'a> {
     fn transform(&'a self,
                  parent_scope: Rc<RefCell<ScopeData<'a>>>,
                  transformed_arena: &'a TypedArena<TransformedNode<'a>>)
-                     -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
+                     -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         for val in &self.values {
             if let Some(t_val) = val.transform(parent_scope.clone(), transformed_arena)? {
                 // export variable to parent scope

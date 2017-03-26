@@ -11,6 +11,7 @@
 
 extern crate regex;
 extern crate arena;
+extern crate lalrpop_util;
 
 use arena::TypedArena;
 use ast::transform::TransformResult;
@@ -36,7 +37,6 @@ pub fn compile(contents: &str, out_buf: &mut Write) {
     let tokens = Box::new(tok::tokenize(contents));
     let ast_arena = TypedArena::new();
     let filter = filter::parse_Filter(&ast_arena, tokens.into_iter());
-    println!("{:?}", filter);
     if let Some(transformed_tree) = filter.unwrap().transform().unwrap() {
         transformed_tree.render(out_buf).unwrap();
     }

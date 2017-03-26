@@ -1,4 +1,4 @@
-use ast::{Node, TransformedNode, TransformErr};
+use ast::{Node, TransformedNode, CompileErr};
 use ast::transform::{Transform, TransformResult};
 use scope::{ScopeData};
 use std::cell::RefCell;
@@ -22,7 +22,7 @@ pub struct PreparedMixin<'a> {
 
 impl <'a> Transform<'a> for Mixin<'a> {
     fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
-        -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
+        -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         let mut t_params = Vec::new();
         for param in &self.parameters {
             if let Some(default_value) = param.default {
@@ -32,7 +32,7 @@ impl <'a> Transform<'a> for Mixin<'a> {
                         default: Some(t_value.clone()),
                     })
                 } else {
-                    return Err(TransformErr::MissingValue(format!("{:?}", self)))
+                    return Err(CompileErr::MissingValue(format!("{:?}", self)))
                 }
             } else {
                 t_params.push(PlainParam {
@@ -81,11 +81,11 @@ pub type ResolvedMixin<'a> = Vec<&'a TransformedNode<'a>>;
 impl <'a> Transform<'a> for MixinCall<'a> {
     #[allow(unused_variables)]
     fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
-        -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
+        -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         if let Some(mixin) = parent_scope.borrow().mixin(&self.name) {
             // catch parameter count mismatch
             if mixin.parameters.len() != self.parameters.len() {
-                return Err(TransformErr::WrongParameterCount(format!("{:?}", self), mixin.parameters.len(), self.parameters.len()));
+                return Err(CompileErr::WrongParameterCount(format!("{:?}", self), mixin.parameters.len(), self.parameters.len()));
             }
 
             // transform parameters in this call
@@ -94,7 +94,7 @@ impl <'a> Transform<'a> for MixinCall<'a> {
                 if let Some(t_param) = param.transform(parent_scope.clone(), transformed_arena)? {
                     t_params.push(t_param);
                 } else {
-                    return Err(TransformErr::MissingValue(format!("{:?}", param)))
+                    return Err(CompileErr::MissingValue(format!("{:?}", param)))
                 }
             }
 
@@ -116,7 +116,7 @@ impl <'a> Transform<'a> for MixinCall<'a> {
                 transformed_arena.alloc(TransformedNode::ResolvedMixin(t_statements))
             ))
         } else {
-            Err(TransformErr::MissingVarRef(self.name.clone()))
+            Err(CompileErr::MissingVarRef(self.name.clone()))
         }
     }
 }
