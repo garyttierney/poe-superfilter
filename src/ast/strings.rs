@@ -1,5 +1,4 @@
 
-use ast;
 use ast::{TransformedNode, TransformErr};
 use scope::{ScopeData, ScopeValue};
 use ast::transform::{Transform, TransformResult};
@@ -9,13 +8,14 @@ use arena::TypedArena;
 use std::io::Write;
 use ast::RenderErr;
 
-/// String value or variable reference
+/// String value or reference to a string value
 #[derive(Debug, Clone)]
 pub enum StringBox {
     Value(String),
     Var(String)
 }
 
+/// Implements TransformResult for any string
 impl <'a> TransformResult for String {
     fn return_value(&self) -> ScopeValue {
         ScopeValue::String(self.clone())
@@ -34,7 +34,6 @@ impl <'a> TransformResult for String {
     }
 }
 
-impl <'a> ast::Value<'a> for StringBox {}
 impl <'a> Transform<'a> for StringBox {
     fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
         -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {

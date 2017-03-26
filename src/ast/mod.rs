@@ -28,8 +28,6 @@ use arena::TypedArena;
 use std::fmt::Formatter;
 use std::fmt::Error as FmtError;
 
-pub trait Value<'a> : Debug + Transform<'a> {}
-
 pub struct Filter<'ast> {
     pub nodes: Vec<&'ast Node<'ast>>,
     pub transformed_arena: TypedArena<TransformedNode<'ast>>
@@ -109,8 +107,6 @@ impl <'a> Transform<'a> for Node<'a> {
         }
     }
 }
-impl <'a> Value<'a> for Node<'a> {}
-impl <'a> BlockStatement<'a> for Node<'a> {}
 
 impl <'ast> TransformResult for TransformedNode<'ast> {
     fn return_value(&self) -> ScopeValue {

@@ -4,7 +4,7 @@ use std::cell::RefCell;
 use ast::{TransformErr,TransformedNode};
 use ast::transform::Transform;
 use scope::ScopeData;
-use ast::{Value, Node};
+use ast::Node;
 
 #[derive(Debug, Clone)]
 pub struct Color<'a> {
@@ -24,7 +24,6 @@ pub struct PlainColor {
     pub a: u8
 }
 
-impl <'a> Value<'a> for Color<'a> {}
 impl <'a> Transform<'a> for Color<'a> {
     #[allow(unused_variables)]
     fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>) -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {

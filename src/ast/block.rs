@@ -1,19 +1,18 @@
-use ast::{TransformedNode,TransformErr,RenderErr};
+use ast::{Node,TransformedNode,TransformErr,RenderErr};
 use ast::transform::{Transform, TransformResult};
 use scope::{ScopeData};
 use std::rc::Rc;
 use std::cell::RefCell;
 use arena::TypedArena;
 use std::io::Write;
-use ast::block_statements::BlockStatement;
 
 /// Top level statements, can be Blocks of instructions
 /// like Show/Hide/Mixin or single top-level statements,
 /// e.g. variable definitions and imports
 #[derive(Debug, Clone)]
 pub enum Block<'a> {
-    Show(Vec<&'a BlockStatement<'a>>),
-    Hide(Vec<&'a BlockStatement<'a>>),
+    Show(Vec<&'a Node<'a>>),
+    Hide(Vec<&'a Node<'a>>),
     Import(String),
 }
 

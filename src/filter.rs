@@ -2658,7 +2658,7 @@ pub fn __action6<
 ) -> &'ast Node<'ast>
 {
     arena.alloc(Node::Block(
-        ast::block::Block::Show(__0.into_iter().map(|e| e as &stm::BlockStatement).collect())
+        ast::block::Block::Show(__0)
     ))
 }
 
@@ -2673,7 +2673,7 @@ pub fn __action7<
 ) -> &'ast Node<'ast>
 {
     arena.alloc(Node::Block(
-        ast::block::Block::Hide(__0.into_iter().map(|e| e as &stm::BlockStatement).collect())
+        ast::block::Block::Hide(__0)
     ))
 }
 
@@ -2699,7 +2699,7 @@ pub fn __action8<
             ast::mixin::Mixin{
                 name: name,
                 parameters: params,
-                statements: instructions.into_iter().map(|e| e as &stm::BlockStatement).collect()
+                statements: instructions
             }
         ))
     }
@@ -2740,7 +2740,7 @@ pub fn __action11<
 {
     ast::var::VarDefinition {
         identifier: id,
-        values: v.into_iter().map(|e| e as &ast::Value).collect()
+        values: v
     }
 }
 
@@ -2770,7 +2770,7 @@ pub fn __action13<
     arena.alloc(Node::SetValueStmt(
         stm::SetValueStatement {
             name: n,
-            values: val.into_iter().map(|e| e as &ast::Value).collect()
+            values: val
         }
     ))
 }
@@ -2807,7 +2807,7 @@ pub fn __action15<
     arena.alloc(Node::MixinCall(
         ast::mixin::MixinCall {
             name: n,
-            parameters: params.unwrap_or(vec![]).into_iter().map(|e| e as &ast::Value).collect()
+            parameters: params.unwrap_or(vec![])
 }
     ))
 }

@@ -1,5 +1,4 @@
 
-use ast;
 use ast::{Node, TransformedNode, TransformErr};
 use ast::transform::{Transform, TransformResult};
 use scope::{ScopeData, ScopeValue};
@@ -22,7 +21,6 @@ pub enum ValueExpression<'ast> {
     Op(&'ast Node<'ast>, NumberOperation, &'ast Node<'ast>)
 }
 
-impl <'a> ast::Value<'a> for ValueExpression<'a> {}
 impl <'a> Transform<'a> for ValueExpression<'a> {
     fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
         -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {

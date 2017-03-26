@@ -60,10 +60,10 @@ ImportBlock : &'ast Node<'ast> = "Import" <StrLiteral> "\n" => arena.alloc(Node:
 
 ContentBlock : &'ast Node<'ast> = {
     "Show" "\n" <Statement*> => arena.alloc(Node::Block(
-        ast::block::Block::Show(<>.into_iter().map(|e| e as &stm::BlockStatement).collect())
+        ast::block::Block::Show(<>)
     )),
     "Hide" "\n" <Statement*> => arena.alloc(Node::Block(
-        ast::block::Block::Hide(<>.into_iter().map(|e| e as &stm::BlockStatement).collect())
+        ast::block::Block::Hide(<>)
     )),
     "Mixin" <name:Constant> <args:("(" <Comma<VarIdentifier>> ")")?> "\n" <instructions:Statement*> => {
         let params = args
@@ -75,7 +75,7 @@ ContentBlock : &'ast Node<'ast> = {
             ast::mixin::Mixin{
                 name: name,
                 parameters: params,
-                statements: instructions.into_iter().map(|e| e as &stm::BlockStatement).collect()
+                statements: instructions
             }
         ))
     }
@@ -97,7 +97,7 @@ Comma<T>: Vec<T> = {
 VarDefinition : ast::var::VarDefinition<'ast>  = {
     <id:VarIdentifier> "=" <v:Value+> "\n" => ast::var::VarDefinition {
         identifier: id,
-        values: v.into_iter().map(|e| e as &ast::Value).collect()
+        values: v
     }
 };
 
@@ -111,13 +111,13 @@ SetValueStmt : &'ast Node<'ast> = {
     <n:Constant> <val:Value+> "\n" => arena.alloc(Node::SetValueStmt(
         stm::SetValueStatement {
             name: n,
-            values: val.into_iter().map(|e| e as &ast::Value).collect()
+            values: val
         }
     ))
 };
 
 ConditionStmt : &'ast Node<'ast> = {
-    < n: Constant > < cond: Condition > "\n" => arena.alloc(Node::ConditionStmt(
+    <n: Constant> <cond: Condition> "\n" => arena.alloc(Node::ConditionStmt(
         stm::ConditionStatement {
             name: n,
             condition: cond
@@ -129,7 +129,7 @@ MixinCall : &'ast Node<'ast> = {
     "+" <n:Constant> <params:("(" <Comma<Value>> ")")?> "\n" => arena.alloc(Node::MixinCall(
         ast::mixin::MixinCall {
             name: n,
-            parameters: params.unwrap_or(vec![]).into_iter().map(|e| e as &ast::Value).collect()
+            parameters: params.unwrap_or(vec![])
 }
     ))
 };

@@ -19,9 +19,16 @@ pub trait Transform<'a> {
         -> Result<Option<&'a TransformedNode<'a>>, TransformErr>;
 }
 
+/// Fully transformed AST structures should implement this trait in order to be renderable and make
+/// their result available for use in parent nodes
 pub trait TransformResult {
+    /// Returns the return value of this AST structure if it has one. The return value of this
+    /// function can be used in parent structures that base their transformation on the result
+    /// of child nodes.
     fn return_value(&self) -> ScopeValue {
         ScopeValue::None
     }
+
+    /// Renders the output for this node into a writable stream.
     fn render(&self, buf: &mut Write) -> Result<(), RenderErr>;
 }

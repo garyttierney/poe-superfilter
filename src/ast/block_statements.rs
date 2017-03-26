@@ -1,8 +1,7 @@
 
-use ast::{Value, TransformedNode, TransformErr};
+use ast::{TransformedNode, TransformErr, Node};
 use ast::transform::{Transform, TransformResult};
 use scope::{ScopeData, ScopeValue};
-use std::fmt::Debug;
 use arena::TypedArena;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -10,12 +9,11 @@ use std::io::Write;
 use ast::RenderErr;
 use std::cmp::PartialEq;
 
-pub trait BlockStatement<'a> : Debug + Transform<'a> {}
-
+/// AST structure for a value set or other instruction statement
 #[derive(Debug, Clone)]
 pub struct SetValueStatement<'a> {
     pub name : String,
-    pub values : Vec<&'a Value<'a>>
+    pub values : Vec<&'a Node<'a>>
 }
 
 #[derive(Debug,Clone)]
@@ -30,7 +28,6 @@ impl PartialEq for PlainSetValueStatement {
     }
 }
 
-impl <'a> BlockStatement<'a> for SetValueStatement<'a> {}
 impl <'a> Transform<'a> for SetValueStatement<'a> {
     fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
         -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
@@ -62,6 +59,7 @@ impl TransformResult for PlainSetValueStatement {
     }
 }
 
+/// AST structure for a condition statement
 #[derive(Debug, Clone)]
 pub struct ConditionStatement<'a> {
     pub name : String,
@@ -80,7 +78,6 @@ impl PartialEq for PlainConditionStatement {
     }
 }
 
-impl <'a> BlockStatement<'a> for ConditionStatement<'a> {}
 impl <'a> Transform<'a> for ConditionStatement<'a> {
     fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
         -> Result<Option<&'a TransformedNode<'a>>, TransformErr> {
@@ -108,9 +105,11 @@ impl TransformResult for PlainConditionStatement {
     }
 }
 
+/// AST structure for a condition. This node is always embedded, so there is no
+/// corresponding variant for it in the ast::Node enum
 #[derive(Debug, Clone)]
 pub struct Condition<'a> {
-    pub value: &'a Value<'a>,
+    pub value: &'a Node<'a>,
     pub operator: ComparisonOperator
 }
 
@@ -120,6 +119,7 @@ pub struct PlainCondition {
     pub operator: ComparisonOperator
 }
 
+/// Comparison operator AST structure
 #[derive(Debug, Clone, Copy)]
 pub enum ComparisonOperator {
     Eql,

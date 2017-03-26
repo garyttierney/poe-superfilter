@@ -1,5 +1,4 @@
-use ast::{Value, TransformedNode, TransformErr};
-use ast::block_statements::BlockStatement;
+use ast::{Node, TransformedNode, TransformErr};
 use ast::transform::{Transform, TransformResult};
 use scope::{ScopeData};
 use std::cell::RefCell;
@@ -11,14 +10,14 @@ use arena::TypedArena;
 pub struct Mixin<'a> {
     pub name: String,
     pub parameters: Vec<Param<'a>>,
-    pub statements: Vec<&'a BlockStatement<'a>>
+    pub statements: Vec<&'a Node<'a>>
 }
 
 #[derive(Debug, Clone)]
 pub struct PreparedMixin<'a> {
     pub name: String,
     pub parameters: Vec<PlainParam<'a>>,
-    pub statements: Vec<&'a BlockStatement<'a>>
+    pub statements: Vec<&'a Node<'a>>
 }
 
 impl <'a> Transform<'a> for Mixin<'a> {
@@ -60,7 +59,7 @@ impl <'a> Transform<'a> for Mixin<'a> {
 #[derive(Debug, Clone)]
 pub struct Param<'a> {
     pub name: String,
-    pub default: Option<&'a Value<'a>>
+    pub default: Option<&'a Node<'a>>
 }
 
 /// (Mixin) Parameter name and default values
@@ -70,12 +69,11 @@ pub struct PlainParam<'a> {
     pub default: Option<TransformedNode<'a>>
 }
 
-/// Represents a mixin include with name and
-/// parameters
+/// Represents a mixin include with name and parameters
 #[derive(Debug, Clone)]
 pub struct MixinCall<'a> {
     pub name: String,
-    pub parameters: Vec<&'a Value<'a>>
+    pub parameters: Vec<&'a Node<'a>>
 }
 
 pub type ResolvedMixin<'a> = Vec<&'a TransformedNode<'a>>;
@@ -122,4 +120,3 @@ impl <'a> Transform<'a> for MixinCall<'a> {
         }
     }
 }
-impl <'a> BlockStatement<'a> for MixinCall<'a> {}

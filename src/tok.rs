@@ -226,6 +226,8 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
         None
     }
 
+    /// Consumes a quoted string (obeying escape sequences) and returns its contents.
+    /// The return value does not contain the quotes themselves.
     fn take_quoted_string(&mut self, quote:char) -> String {
         let mut buf = String::new();
 
@@ -246,6 +248,9 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
         return buf;
     }
 
+    /// Consumes characters, calling a closure each time until the closure returns false.
+    /// Returns a String with all characters consumed up to that point.
+    /// Taken from https://github.com/nikomatsakis/lalrpop/blob/master/lalrpop-test/src/util/tok.rs
     fn take_while<F>(&mut self, c0:char, f: F) -> String
         where F: Fn(char) -> bool
     {

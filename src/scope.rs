@@ -7,6 +7,7 @@ use std::io::Write;
 use ast::RenderErr;
 use std::ops::{Add, Sub, Mul, Div};
 
+/// Symbol table structure that hold variables and mixins that are available in a scope
 #[derive(Debug, Clone)]
 pub struct ScopeData<'ast> {
     pub parent: Option<Rc<RefCell<ScopeData<'ast>>>>,
@@ -15,6 +16,7 @@ pub struct ScopeData<'ast> {
 }
 
 impl <'ast> ScopeData<'ast> {
+    /// Creates a new instance with an optional reference to a parent scope
     pub fn new(parent: Option<Rc<RefCell<ScopeData<'ast>>>>) -> ScopeData<'ast> {
         ScopeData {
             parent: parent,
@@ -23,9 +25,14 @@ impl <'ast> ScopeData<'ast> {
         }
     }
 
+    /// Returns the parent scope
     pub fn parent(&self) -> Option<Rc<RefCell<ScopeData<'ast>>>> { self.parent.clone() }
 
+    /// Adds a variable to this scope
     pub fn push_var(&mut self, ident:String, value: ScopeValue) { self.vars.insert(ident, value); }
+
+    /// Resolves a variable that is available in this scope. Traverses up to parent scopes
+    /// if necessary.
     pub fn var(&self, ident:&String) -> Option<ScopeValue> {
         // return from current scope if found
         if let Some(var) = self.vars.get(ident) {
@@ -40,7 +47,11 @@ impl <'ast> ScopeData<'ast> {
         }
     }
 
+    /// Adds a mixin to this scope
     pub fn push_mixin(&mut self, ident:String, value:PreparedMixin<'ast>) { self.mixins.insert(ident, value); }
+
+    /// Resolves a variable that is available in this scope. Traverses up to parent scopes
+    /// if necessary.
     pub fn mixin(&self, ident:&String) -> Option<PreparedMixin<'ast>> {
         // return from current scope if found
         if let Some(mixin) = self.mixins.get(ident) {
@@ -56,6 +67,7 @@ impl <'ast> ScopeData<'ast> {
     }
 }
 
+/// Holds the value of a variable that can be held in a ScopeData instance
 #[derive(Clone,Debug,PartialEq)]
 pub enum ScopeValue {
     String(String),
