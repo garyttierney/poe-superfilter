@@ -1,12 +1,7 @@
+Import "mixins.sf"
+
 $test = "abc"
 $test2 = 1
-
-Mixin FlaskMagic($type)
-	Class Flask
-	Rarity Magic
-	BaseType $type
-	SetBorderColor 100 100 100
-	SetFontSize 38
 
 Show
 	+FlaskMagic("Small")

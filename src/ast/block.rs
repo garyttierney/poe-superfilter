@@ -4,7 +4,10 @@ use scope::{ScopeData};
 use std::rc::Rc;
 use std::cell::RefCell;
 use arena::TypedArena;
-use std::io::Write;
+use std::io::{Write, Read};
+use tok;
+use std::fs;
+use filter;
 
 /// Top level statements, can be Blocks of instructions
 /// like Show/Hide/Mixin or single top-level statements,
@@ -23,18 +26,18 @@ pub enum PlainBlock<'a> {
 }
 
 impl <'a> Transform<'a> for Block<'a> {
-    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
+    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>, ast_arena: &'a TypedArena<Node<'a>> )
             -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
-        let block_scope = Rc::new(RefCell::new(ScopeData::new(Some(parent_scope))));
+        let block_scope = Rc::new(RefCell::new(ScopeData::new(Some(parent_scope.clone()))));
 
         // collect transformed statements from lines in this block
         let mut t_statements : Vec<&TransformedNode> = Vec::new();
         match self {
             &Block::Show(ref statements) | &Block::Hide(ref statements) => {
                 for statement in statements {
-                    if let Some(t_statement) = statement.transform(block_scope.clone(), transformed_arena)? {
+                    if let Some(t_statement) = statement.transform(block_scope.clone(), transformed_arena, ast_arena)? {
                         match *t_statement {
-                            TransformedNode::ResolvedMixin(ref resolved_stmts) => {
+                            TransformedNode::ExpandedNodes(ref resolved_stmts) => {
                                 for stmt in resolved_stmts {
                                     // replace existing same statement if possible
                                     if let Some(index) = t_statements.iter().position(|other| *other == *stmt) {
@@ -56,9 +59,27 @@ impl <'a> Transform<'a> for Block<'a> {
                     }
                 }
             }
-            node => {
-                println!("{:?}", node);
-                unimplemented!()
+            &Block::Import(ref path) => {
+                let mut file = fs::File::open(path)?;
+                let mut contents = String::new();
+                file.read_to_string(&mut contents)?;
+
+                let tokens = Box::new(tok::tokenize(&contents));
+                {
+                    match filter::parse_Filter(&ast_arena, tokens.into_iter()) {
+                        Ok(&Node::Filter(ref filter)) => {
+                            if let Some(transformed_tree) = filter.transform_begin(&ast_arena, parent_scope.clone()).unwrap() {
+
+                                return Ok(Some(transformed_arena.alloc(TransformedNode::ExpandedNodes(
+                                    t_statements
+                                ))))
+                            } else {
+                                return Ok(None);
+                            }
+                        },
+                        _ => return Err(CompileErr::Unknown)
+                    }
+                }
             }
         }
 

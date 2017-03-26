@@ -67,7 +67,7 @@ mod __parse__Filter {
         NtDefinitionBlock(&'ast Node<'ast>),
         NtDefinitionBlock_2a(::std::vec::Vec<&'ast Node<'ast>>),
         NtDefinitionBlock_2b(::std::vec::Vec<&'ast Node<'ast>>),
-        NtFilter(ast::Filter<'ast>),
+        NtFilter(&'ast Node<'ast>),
         NtImportBlock(&'ast Node<'ast>),
         NtMixinCall(&'ast Node<'ast>),
         NtNumberLiteral(&'ast Node<'ast>),
@@ -85,7 +85,7 @@ mod __parse__Filter {
         NtVarDefinition(ast::var::VarDefinition<'ast>),
         NtVarIdentifier_3f(::std::option::Option<String>),
         NtVarReference(&'ast Node<'ast>),
-        Nt____Filter(ast::Filter<'ast>),
+        Nt____Filter(&'ast Node<'ast>),
     }
     const __ACTION: &'static [i32] = &[
         // State 0
@@ -613,7 +613,7 @@ mod __parse__Filter {
     >(
         arena: &'ast TypedArena<Node<'ast>>,
         __tokens0: __TOKENS,
-    ) -> Result<ast::Filter<'ast>, __lalrpop_util::ParseError<TokenLocation, Tok, char>>
+    ) -> Result<&'ast Node<'ast>, __lalrpop_util::ParseError<TokenLocation, Tok, char>>
     {
         let __tokens = __tokens0.into_iter();
         let mut __tokens = __tokens.map(|t| __ToTriple::to_triple(t));
@@ -799,7 +799,7 @@ mod __parse__Filter {
         __states: &mut ::std::vec::Vec<i32>,
         __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>,
         _: ::std::marker::PhantomData<()>,
-    ) -> Option<Result<ast::Filter<'ast>,__lalrpop_util::ParseError<TokenLocation, Tok, char>>>
+    ) -> Option<Result<&'ast Node<'ast>,__lalrpop_util::ParseError<TokenLocation, Tok, char>>>
     {
         let __nonterminal = match -__action {
             1 => {
@@ -2383,7 +2383,7 @@ mod __parse__Filter {
       'ast,
     >(
         __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
-    ) -> (TokenLocation, ast::Filter<'ast>, TokenLocation) {
+    ) -> (TokenLocation, &'ast Node<'ast>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::NtFilter(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
@@ -2563,7 +2563,7 @@ mod __parse__Filter {
       'ast,
     >(
         __symbols: &mut ::std::vec::Vec<(TokenLocation,__Symbol<'ast>,TokenLocation)>
-    ) -> (TokenLocation, ast::Filter<'ast>, TokenLocation) {
+    ) -> (TokenLocation, &'ast Node<'ast>, TokenLocation) {
         match __symbols.pop().unwrap() {
             (__l, __Symbol::Nt____Filter(__v), __r) => (__l, __v, __r),
             _ => panic!("symbol type mismatch")
@@ -2577,8 +2577,8 @@ pub fn __action0<
     'ast,
 >(
     arena: &'ast TypedArena<Node<'ast>>,
-    (_, __0, _): (TokenLocation, ast::Filter<'ast>, TokenLocation),
-) -> ast::Filter<'ast>
+    (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
+) -> &'ast Node<'ast>
 {
     (__0)
 }
@@ -2591,13 +2591,13 @@ pub fn __action1<
     (_, defs, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     (_, first, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
     (_, rest, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
-) -> ast::Filter<'ast>
+) -> &'ast Node<'ast>
 {
     {
         let mut nodes = defs;
         nodes.push(first);
         nodes.extend(rest);
-        ast::Filter { nodes: nodes, transformed_arena: TypedArena::new() }
+        arena.alloc(Node::Filter(ast::Filter { nodes: nodes, transformed_arena: TypedArena::new() }))
     }
 }
 
@@ -2607,9 +2607,11 @@ pub fn __action2<
 >(
     arena: &'ast TypedArena<Node<'ast>>,
     (_, __0, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
-) -> ast::Filter<'ast>
+) -> &'ast Node<'ast>
 {
-    ast::Filter { nodes: __0, transformed_arena: TypedArena::new() }
+    arena.alloc(Node::Filter(
+        ast::Filter { nodes: __0, transformed_arena: TypedArena::new() }
+    ))
 }
 
 #[allow(unused_variables)]
@@ -3947,7 +3949,7 @@ pub fn __action93<
     arena: &'ast TypedArena<Node<'ast>>,
     __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     __1: (TokenLocation, &'ast Node<'ast>, TokenLocation),
-) -> ast::Filter<'ast>
+) -> &'ast Node<'ast>
 {
     let __start0 = __1.2.clone();
     let __end0 = __1.2.clone();
@@ -3973,7 +3975,7 @@ pub fn __action94<
     __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     __1: (TokenLocation, &'ast Node<'ast>, TokenLocation),
     __2: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
-) -> ast::Filter<'ast>
+) -> &'ast Node<'ast>
 {
     let __start0 = __2.0.clone();
     let __end0 = __2.2.clone();
@@ -3996,7 +3998,7 @@ pub fn __action95<
 >(
     arena: &'ast TypedArena<Node<'ast>>,
     __0: (TokenLocation, &'ast Node<'ast>, TokenLocation),
-) -> ast::Filter<'ast>
+) -> &'ast Node<'ast>
 {
     let __start0 = __0.0.clone();
     let __end0 = __0.0.clone();
@@ -4020,7 +4022,7 @@ pub fn __action96<
     arena: &'ast TypedArena<Node<'ast>>,
     __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     __1: (TokenLocation, &'ast Node<'ast>, TokenLocation),
-) -> ast::Filter<'ast>
+) -> &'ast Node<'ast>
 {
     let __start0 = __0.0.clone();
     let __end0 = __0.2.clone();
@@ -4043,7 +4045,7 @@ pub fn __action97<
     arena: &'ast TypedArena<Node<'ast>>,
     __0: (TokenLocation, &'ast Node<'ast>, TokenLocation),
     __1: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
-) -> ast::Filter<'ast>
+) -> &'ast Node<'ast>
 {
     let __start0 = __0.0.clone();
     let __end0 = __0.0.clone();
@@ -4069,7 +4071,7 @@ pub fn __action98<
     __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     __1: (TokenLocation, &'ast Node<'ast>, TokenLocation),
     __2: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
-) -> ast::Filter<'ast>
+) -> &'ast Node<'ast>
 {
     let __start0 = __0.0.clone();
     let __end0 = __0.2.clone();
@@ -4093,7 +4095,7 @@ pub fn __action99<
     arena: &'ast TypedArena<Node<'ast>>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
-) -> ast::Filter<'ast>
+) -> &'ast Node<'ast>
 {
     let __start0 = __lookbehind.clone();
     let __end0 = __lookahead.clone();
@@ -4115,7 +4117,7 @@ pub fn __action100<
 >(
     arena: &'ast TypedArena<Node<'ast>>,
     __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
-) -> ast::Filter<'ast>
+) -> &'ast Node<'ast>
 {
     let __start0 = __0.0.clone();
     let __end0 = __0.2.clone();

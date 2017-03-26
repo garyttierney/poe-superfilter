@@ -28,11 +28,11 @@ impl PartialEq for PlainSetValueStatement {
 }
 
 impl <'a> Transform<'a> for SetValueStatement<'a> {
-    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
+    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>, ast_arena: &'a TypedArena<Node<'a>> )
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         let mut transformed_values: Vec<ScopeValue> = vec![];
         for value in &self.values {
-            if let Some(t_value) = try!(value.transform(parent_scope.clone(), transformed_arena)) {
+            if let Some(t_value) = try!(value.transform(parent_scope.clone(), transformed_arena, ast_arena)) {
                 transformed_values.push(t_value.return_value());
             }
         }
@@ -78,9 +78,9 @@ impl PartialEq for PlainConditionStatement {
 }
 
 impl <'a> Transform<'a> for ConditionStatement<'a> {
-    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
+    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>, ast_arena: &'a TypedArena<Node<'a>> )
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
-        if let Some(t_value) = self.condition.value.transform(parent_scope.clone(), transformed_arena)? {
+        if let Some(t_value) = self.condition.value.transform(parent_scope.clone(), transformed_arena, ast_arena)? {
             return Ok(Some(transformed_arena.alloc(TransformedNode::ConditionStmt(
                 PlainConditionStatement {
                     name: self.name.clone(),

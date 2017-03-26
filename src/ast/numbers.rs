@@ -22,18 +22,18 @@ pub enum ValueExpression<'ast> {
 }
 
 impl <'a> Transform<'a> for ValueExpression<'a> {
-    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
+    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>, ast_arena: &'a TypedArena<Node<'a>> )
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         match *self {
-            ValueExpression::Number(ref num_box) => num_box.transform(parent_scope.clone(), transformed_arena),
+            ValueExpression::Number(ref num_box) => num_box.transform(parent_scope.clone(), transformed_arena, ast_arena),
             ValueExpression::Op(ref a, ref op, ref b) => {
                 // transform each operand
-                let t_a = a.transform(parent_scope.clone(), transformed_arena)?;
+                let t_a = a.transform(parent_scope.clone(), transformed_arena, ast_arena)?;
                 if let None = t_a {
                     return Err(CompileErr::MissingValue(format!("{:?}", t_a)))
                 }
 
-                let t_b = b.transform(parent_scope.clone(), transformed_arena)?;
+                let t_b = b.transform(parent_scope.clone(), transformed_arena, ast_arena)?;
                 if let None = t_b {
                     return Err(CompileErr::MissingValue(format!("{:?}", t_b)))
                 }
@@ -62,7 +62,8 @@ pub enum NumberBox {
 }
 
 impl <'a> Transform<'a> for NumberBox {
-    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
+    #[allow(unused_variables)]
+    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>, ast_arena: &'a TypedArena<Node<'a>> )
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         match *self {
             NumberBox::Decimal(num) => Ok(Some(transformed_arena.alloc(

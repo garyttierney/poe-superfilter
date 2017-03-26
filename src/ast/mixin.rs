@@ -21,12 +21,12 @@ pub struct PreparedMixin<'a> {
 }
 
 impl <'a> Transform<'a> for Mixin<'a> {
-    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
+    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>, ast_arena: &'a TypedArena<Node<'a>> )
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         let mut t_params = Vec::new();
         for param in &self.parameters {
             if let Some(default_value) = param.default {
-                if let Some(t_value) = default_value.transform(parent_scope.clone(), transformed_arena)? {
+                if let Some(t_value) = default_value.transform(parent_scope.clone(), transformed_arena, ast_arena)? {
                     t_params.push(PlainParam {
                         name: param.name.clone(),
                         default: Some(t_value.clone()),
@@ -80,7 +80,7 @@ pub type ResolvedMixin<'a> = Vec<&'a TransformedNode<'a>>;
 
 impl <'a> Transform<'a> for MixinCall<'a> {
     #[allow(unused_variables)]
-    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
+    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>, ast_arena: &'a TypedArena<Node<'a>> )
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         if let Some(mixin) = parent_scope.borrow().mixin(&self.name) {
             // catch parameter count mismatch
@@ -91,7 +91,7 @@ impl <'a> Transform<'a> for MixinCall<'a> {
             // transform parameters in this call
             let mut t_params = Vec::new();
             for param in &self.parameters {
-                if let Some(t_param) = param.transform(parent_scope.clone(), transformed_arena)? {
+                if let Some(t_param) = param.transform(parent_scope.clone(), transformed_arena, ast_arena)? {
                     t_params.push(t_param);
                 } else {
                     return Err(CompileErr::MissingValue(format!("{:?}", param)))
@@ -108,12 +108,12 @@ impl <'a> Transform<'a> for MixinCall<'a> {
             // collect transformed statements from lines in the mixin
             let mut t_statements: ResolvedMixin = Vec::new();
             for statement in &mixin.statements {
-                if let Some(t_statement) = statement.transform(mixin_inner_scope_ref.clone(), transformed_arena)? {
+                if let Some(t_statement) = statement.transform(mixin_inner_scope_ref.clone(), transformed_arena, ast_arena)? {
                     t_statements.push(t_statement);
                 }
             }
             Ok(Some(
-                transformed_arena.alloc(TransformedNode::ResolvedMixin(t_statements))
+                transformed_arena.alloc(TransformedNode::ExpandedNodes(t_statements))
             ))
         } else {
             Err(CompileErr::MissingVarRef(self.name.clone()))

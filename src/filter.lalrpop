@@ -41,14 +41,16 @@ extern {
     }
 }
 
-pub Filter : ast::Filter<'ast> = {
+pub Filter : &'ast Node<'ast> = {
     <defs:DefinitionBlock*> <first:ContentBlock> <rest:AnyBlock*> => {
         let mut nodes = defs;
         nodes.push(first);
         nodes.extend(rest);
-        ast::Filter { nodes: nodes, transformed_arena: TypedArena::new() }
+        arena.alloc(Node::Filter(ast::Filter { nodes: nodes, transformed_arena: TypedArena::new() }))
     },
-    DefinitionBlock* => ast::Filter { nodes: <>, transformed_arena: TypedArena::new() },
+    DefinitionBlock* => arena.alloc(Node::Filter(
+        ast::Filter { nodes: <>, transformed_arena: TypedArena::new() }
+    )),
 };
 
 DefinitionBlock : &'ast Node<'ast> = {

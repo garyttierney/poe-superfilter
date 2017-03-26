@@ -44,12 +44,11 @@ impl <'ast> Debug for Filter<'ast> {
 }
 
 impl <'a> Filter<'a> {
-    pub fn transform(&'a self)
-        -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
+    pub fn transform_begin(&'a self, ast_arena: &'a TypedArena<Node<'a>>, root_scope: Rc<RefCell<ScopeData<'a>>>)
+                           -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         let mut transformed_nodes : Vec<&TransformedNode<'a>> =  Vec::with_capacity(self.nodes.len());
-        let root_scope = Rc::new(RefCell::new(ScopeData::new(None)));
         for node in &self.nodes {
-            if let Some(t_node) = try!(node.transform(root_scope.clone(), &self.transformed_arena)) {
+            if let Some(t_node) = try!(node.transform(root_scope.clone(), &self.transformed_arena, ast_arena)) {
                 transformed_nodes.push(t_node);
             }
         }
@@ -61,6 +60,7 @@ impl <'a> Filter<'a> {
 
 #[derive(Debug)]
 pub enum Node<'ast> {
+    Filter(Filter<'ast>),
     Block(block::Block<'ast>),
     SetValueStmt(SetValueStatement<'ast>),
     ConditionStmt(ConditionStatement<'ast>),
@@ -86,23 +86,23 @@ pub enum TransformedNode<'ast> {
     SetValueStmt(PlainSetValueStatement),
     ConditionStmt(PlainConditionStatement),
     Value(ScopeValue),
-    ResolvedMixin(ResolvedMixin<'ast>)
+    ExpandedNodes(Vec<&'ast TransformedNode<'ast>>)
 }
 
 impl <'a> Transform<'a> for Node<'a> {
-    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
+    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>, ast_arena: &'a TypedArena<Node<'a>> )
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         // TODO: make this a macro instead of listing all the options manually
         match *self {
-            Node::Block(ref n) => n.transform(parent_scope, transformed_arena),
-            Node::SetValueStmt(ref n) => n.transform(parent_scope, transformed_arena),
-            Node::VarDefinition(ref n) => n.transform(parent_scope, transformed_arena),
-            Node::VarRef(ref n) => n.transform(parent_scope, transformed_arena),
-            Node::ValueExpr(ref n) => n.transform(parent_scope, transformed_arena),
-            Node::ConditionStmt(ref n) => n.transform(parent_scope, transformed_arena),
-            Node::StringBox(ref n) => n.transform(parent_scope, transformed_arena),
-            Node::Mixin(ref n) => n.transform(parent_scope, transformed_arena),
-            Node::MixinCall(ref n) => n.transform(parent_scope, transformed_arena),
+            Node::Block(ref n) => n.transform(parent_scope, transformed_arena, ast_arena),
+            Node::SetValueStmt(ref n) => n.transform(parent_scope, transformed_arena, ast_arena),
+            Node::VarDefinition(ref n) => n.transform(parent_scope, transformed_arena, ast_arena),
+            Node::VarRef(ref n) => n.transform(parent_scope, transformed_arena, ast_arena),
+            Node::ValueExpr(ref n) => n.transform(parent_scope, transformed_arena, ast_arena),
+            Node::ConditionStmt(ref n) => n.transform(parent_scope, transformed_arena, ast_arena),
+            Node::StringBox(ref n) => n.transform(parent_scope, transformed_arena, ast_arena),
+            Node::Mixin(ref n) => n.transform(parent_scope, transformed_arena, ast_arena),
+            Node::MixinCall(ref n) => n.transform(parent_scope, transformed_arena, ast_arena),
             ref node => {
                 println!("Unimplemented node type: {:?}", node);
                 unimplemented!();
@@ -120,7 +120,7 @@ impl <'ast> TransformResult for TransformedNode<'ast> {
             TransformedNode::SetValueStmt(ref node) => node.return_value(),
             TransformedNode::ConditionStmt(ref node) => node.return_value(),
             TransformedNode::Value(ref node) => node.return_value(),
-            TransformedNode::ResolvedMixin(ref node) => node.return_value()
+            TransformedNode::ExpandedNodes(ref node) => node.return_value()
         }
     }
 
@@ -132,7 +132,7 @@ impl <'ast> TransformResult for TransformedNode<'ast> {
             TransformedNode::SetValueStmt(ref node) => node.render(buf)?,
             TransformedNode::ConditionStmt(ref node) => node.render(buf)?,
             TransformedNode::Value(ref node) => node.render(buf)?,
-            TransformedNode::ResolvedMixin(ref node) => node.render(buf)?
+            TransformedNode::ExpandedNodes(ref node) => node.render(buf)?
         }
         Ok(())
     }

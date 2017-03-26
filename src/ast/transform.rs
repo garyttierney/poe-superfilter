@@ -6,7 +6,7 @@ use arena::TypedArena;
 use std::rc::Rc;
 use std::cell::RefCell;
 use std::io::Write;
-use ast::{CompileErr,TransformedNode};
+use ast::{CompileErr,TransformedNode,Node};
 
 /// This trait needs to be implemented for any abstract syntax tree structure, it contains the
 /// functions to transform the structure's representation into the final structure before it gets
@@ -15,7 +15,7 @@ use ast::{CompileErr,TransformedNode};
 pub trait Transform<'a> {
     /// Perform any transformations that need to be done before rendering this structure into
     /// plain GGG loot filter syntax
-    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
+    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>, ast_arena: &'a TypedArena<Node<'a>> )
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr>;
 }
 

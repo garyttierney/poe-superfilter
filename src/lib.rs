@@ -16,6 +16,10 @@ extern crate lalrpop_util;
 use arena::TypedArena;
 use ast::transform::TransformResult;
 use std::io::Write;
+use ast::Node;
+use std::rc::Rc;
+use std::cell::RefCell;
+use scope::ScopeData;
 
 #[allow(dead_code)]
 mod filter;
@@ -36,8 +40,13 @@ mod scope;
 pub fn compile(contents: &str, out_buf: &mut Write) {
     let tokens = Box::new(tok::tokenize(contents));
     let ast_arena = TypedArena::new();
-    let filter = filter::parse_Filter(&ast_arena, tokens.into_iter());
-    if let Some(transformed_tree) = filter.unwrap().transform().unwrap() {
-        transformed_tree.render(out_buf).unwrap();
+    let root_scope = Rc::new(RefCell::new(ScopeData::new(None)));
+    match filter::parse_Filter(&ast_arena, tokens.into_iter()) {
+        Ok(&Node::Filter(ref filter)) => {
+            if let Some(transformed_tree) = filter.transform_begin(&ast_arena, root_scope).unwrap() {
+                transformed_tree.render(out_buf).unwrap();
+            }
+        },
+        _ => panic!()
     }
 }

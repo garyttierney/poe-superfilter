@@ -26,7 +26,7 @@ pub struct PlainColor {
 
 impl <'a> Transform<'a> for Color<'a> {
     #[allow(unused_variables)]
-    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>) -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
+    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>, ast_arena: &'a TypedArena<Node<'a>> ) -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         unimplemented!();
     }
 }

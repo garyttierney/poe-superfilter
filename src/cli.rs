@@ -13,6 +13,7 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::io;
 use docopt::Docopt;
+use std::path::Path;
 
 const USAGE: &'static str = "
 PoE Superfilter compiler
@@ -39,9 +40,11 @@ pub fn main() {
         .and_then(|d| d.decode())
         .unwrap_or_else(|e| e.exit());
 
-    let mut file = File::open(args.arg_name).unwrap();
+    let mut file = File::open(&args.arg_name).unwrap();
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
+    // set directory to dir of the loaded file
+    ::std::env::set_current_dir(Path::new(&args.arg_name).parent().unwrap()).unwrap();
     if let Some(out_file) = args.flag_output {
         let mut file = File::create(out_file).unwrap();
         superfilter::compile(&contents, &mut file);

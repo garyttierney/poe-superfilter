@@ -1,5 +1,5 @@
 
-use ast::{TransformedNode, CompileErr};
+use ast::{TransformedNode, CompileErr, Node};
 use scope::{ScopeData, ScopeValue};
 use ast::transform::{Transform, TransformResult};
 use std::rc::Rc;
@@ -34,7 +34,8 @@ impl <'a> TransformResult for String {
 }
 
 impl <'a> Transform<'a> for StringBox {
-    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>)
+    #[allow(unused_variables)]
+    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>, ast_arena: &'a TypedArena<Node<'a>> )
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         match self {
             &StringBox::Var(ref identifier) => {
