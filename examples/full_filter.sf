@@ -1,20 +1,11 @@
 Import "mixins.sf"
 
 $test = "abc"
-$test2 = 1
+$test2 = 8
 
 Show
-	+FlaskMagic("Small")
+	+FlaskMagic("Medium")
 	SetTextColor 100 100 255 255
 	SetFontSize 38 # comment
-	ItemLevel <= 5
-
-Show
-	Class Flask
-	Rarity Magic
-	BaseType "Medium"
-	SetTextColor 100 100 255 255
-	SetBorderColor 100 100 100
-	SetFontSize 38
-	ItemLevel <= 8
+	ItemLevel <= $test2
 	ItemLevel >= 3

@@ -68,8 +68,11 @@ impl <'a> Transform<'a> for Block<'a> {
                 {
                     match filter::parse_Filter(&ast_arena, tokens.into_iter()) {
                         Ok(&Node::Filter(ref filter)) => {
-                            if let Some(transformed_tree) = filter.transform_begin(&ast_arena, parent_scope.clone()).unwrap() {
-
+                            if let Some(&TransformedNode::Root(ref nodes)) =
+                                    filter.transform_begin(&ast_arena, parent_scope.clone()).unwrap() {
+                                for n in nodes {
+                                    t_statements.push(n);
+                                }
                                 return Ok(Some(transformed_arena.alloc(TransformedNode::ExpandedNodes(
                                     t_statements
                                 ))))
