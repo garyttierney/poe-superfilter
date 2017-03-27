@@ -1,10 +1,7 @@
 
-use ast::{TransformedNode, CompileErr, Node};
-use scope::{ScopeData, ScopeValue};
-use ast::transform::{Transform, TransformResult};
-use std::rc::Rc;
-use std::cell::RefCell;
-use arena::TypedArena;
+use ast::{TransformedNode, CompileErr};
+use scope::ScopeValue;
+use ast::transform::{Transform, TransformResult, TransformContext};
 use std::io::Write;
 
 /// String value or reference to a string value
@@ -35,14 +32,14 @@ impl <'a> TransformResult for String {
 
 impl <'a> Transform<'a> for StringBox {
     #[allow(unused_variables)]
-    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>, ast_arena: &'a TypedArena<Node<'a>> )
+    fn transform(&'a self, ctx: TransformContext<'a>)
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         match self {
             &StringBox::Var(ref identifier) => {
-                if let Some(value) = parent_scope.borrow().var(identifier) {
+                if let Some(value) = ctx.parent_scope.borrow().var(identifier) {
                     match value {
                         ScopeValue::String(ref s) => {
-                            return Ok(Some(transformed_arena.alloc(
+                            return Ok(Some(ctx.alloc_transformed(
                                 TransformedNode::Value(ScopeValue::String(s.clone()))
                             )));
                         },
@@ -53,7 +50,7 @@ impl <'a> Transform<'a> for StringBox {
                     return Err(e);
                 }
             },
-            &StringBox::Value(ref val) => Ok(Some(transformed_arena.alloc(
+            &StringBox::Value(ref val) => Ok(Some(ctx.alloc_transformed(
                 TransformedNode::Value(ScopeValue::String(val.clone()))
             )))
         }

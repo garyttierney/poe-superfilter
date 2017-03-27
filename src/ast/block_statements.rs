@@ -1,10 +1,7 @@
 
 use ast::{TransformedNode, CompileErr, Node};
-use ast::transform::{Transform, TransformResult};
-use scope::{ScopeData, ScopeValue};
-use arena::TypedArena;
-use std::cell::RefCell;
-use std::rc::Rc;
+use ast::transform::{Transform, TransformResult, TransformContext};
+use scope::ScopeValue;
 use std::io::Write;
 use std::cmp::PartialEq;
 
@@ -28,16 +25,16 @@ impl PartialEq for PlainSetValueStatement {
 }
 
 impl <'a> Transform<'a> for SetValueStatement<'a> {
-    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>, ast_arena: &'a TypedArena<Node<'a>> )
+    fn transform(&'a self, ctx: TransformContext<'a>)
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         let mut transformed_values: Vec<ScopeValue> = vec![];
         for value in &self.values {
-            if let Some(t_value) = try!(value.transform(parent_scope.clone(), transformed_arena, ast_arena)) {
+            if let Some(t_value) = try!(value.transform(ctx.clone())) {
                 transformed_values.push(t_value.return_value());
             }
         }
 
-        Ok(Some(transformed_arena.alloc(TransformedNode::SetValueStmt(
+        Ok(Some(ctx.alloc_transformed(TransformedNode::SetValueStmt(
             PlainSetValueStatement {
                 name: self.name.clone(),
                 values: transformed_values
@@ -78,10 +75,10 @@ impl PartialEq for PlainConditionStatement {
 }
 
 impl <'a> Transform<'a> for ConditionStatement<'a> {
-    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>, ast_arena: &'a TypedArena<Node<'a>> )
+    fn transform(&'a self, ctx: TransformContext<'a>)
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
-        if let Some(t_value) = self.condition.value.transform(parent_scope.clone(), transformed_arena, ast_arena)? {
-            return Ok(Some(transformed_arena.alloc(TransformedNode::ConditionStmt(
+        if let Some(t_value) = self.condition.value.transform(ctx.clone())? {
+            return Ok(Some(ctx.alloc_transformed(TransformedNode::ConditionStmt(
                 PlainConditionStatement {
                     name: self.name.clone(),
                     condition: PlainCondition { value: t_value.return_value(), operator: self.condition.operator },

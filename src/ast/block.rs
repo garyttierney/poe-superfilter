@@ -1,9 +1,8 @@
 use ast::{Node,TransformedNode,CompileErr};
-use ast::transform::{Transform, TransformResult};
+use ast::transform::{Transform, TransformResult, TransformContext};
 use scope::{ScopeData};
 use std::rc::Rc;
 use std::cell::RefCell;
-use arena::TypedArena;
 use std::io::{Write, Read};
 use tok;
 use std::fs;
@@ -26,19 +25,22 @@ pub enum PlainBlock<'a> {
 }
 
 impl <'a> Transform<'a> for Block<'a> {
-    fn transform(&'a self,
-                 parent_scope: Rc<RefCell<ScopeData<'a>>>,
-                 transformed_arena: &'a TypedArena<TransformedNode<'a>>,
-                 ast_arena: &'a TypedArena<Node<'a>>)
+    fn transform(&'a self, ctx: TransformContext<'a>)
             -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
-        let block_scope = Rc::new(RefCell::new(ScopeData::new(Some(parent_scope.clone()))));
+        let block_ctx = TransformContext {
+            parent_scope: Rc::new(RefCell::new(
+                ScopeData::new(Some(ctx.parent_scope.clone()))
+            )),
+            transform_arena: ctx.transform_arena,
+            ast_arena: ctx.ast_arena,
+        };
 
         // collect transformed statements from lines in this block
         let mut t_statements : Vec<&TransformedNode> = Vec::new();
         match self {
             &Block::Show(ref statements) | &Block::Hide(ref statements) => {
                 for statement in statements {
-                    if let Some(t_statement) = statement.transform(block_scope.clone(), transformed_arena, ast_arena)? {
+                    if let Some(t_statement) = statement.transform(block_ctx.clone())? {
                         match *t_statement {
                             TransformedNode::ExpandedNodes(ref resolved_stmts) => {
                                 for stmt in resolved_stmts {
@@ -75,14 +77,14 @@ impl <'a> Transform<'a> for Block<'a> {
 
                 let tokens = Box::new(tok::tokenize(&contents));
                 {
-                    match filter::parse_Filter(&ast_arena, tokens.into_iter()) {
+                    match filter::parse_Filter(ctx.ast_arena, tokens.into_iter()) {
                         Ok(&Node::Filter(ref filter)) => {
                             if let Some(&TransformedNode::Root(ref nodes)) =
-                                    filter.transform_begin(&ast_arena, parent_scope.clone()).unwrap() {
+                                    filter.transform_begin(ctx.ast_arena, ctx.parent_scope.clone()).unwrap() {
                                 for n in nodes {
                                     t_statements.push(n);
                                 }
-                                return Ok(Some(transformed_arena.alloc(TransformedNode::ExpandedNodes(
+                                return Ok(Some(ctx.alloc_transformed(TransformedNode::ExpandedNodes(
                                     t_statements
                                 ))))
                             } else {
@@ -95,7 +97,7 @@ impl <'a> Transform<'a> for Block<'a> {
             }
         }
 
-        Ok(Some(transformed_arena.alloc(TransformedNode::Block(
+        Ok(Some(ctx.alloc_transformed(TransformedNode::Block(
             match self {
                 &Block::Show(_) => PlainBlock::Show(t_statements),
                 &Block::Hide(_) => PlainBlock::Hide(t_statements),

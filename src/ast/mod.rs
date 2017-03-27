@@ -15,7 +15,7 @@ use ast::numbers::*;
 use ast::block_statements::*;
 use ast::mixin::*;
 use ast::var::*;
-use ast::transform::{Transform, TransformResult};
+use ast::transform::{Transform, TransformResult, TransformContext};
 use scope::{ScopeData, ScopeValue};
 
 use std::fmt::Debug;
@@ -47,8 +47,15 @@ impl <'a> Filter<'a> {
     pub fn transform_begin(&'a self, ast_arena: &'a TypedArena<Node<'a>>, root_scope: Rc<RefCell<ScopeData<'a>>>)
                            -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         let mut transformed_nodes : Vec<&TransformedNode<'a>> =  Vec::with_capacity(self.nodes.len());
+
+        let root_ctx = TransformContext {
+            parent_scope: root_scope,
+            transform_arena: &self.transformed_arena,
+            ast_arena: ast_arena,
+        };
+
         for node in &self.nodes {
-            if let Some(t_node) = try!(node.transform(root_scope.clone(), &self.transformed_arena, ast_arena)) {
+            if let Some(t_node) = node.transform(root_ctx.clone())? {
                 transformed_nodes.push(t_node);
             }
         }
@@ -90,19 +97,19 @@ pub enum TransformedNode<'ast> {
 }
 
 impl <'a> Transform<'a> for Node<'a> {
-    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>, ast_arena: &'a TypedArena<Node<'a>> )
+    fn transform(&'a self, ctx: TransformContext<'a>)
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         // TODO: make this a macro instead of listing all the options manually
         match *self {
-            Node::Block(ref n) => n.transform(parent_scope, transformed_arena, ast_arena),
-            Node::SetValueStmt(ref n) => n.transform(parent_scope, transformed_arena, ast_arena),
-            Node::VarDefinition(ref n) => n.transform(parent_scope, transformed_arena, ast_arena),
-            Node::VarRef(ref n) => n.transform(parent_scope, transformed_arena, ast_arena),
-            Node::ValueExpr(ref n) => n.transform(parent_scope, transformed_arena, ast_arena),
-            Node::ConditionStmt(ref n) => n.transform(parent_scope, transformed_arena, ast_arena),
-            Node::StringBox(ref n) => n.transform(parent_scope, transformed_arena, ast_arena),
-            Node::Mixin(ref n) => n.transform(parent_scope, transformed_arena, ast_arena),
-            Node::MixinCall(ref n) => n.transform(parent_scope, transformed_arena, ast_arena),
+            Node::Block(ref n) => n.transform(ctx),
+            Node::SetValueStmt(ref n) => n.transform(ctx),
+            Node::VarDefinition(ref n) => n.transform(ctx),
+            Node::VarRef(ref n) => n.transform(ctx),
+            Node::ValueExpr(ref n) => n.transform(ctx),
+            Node::ConditionStmt(ref n) => n.transform(ctx),
+            Node::StringBox(ref n) => n.transform(ctx),
+            Node::Mixin(ref n) => n.transform(ctx),
+            Node::MixinCall(ref n) => n.transform(ctx),
             ref node => {
                 println!("Unimplemented node type: {:?}", node);
                 unimplemented!();

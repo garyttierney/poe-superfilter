@@ -11,12 +11,30 @@ use ast::{CompileErr,TransformedNode,Node};
 /// This trait needs to be implemented for any abstract syntax tree structure, it contains the
 /// functions to transform the structure's representation into the final structure before it gets
 /// rendered into plain GGG syntax tree output
-#[allow(unused_variables)]
 pub trait Transform<'a> {
     /// Perform any transformations that need to be done before rendering this structure into
     /// plain GGG loot filter syntax
-    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>, ast_arena: &'a TypedArena<Node<'a>> )
+    fn transform(&'a self, ctx: TransformContext<'a>)
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr>;
+}
+
+#[derive(Clone)]
+pub struct TransformContext<'a> {
+    pub parent_scope: Rc<RefCell<ScopeData<'a>>>,
+    pub transform_arena: &'a TypedArena<TransformedNode<'a>>,
+    pub ast_arena: &'a TypedArena<Node<'a>>
+}
+
+impl <'a> TransformContext<'a> {
+    pub fn alloc_transformed(&self, node: TransformedNode<'a>)
+        -> &'a TransformedNode<'a> {
+        self.transform_arena.alloc(node)
+    }
+
+    pub fn alloc_ast(&self, node: Node<'a>)
+                             -> &'a Node<'a> {
+        self.ast_arena.alloc(node)
+    }
 }
 
 /// Fully transformed AST structures should implement this trait in order to be renderable and make

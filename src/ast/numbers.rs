@@ -1,10 +1,7 @@
 
 use ast::{Node, TransformedNode, CompileErr};
-use ast::transform::{Transform, TransformResult};
-use scope::{ScopeData, ScopeValue};
-use arena::TypedArena;
-use std::cell::RefCell;
-use std::rc::Rc;
+use ast::transform::{Transform, TransformResult, TransformContext};
+use scope::ScopeValue;
 
 #[derive(Debug, Clone)]
 pub enum NumberOperation {
@@ -22,18 +19,18 @@ pub enum ValueExpression<'ast> {
 }
 
 impl <'a> Transform<'a> for ValueExpression<'a> {
-    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>, ast_arena: &'a TypedArena<Node<'a>> )
+    fn transform(&'a self, ctx: TransformContext<'a>)
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         match *self {
-            ValueExpression::Number(ref num_box) => num_box.transform(parent_scope.clone(), transformed_arena, ast_arena),
+            ValueExpression::Number(ref num_box) => num_box.transform(ctx.clone()),
             ValueExpression::Op(ref a, ref op, ref b) => {
                 // transform each operand
-                let t_a = a.transform(parent_scope.clone(), transformed_arena, ast_arena)?;
+                let t_a = a.transform(ctx.clone())?;
                 if let None = t_a {
                     return Err(CompileErr::MissingValue(format!("{:?}", t_a)))
                 }
 
-                let t_b = b.transform(parent_scope.clone(), transformed_arena, ast_arena)?;
+                let t_b = b.transform(ctx.clone())?;
                 if let None = t_b {
                     return Err(CompileErr::MissingValue(format!("{:?}", t_b)))
                 }
@@ -47,7 +44,7 @@ impl <'a> Transform<'a> for ValueExpression<'a> {
                     NumberOperation::Div => a_val / b_val,
                     NumberOperation::Sub => a_val - b_val,
                 };
-                Ok(Some(transformed_arena.alloc(TransformedNode::Value(result))))
+                Ok(Some(ctx.alloc_transformed(TransformedNode::Value(result))))
             }
         }
     }
@@ -63,22 +60,22 @@ pub enum NumberBox {
 
 impl <'a> Transform<'a> for NumberBox {
     #[allow(unused_variables)]
-    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>, ast_arena: &'a TypedArena<Node<'a>> )
+    fn transform(&'a self, ctx: TransformContext<'a>)
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         match *self {
-            NumberBox::Decimal(num) => Ok(Some(transformed_arena.alloc(
+            NumberBox::Decimal(num) => Ok(Some(ctx.alloc_transformed(
                 TransformedNode::Value(ScopeValue::Decimal(num))
             ))),
-            NumberBox::IntValue(num) => Ok(Some(transformed_arena.alloc(
+            NumberBox::IntValue(num) => Ok(Some(ctx.alloc_transformed(
                 TransformedNode::Value(ScopeValue::Int(num))
             ))),
             NumberBox::Var(ref identifier) => {
-                if let Some(var_content) = parent_scope.borrow().var(&identifier) {
+                if let Some(var_content) = ctx.parent_scope.borrow().var(&identifier) {
                     match var_content {
-                        ScopeValue::Int(num) => Ok(Some(transformed_arena.alloc(
+                        ScopeValue::Int(num) => Ok(Some(ctx.alloc_transformed(
                             TransformedNode::Value(ScopeValue::Int(num))
                         ))),
-                        ScopeValue::Decimal(num) => Ok(Some(transformed_arena.alloc(
+                        ScopeValue::Decimal(num) => Ok(Some(ctx.alloc_transformed(
                             TransformedNode::Value(ScopeValue::Decimal(num))
                         ))),
                         other => Err(CompileErr::TypeMismatch("Int or Decimal", other.type_name(), "Anonymous".to_owned()))
