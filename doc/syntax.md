@@ -59,10 +59,9 @@ $var = "value"
 
 Variable definitions are allowed in two places.
 
-1. Anywhere between blocks
+1. Before the first block
 
-    Variables defined here will be visible in all blocks following the variable definition.
-    Note that the order is significant here, a variable won't be available in a block that precedes it.
+    Variables defined here will be visible globally
 
 2. Inside of a block
 
@@ -87,4 +86,12 @@ Show
     SetTextColor 100 * $foo 100 255 + $bar 255
     # Probably better like that:
     SetTextColor (100 * $foo) 100 (255 + $bar) 255
+```
+
+## Imports
+
+You can import other Superfilter files with the import statement. Mixins and global variables defined there will also be available in the including file.
+
+```
+Import "some_file.sf"
 ```
