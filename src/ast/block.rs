@@ -26,7 +26,10 @@ pub enum PlainBlock<'a> {
 }
 
 impl <'a> Transform<'a> for Block<'a> {
-    fn transform(&'a self, parent_scope: Rc<RefCell<ScopeData<'a>>>, transformed_arena: &'a TypedArena<TransformedNode<'a>>, ast_arena: &'a TypedArena<Node<'a>> )
+    fn transform(&'a self,
+                 parent_scope: Rc<RefCell<ScopeData<'a>>>,
+                 transformed_arena: &'a TypedArena<TransformedNode<'a>>,
+                 ast_arena: &'a TypedArena<Node<'a>>)
             -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         let block_scope = Rc::new(RefCell::new(ScopeData::new(Some(parent_scope.clone()))));
 
@@ -39,8 +42,11 @@ impl <'a> Transform<'a> for Block<'a> {
                         match *t_statement {
                             TransformedNode::ExpandedNodes(ref resolved_stmts) => {
                                 for stmt in resolved_stmts {
-                                    // replace existing same statement if possible
-                                    if let Some(index) = t_statements.iter().position(|other| *other == *stmt) {
+                                    // always add condition statements
+                                    if let TransformedNode::ConditionStmt(_) = **stmt {
+                                        t_statements.push(stmt);
+                                    } else if let Some(index) = t_statements.iter().position(|other| *other == *stmt) {
+                                        // replace existing same statement if possible
                                         t_statements[index] = stmt;
                                     } else {
                                         t_statements.push(stmt);
@@ -48,8 +54,11 @@ impl <'a> Transform<'a> for Block<'a> {
                                 }
                             },
                             _ => {
-                                // replace existing same statement if possible
-                                if let Some(index) = t_statements.iter().position(|other| *other == t_statement) {
+                                // always add condition statements
+                                if let &TransformedNode::ConditionStmt(_) = t_statement {
+                                    t_statements.push(t_statement);
+                                } else if let Some(index) = t_statements.iter().position(|other| *other == t_statement) {
+                                    // replace existing same statement if possible
                                     t_statements[index] = t_statement;
                                 } else {
                                     t_statements.push(t_statement);
