@@ -87,3 +87,11 @@ Show
     # Probably better like that:
     SetTextColor (100 * $foo) 100 (255 + $bar) 255
 ```
+
+## Imports
+
+You can import other Superfilter files with the import statement. Mixins and global variables defined there will also be available in the including file.
+
+```
+Import "some_file.sf"
+```
