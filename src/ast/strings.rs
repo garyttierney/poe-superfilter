@@ -31,12 +31,11 @@ impl <'a> TransformResult for String {
 }
 
 impl <'a> Transform<'a> for StringBox {
-    #[allow(unused_variables)]
     fn transform(&'a self, ctx: TransformContext<'a>)
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         match self {
             &StringBox::Var(ref identifier) => {
-                if let Some(value) = ctx.parent_scope.borrow().var(identifier) {
+                if let Some(value) = ctx.ref_scope().var(identifier) {
                     match value {
                         ScopeValue::String(ref s) => {
                             return Ok(Some(ctx.alloc_transformed(

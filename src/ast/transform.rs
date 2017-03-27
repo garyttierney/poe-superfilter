@@ -4,6 +4,8 @@
 use scope::{ScopeData, ScopeValue};
 use arena::TypedArena;
 use std::rc::Rc;
+use std::cell::Ref;
+use std::cell::RefMut;
 use std::cell::RefCell;
 use std::io::Write;
 use ast::{CompileErr,TransformedNode,Node};
@@ -20,20 +22,26 @@ pub trait Transform<'a> {
 
 #[derive(Clone)]
 pub struct TransformContext<'a> {
-    pub parent_scope: Rc<RefCell<ScopeData<'a>>>,
+    pub scope: Rc<RefCell<ScopeData<'a>>>,
     pub transform_arena: &'a TypedArena<TransformedNode<'a>>,
     pub ast_arena: &'a TypedArena<Node<'a>>
 }
 
 impl <'a> TransformContext<'a> {
-    pub fn alloc_transformed(&self, node: TransformedNode<'a>)
-        -> &'a TransformedNode<'a> {
+    pub fn alloc_transformed(&self, node: TransformedNode<'a>) -> &'a TransformedNode<'a> {
         self.transform_arena.alloc(node)
     }
 
-    pub fn alloc_ast(&self, node: Node<'a>)
-                             -> &'a Node<'a> {
+    pub fn alloc_ast(&self, node: Node<'a>) -> &'a Node<'a> {
         self.ast_arena.alloc(node)
+    }
+
+    pub fn mut_scope(&self) -> RefMut<ScopeData<'a>> {
+        self.scope.borrow_mut()
+    }
+
+    pub fn ref_scope(&self) -> Ref<ScopeData<'a>> {
+        self.scope.borrow()
     }
 }
 

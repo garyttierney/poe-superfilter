@@ -11,7 +11,7 @@ impl <'a> Transform<'a> for VarReference {
     fn transform(&'a self, ctx: TransformContext<'a>)
                      -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         // try to resolve variable reference
-        match ctx.parent_scope.borrow().var(&self.identifier) {
+        match ctx.ref_scope().var(&self.identifier) {
             Some(val) => Ok(Some(
                 ctx.alloc_transformed(TransformedNode::Value(val))
             )),
@@ -33,7 +33,7 @@ impl <'a> Transform<'a> for VarDefinition<'a> {
         for val in &self.values {
             if let Some(t_val) = val.transform(ctx.clone())? {
                 // export variable to parent scope
-                ctx.parent_scope.borrow_mut()
+                ctx.mut_scope()
                     .push_var(self.identifier.clone(), t_val.return_value());
             }
         }

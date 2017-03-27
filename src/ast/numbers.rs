@@ -70,7 +70,7 @@ impl <'a> Transform<'a> for NumberBox {
                 TransformedNode::Value(ScopeValue::Int(num))
             ))),
             NumberBox::Var(ref identifier) => {
-                if let Some(var_content) = ctx.parent_scope.borrow().var(&identifier) {
+                if let Some(var_content) = ctx.ref_scope().var(&identifier) {
                     match var_content {
                         ScopeValue::Int(num) => Ok(Some(ctx.alloc_transformed(
                             TransformedNode::Value(ScopeValue::Int(num))

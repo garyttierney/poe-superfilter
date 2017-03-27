@@ -28,8 +28,8 @@ impl <'a> Transform<'a> for Block<'a> {
     fn transform(&'a self, ctx: TransformContext<'a>)
             -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         let block_ctx = TransformContext {
-            parent_scope: Rc::new(RefCell::new(
-                ScopeData::new(Some(ctx.parent_scope.clone()))
+            scope: Rc::new(RefCell::new(
+                ScopeData::new(Some(ctx.scope.clone()))
             )),
             transform_arena: ctx.transform_arena,
             ast_arena: ctx.ast_arena,
@@ -80,7 +80,7 @@ impl <'a> Transform<'a> for Block<'a> {
                     match filter::parse_Filter(ctx.ast_arena, tokens.into_iter()) {
                         Ok(&Node::Filter(ref filter)) => {
                             if let Some(&TransformedNode::Root(ref nodes)) =
-                                    filter.transform_begin(ctx.ast_arena, ctx.parent_scope.clone()).unwrap() {
+                                    filter.transform_begin(ctx.ast_arena, ctx.scope.clone()).unwrap() {
                                 for n in nodes {
                                     t_statements.push(n);
                                 }

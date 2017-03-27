@@ -41,7 +41,7 @@ impl <'a> Transform<'a> for Mixin<'a> {
             }
         }
 
-        ctx.parent_scope.borrow_mut().push_mixin(
+        ctx.mut_scope().push_mixin(
             self.name.clone(),
             PreparedMixin {
                 name: self.name.clone(),
@@ -81,7 +81,7 @@ impl <'a> Transform<'a> for MixinCall<'a> {
     #[allow(unused_variables)]
     fn transform(&'a self, ctx: TransformContext<'a>)
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
-        if let Some(mixin) = ctx.parent_scope.borrow().mixin(&self.name) {
+        if let Some(mixin) = ctx.ref_scope().mixin(&self.name) {
             // catch parameter count mismatch
             if mixin.parameters.len() != self.parameters.len() {
                 return Err(CompileErr::WrongParameterCount(format!("{:?}", self), mixin.parameters.len(), self.parameters.len()));
@@ -97,13 +97,13 @@ impl <'a> Transform<'a> for MixinCall<'a> {
                 }
             }
 
-            let mut mixin_inner_scope = ScopeData::new(Some(ctx.parent_scope.clone()));
+            let mut mixin_inner_scope = ScopeData::new(Some(ctx.scope.clone()));
             for i in 0..self.parameters.len() {
                 mixin_inner_scope.push_var(mixin.parameters[i].name.clone(), t_params[i].return_value())
             }
 
             let inner_ctx = TransformContext {
-                parent_scope: Rc::new(RefCell::new(mixin_inner_scope)),
+                scope: Rc::new(RefCell::new(mixin_inner_scope)),
                 transform_arena: ctx.transform_arena,
                 ast_arena: ctx.ast_arena,
             };

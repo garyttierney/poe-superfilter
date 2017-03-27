@@ -49,7 +49,7 @@ impl <'a> Filter<'a> {
         let mut transformed_nodes : Vec<&TransformedNode<'a>> =  Vec::with_capacity(self.nodes.len());
 
         let root_ctx = TransformContext {
-            parent_scope: root_scope,
+            scope: root_scope,
             transform_arena: &self.transformed_arena,
             ast_arena: ast_arena,
         };
