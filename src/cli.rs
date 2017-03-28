@@ -14,25 +14,28 @@ use std::io::prelude::*;
 use std::io;
 use docopt::Docopt;
 use std::path::Path;
+use superfilter::ast::transform::RenderConfig;
 
 const USAGE: &'static str = "
 PoE Superfilter compiler
 
 Usage:
-  superfilter <name> [--output=<file>]
+  superfilter <name> [--output=<file>] [-p]
   superfilter (-h | --help)
   superfilter --version
 
 Options:
   -h --help        Show this screen.
-  --version        Show version.
+  --version, -v    Show version.
+  --pretty, -p     Include indentation and other formatting in the output
   --output=<file>  Output file.
 ";
 
 #[derive(Debug, RustcDecodable)]
 struct Args {
     arg_name: String,
-    flag_output: Option<String>
+    flag_output: Option<String>,
+    flag_pretty: bool
 }
 
 pub fn main() {
@@ -45,10 +48,16 @@ pub fn main() {
     file.read_to_string(&mut contents).unwrap();
     // set directory to dir of the loaded file
     ::std::env::set_current_dir(Path::new(&args.arg_name).parent().unwrap()).unwrap();
+
+    let render_config = RenderConfig {
+        pretty: args.flag_pretty,
+        indent_str: "    ",
+    };
+
     if let Some(out_file) = args.flag_output {
         let mut file = File::create(out_file).unwrap();
-        superfilter::compile(&contents, &mut file);
+        superfilter::compile(&contents, &mut file, &render_config);
     } else {
-        superfilter::compile(&contents, &mut io::stdout());
+        superfilter::compile(&contents, &mut io::stdout(), &render_config);
     }
 }

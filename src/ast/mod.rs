@@ -15,7 +15,7 @@ use ast::numbers::*;
 use ast::block_statements::*;
 use ast::mixin::*;
 use ast::var::*;
-use ast::transform::{Transform, TransformResult, TransformContext};
+use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
 use scope::{ScopeData, ScopeValue};
 
 use std::fmt::Debug;
@@ -131,24 +131,24 @@ impl <'ast> TransformResult for TransformedNode<'ast> {
         }
     }
 
-    fn render(&self, buf: &mut Write) -> Result<(), CompileErr> {
+    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
         match *self {
             // TODO: use a macro for this.
-            TransformedNode::Root(ref node) => node.render(buf)?,
-            TransformedNode::Block(ref node) => node.render(buf)?,
-            TransformedNode::SetValueStmt(ref node) => node.render(buf)?,
-            TransformedNode::ConditionStmt(ref node) => node.render(buf)?,
-            TransformedNode::Value(ref node) => node.render(buf)?,
-            TransformedNode::ExpandedNodes(ref node) => node.render(buf)?
+            TransformedNode::Root(ref node) => node.render(ctx, buf)?,
+            TransformedNode::Block(ref node) => node.render(ctx, buf)?,
+            TransformedNode::SetValueStmt(ref node) => node.render(ctx, buf)?,
+            TransformedNode::ConditionStmt(ref node) => node.render(ctx, buf)?,
+            TransformedNode::Value(ref node) => node.render(ctx, buf)?,
+            TransformedNode::ExpandedNodes(ref node) => node.render(ctx, buf)?
         }
         Ok(())
     }
 }
 
 impl <'ast> TransformResult for Vec<&'ast TransformedNode<'ast>> {
-    fn render(&self, buf: &mut Write) -> Result<(), CompileErr> {
+    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
         for node in self {
-            node.render(buf)?;
+            node.render(ctx, buf)?;
         }
         Ok(())
     }

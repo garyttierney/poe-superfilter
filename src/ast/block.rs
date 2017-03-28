@@ -1,5 +1,5 @@
 use ast::{Node,TransformedNode,CompileErr};
-use ast::transform::{Transform, TransformResult, TransformContext};
+use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
 use scope::{ScopeData};
 use std::rc::Rc;
 use std::cell::RefCell;
@@ -111,7 +111,7 @@ impl <'a> Transform<'a> for Block<'a> {
 }
 
 impl <'a> TransformResult for PlainBlock<'a> {
-    fn render(&self, buf: &mut Write) -> Result<(), CompileErr> {
+    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
         let nodes = match *self {
             PlainBlock::Show(ref nodes) => {
                 buf.write("Show\n".as_ref())?;
@@ -123,7 +123,7 @@ impl <'a> TransformResult for PlainBlock<'a> {
             }
         };
         for n in nodes {
-            n.render(buf)?;
+            n.render(ctx.increase_indent(), buf)?;
         }
         Ok(())
     }

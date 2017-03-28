@@ -1,7 +1,7 @@
 
 use ast::{TransformedNode, CompileErr};
 use scope::ScopeValue;
-use ast::transform::{Transform, TransformResult, TransformContext};
+use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
 use std::io::Write;
 
 /// String value or reference to a string value
@@ -17,7 +17,8 @@ impl <'a> TransformResult for String {
         ScopeValue::String(self.clone())
     }
 
-    fn render(&self, buf: &mut Write) -> Result<(), CompileErr> {
+    #[allow(unused_variables)]
+    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
         let quotes_needed = self.contains(" ");
         if quotes_needed {
             buf.write("\"".as_ref())?;

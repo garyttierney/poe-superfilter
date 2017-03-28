@@ -1,6 +1,6 @@
 
 use ast::{TransformedNode, CompileErr, Node};
-use ast::transform::{Transform, TransformResult, TransformContext};
+use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
 use scope::ScopeValue;
 use std::io::Write;
 use std::cmp::PartialEq;
@@ -44,11 +44,12 @@ impl <'a> Transform<'a> for SetValueStatement<'a> {
 }
 
 impl TransformResult for PlainSetValueStatement {
-    fn render(&self, buf: &mut Write) -> Result<(), CompileErr> {
+    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
+        ctx.write_indent(buf)?;
         buf.write(self.name.as_ref())?;
         for val in &self.values {
             buf.write(" ".as_ref())?;
-            val.render(buf)?;
+            val.render(ctx, buf)?;
         }
         buf.write("\n".as_ref())?;
         Ok(())
@@ -90,12 +91,13 @@ impl <'a> Transform<'a> for ConditionStatement<'a> {
 }
 
 impl TransformResult for PlainConditionStatement {
-    fn render(&self, buf: &mut Write) -> Result<(), CompileErr> {
+    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
+        ctx.write_indent(buf)?;
         buf.write(self.name.as_ref())?;
         buf.write(" ".as_ref())?;
-        self.condition.operator.render(buf)?;
+        self.condition.operator.render(ctx, buf)?;
         buf.write(" ".as_ref())?;
-        self.condition.value.render(buf)?;
+        self.condition.value.render(ctx, buf)?;
         buf.write("\n".as_ref())?;
         Ok(())
     }
@@ -126,7 +128,8 @@ pub enum ComparisonOperator {
 }
 
 impl TransformResult for ComparisonOperator {
-    fn render(&self, buf: &mut Write) -> Result<(), CompileErr> {
+    #[allow(unused_variables)]
+    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
         buf.write(match *self {
             ComparisonOperator::Eql => "=",
             ComparisonOperator::Gt => ">",

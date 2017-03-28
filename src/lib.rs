@@ -14,7 +14,7 @@ extern crate arena;
 extern crate lalrpop_util;
 
 use arena::TypedArena;
-use ast::transform::TransformResult;
+use ast::transform::{TransformResult, RenderContext, RenderConfig};
 use std::io::Write;
 use ast::Node;
 use std::rc::Rc;
@@ -37,14 +37,20 @@ mod tests;
 mod scope;
 
 /// Compiles a complete filter into vanilla loot filter syntax
-pub fn compile(contents: &str, out_buf: &mut Write) {
+pub fn compile(contents: &str, out_buf: &mut Write, render_config: &RenderConfig) {
     let tokens = Box::new(tok::tokenize(contents));
     let ast_arena = TypedArena::new();
     let root_scope = Rc::new(RefCell::new(ScopeData::new(None)));
+
+    let render_ctx = RenderContext {
+        config: render_config,
+        indent_level: 0,
+    };
+
     match filter::parse_Filter(&ast_arena, tokens.into_iter()) {
         Ok(&Node::Filter(ref filter)) => {
             if let Some(transformed_tree) = filter.transform_begin(&ast_arena, root_scope).unwrap() {
-                transformed_tree.render(out_buf).unwrap();
+                transformed_tree.render(render_ctx, out_buf).unwrap();
             }
         },
         _ => panic!()

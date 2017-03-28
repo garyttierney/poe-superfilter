@@ -2,7 +2,7 @@ use ast::mixin::PreparedMixin;
 use std::collections::BTreeMap;
 use std::cell::RefCell;
 use std::rc::Rc;
-use ast::transform::TransformResult;
+use ast::transform::{TransformResult, RenderContext};
 use std::io::Write;
 use ast::CompileErr;
 use std::ops::{Add, Sub, Mul, Div};
@@ -192,9 +192,9 @@ impl TransformResult for ScopeValue {
         self.clone()
     }
 
-    fn render(&self, buf: &mut Write) -> Result<(), CompileErr> {
+    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
         match *self {
-            ScopeValue::String(ref v) => { v.render(buf)?; },
+            ScopeValue::String(ref v) => { v.render(ctx, buf)?; },
             ScopeValue::Decimal(ref v) => {
                 // round float output since vanilla GGG filters only contain integers
                 let rounded = v.round();
@@ -203,7 +203,7 @@ impl TransformResult for ScopeValue {
             ScopeValue::Int(ref v) => { buf.write(v.to_string().as_ref())?; },
             ScopeValue::List(ref list) => {
                 for val in list {
-                    val.render(buf)?;
+                    val.render(ctx, buf)?;
                     buf.write(" ".as_ref())?;
                 };
             },
