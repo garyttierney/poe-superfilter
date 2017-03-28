@@ -19,7 +19,7 @@ pub enum ValueExpression<'ast> {
 }
 
 impl <'a> Transform<'a> for ValueExpression<'a> {
-    fn transform(&'a self, ctx: TransformContext<'a>)
+    fn transform(&self, ctx: TransformContext<'a>)
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         match *self {
             ValueExpression::Number(ref num_box) => num_box.transform(ctx.clone()),
@@ -60,7 +60,7 @@ pub enum NumberBox {
 
 impl <'a> Transform<'a> for NumberBox {
     #[allow(unused_variables)]
-    fn transform(&'a self, ctx: TransformContext<'a>)
+    fn transform(&self, ctx: TransformContext<'a>)
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         match *self {
             NumberBox::Decimal(num) => Ok(Some(ctx.alloc_transformed(

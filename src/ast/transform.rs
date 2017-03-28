@@ -13,24 +13,15 @@ use ast::{CompileErr,TransformedNode,Node};
 pub trait Transform<'a> {
     /// Perform any transformations that need to be done before rendering this structure into
     /// plain GGG loot filter syntax
-    fn transform(&'a self, ctx: TransformContext<'a>)
+    fn transform(&self, ctx: TransformContext<'a>)
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr>;
 }
 
+#[derive(Clone)]
 pub struct TransformContext<'a> {
     pub scope: Rc<RefCell<ScopeData<'a>>>,
     pub transform_arena: &'a TypedArena<TransformedNode<'a>>,
     pub ast_arena: &'a TypedArena<Node<'a>>
-}
-
-impl <'a> Clone for TransformContext<'a> {
-    fn clone(&self) -> Self {
-        TransformContext {
-            scope: self.scope.clone(),
-            transform_arena: self.transform_arena,
-            ast_arena: self.ast_arena,
-        }
-    }
 }
 
 impl <'a> TransformContext<'a> {

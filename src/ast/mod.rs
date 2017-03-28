@@ -46,102 +46,94 @@ impl <'ast> Debug for Filter<'ast> {
 impl <'a> Filter<'a> {
     pub fn transform_begin(&'a self, ast_arena: &'a TypedArena<Node<'a>>, root_scope: Rc<RefCell<ScopeData<'a>>>)
                            -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
-        let mut transformed_nodes : Vec<&TransformedNode<'a>> =  Vec::with_capacity(self.nodes.len());
-
         let root_ctx = TransformContext {
             scope: root_scope,
             transform_arena: &self.transformed_arena,
             ast_arena: ast_arena,
         };
 
+        self.transform(root_ctx)
+    }
+}
+
+impl <'a> Transform<'a> for Filter<'a> {
+    fn transform(&self, ctx: TransformContext<'a>)
+                 -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
+        let mut transformed_nodes : Vec<&TransformedNode<'a>> =  Vec::with_capacity(self.nodes.len());
+
         for node in &self.nodes {
-            if let Some(t_node) = node.transform(root_ctx.clone())? {
+            if let Some(t_node) = node.transform(ctx.clone())? {
                 transformed_nodes.push(t_node);
             }
         }
         return Ok(Some(
-            self.transformed_arena.alloc(TransformedNode::Root(transformed_nodes))
+            ctx.alloc_transformed(TransformedNode::Root(transformed_nodes))
         ));
     }
 }
 
-#[derive(Debug)]
-pub enum Node<'ast> {
-    Filter(Filter<'ast>),
-    Block(block::Block<'ast>),
-    SetValueStmt(SetValueStatement<'ast>),
-    ConditionStmt(ConditionStatement<'ast>),
-    Condition(Condition<'ast>),
-    ComparisonOp(ComparisonOperator),
-
-    StringBox(StringBox),
-
-    ValueExpr(ValueExpression<'ast>),
-
-    VarRef(VarReference),
-    VarDefinition(VarDefinition<'ast>),
-
-    Mixin(Mixin<'ast>),
-    MixinCall(MixinCall<'ast>),
-    Color(color::Color<'ast>),
+macro_rules! as_inner {
+    ( #[$meta:meta] pub enum $name:ident<'ast> as $trai:ty { $( $variant:ident($arg:ty) ),* } ) => (
+        #[$meta]
+        pub enum $name<'ast> { $( $variant ( $arg ) ),* }
+        impl <'ast> $name<'ast> {
+            pub fn as_inner(&self) -> &($trai) {
+                match *self {
+                    $( $name::$variant ( ref x ) => x as &$trai ),*
+                }
+            }
+        }
+    )
 }
 
-#[derive(Debug,Clone,PartialEq)]
-pub enum TransformedNode<'ast> {
-    Root(Vec<&'ast TransformedNode<'ast>>),
-    Block(block::PlainBlock<'ast>),
-    SetValueStmt(PlainSetValueStatement),
-    ConditionStmt(PlainConditionStatement),
-    Value(ScopeValue),
-    ExpandedNodes(Vec<&'ast TransformedNode<'ast>>)
+as_inner! {
+    #[derive(Debug)]
+    pub enum Node<'ast> as Transform<'ast> {
+        Filter(Filter<'ast>),
+        Block(block::Block<'ast>),
+        SetValueStmt(SetValueStatement<'ast>),
+        ConditionStmt(ConditionStatement<'ast>),
+
+        StringBox(StringBox),
+
+        ValueExpr(ValueExpression<'ast>),
+
+        VarRef(VarReference),
+        VarDefinition(VarDefinition<'ast>),
+
+        Mixin(Mixin<'ast>),
+        MixinCall(MixinCall<'ast>),
+        Color(color::Color<'ast>)
+    }
+}
+
+as_inner! {
+    #[derive(Debug,Clone,PartialEq)]
+    pub enum TransformedNode<'ast> as TransformResult {
+        Root(Vec<&'ast TransformedNode<'ast>>),
+        Block(block::PlainBlock<'ast>),
+        SetValueStmt(PlainSetValueStatement),
+        ConditionStmt(PlainConditionStatement),
+        Value(ScopeValue),
+        ExpandedNodes(Vec<&'ast TransformedNode<'ast>>)
+    }
 }
 
 impl <'a> Transform<'a> for Node<'a> {
-    fn transform(&'a self, ctx: TransformContext<'a>)
+    fn transform(&self, ctx: TransformContext<'a>)
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
-        // TODO: make this a macro instead of listing all the options manually
-        match *self {
-            Node::Block(ref n) => n.transform(ctx),
-            Node::SetValueStmt(ref n) => n.transform(ctx),
-            Node::VarDefinition(ref n) => n.transform(ctx),
-            Node::VarRef(ref n) => n.transform(ctx),
-            Node::ValueExpr(ref n) => n.transform(ctx),
-            Node::ConditionStmt(ref n) => n.transform(ctx),
-            Node::StringBox(ref n) => n.transform(ctx),
-            Node::Mixin(ref n) => n.transform(ctx),
-            Node::MixinCall(ref n) => n.transform(ctx),
-            ref node => {
-                println!("Unimplemented node type: {:?}", node);
-                unimplemented!();
-            }
-        }
+        let t = self.as_inner();
+        t.transform(ctx)
     }
 }
 
 impl <'ast> TransformResult for TransformedNode<'ast> {
     fn return_value(&self) -> ScopeValue {
-        match *self {
-            // TODO: use a macro for this.
-            TransformedNode::Root(_) => ScopeValue::None,
-            TransformedNode::Block(ref node) => node.return_value(),
-            TransformedNode::SetValueStmt(ref node) => node.return_value(),
-            TransformedNode::ConditionStmt(ref node) => node.return_value(),
-            TransformedNode::Value(ref node) => node.return_value(),
-            TransformedNode::ExpandedNodes(ref node) => node.return_value()
-        }
+        self.as_inner().return_value()
     }
 
     fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
-        match *self {
-            // TODO: use a macro for this.
-            TransformedNode::Root(ref node) => node.render(ctx, buf)?,
-            TransformedNode::Block(ref node) => node.render(ctx, buf)?,
-            TransformedNode::SetValueStmt(ref node) => node.render(ctx, buf)?,
-            TransformedNode::ConditionStmt(ref node) => node.render(ctx, buf)?,
-            TransformedNode::Value(ref node) => node.render(ctx, buf)?,
-            TransformedNode::ExpandedNodes(ref node) => node.render(ctx, buf)?
-        }
-        Ok(())
+        self.as_inner().render(ctx, buf)
     }
 }
 

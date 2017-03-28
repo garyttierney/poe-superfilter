@@ -8,7 +8,7 @@ pub struct VarReference {
 }
 impl <'a> Transform<'a> for VarReference {
     #[allow(unused_variables)]
-    fn transform(&'a self, ctx: TransformContext<'a>)
+    fn transform(&self, ctx: TransformContext<'a>)
                      -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         // try to resolve variable reference
         match ctx.ref_scope().var(&self.identifier) {
@@ -28,7 +28,7 @@ pub struct VarDefinition<'a> {
 }
 
 impl <'a> Transform<'a> for VarDefinition<'a> {
-    fn transform(&'a self, ctx: TransformContext<'a>)
+    fn transform(&self, ctx: TransformContext<'a>)
                      -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         for val in &self.values {
             if let Some(t_val) = val.transform(ctx.clone())? {

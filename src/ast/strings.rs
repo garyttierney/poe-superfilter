@@ -32,7 +32,7 @@ impl <'a> TransformResult for String {
 }
 
 impl <'a> Transform<'a> for StringBox {
-    fn transform(&'a self, ctx: TransformContext<'a>)
+    fn transform(&self, ctx: TransformContext<'a>)
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         match self {
             &StringBox::Var(ref identifier) => {

@@ -25,7 +25,7 @@ impl PartialEq for PlainSetValueStatement {
 }
 
 impl <'a> Transform<'a> for SetValueStatement<'a> {
-    fn transform(&'a self, ctx: TransformContext<'a>)
+    fn transform(&self, ctx: TransformContext<'a>)
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         let mut transformed_values: Vec<ScopeValue> = vec![];
         for value in &self.values {
@@ -76,7 +76,7 @@ impl PartialEq for PlainConditionStatement {
 }
 
 impl <'a> Transform<'a> for ConditionStatement<'a> {
-    fn transform(&'a self, ctx: TransformContext<'a>)
+    fn transform(&self, ctx: TransformContext<'a>)
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         if let Some(t_value) = self.condition.value.transform(ctx.clone())? {
             return Ok(Some(ctx.alloc_transformed(TransformedNode::ConditionStmt(

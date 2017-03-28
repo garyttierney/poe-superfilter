@@ -25,7 +25,7 @@ pub enum PlainBlock<'a> {
 }
 
 impl <'a> Transform<'a> for Block<'a> {
-    fn transform(&'a self, ctx: TransformContext<'a>)
+    fn transform(&self, ctx: TransformContext<'a>)
             -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         let block_ctx = TransformContext {
             scope: Rc::new(RefCell::new(
