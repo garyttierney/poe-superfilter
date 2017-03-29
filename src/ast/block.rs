@@ -24,6 +24,23 @@ pub enum PlainBlock<'a> {
     Hide(Vec<&'a TransformedNode<'a>>),
 }
 
+trait NodeList<'a> {
+    fn push_statement(&mut self, value: &'a TransformedNode);
+}
+
+impl <'a> NodeList<'a> for Vec<&'a TransformedNode<'a>> {
+    fn push_statement(&mut self, value: &'a TransformedNode) {
+        if let &TransformedNode::ConditionStmt(_) = value {
+            self.push(value);
+        } else if let Some(index) = self.iter().position(|other| *other == value) {
+            // replace existing same statement if possible
+            self[index] = value;
+        } else {
+            self.push(value);
+        }
+    }
+}
+
 impl <'a> Transform<'a> for Block<'a> {
     fn transform(&self, ctx: TransformContext<'a>)
             -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
@@ -44,27 +61,11 @@ impl <'a> Transform<'a> for Block<'a> {
                         match *t_statement {
                             TransformedNode::ExpandedNodes(ref resolved_stmts) => {
                                 for stmt in resolved_stmts {
-                                    // always add condition statements
-                                    if let TransformedNode::ConditionStmt(_) = **stmt {
-                                        t_statements.push(stmt);
-                                    } else if let Some(index) = t_statements.iter().position(|other| *other == *stmt) {
-                                        // replace existing same statement if possible
-                                        t_statements[index] = stmt;
-                                    } else {
-                                        t_statements.push(stmt);
-                                    }
+                                    t_statements.push_statement(stmt);
                                 }
                             },
                             _ => {
-                                // always add condition statements
-                                if let &TransformedNode::ConditionStmt(_) = t_statement {
-                                    t_statements.push(t_statement);
-                                } else if let Some(index) = t_statements.iter().position(|other| *other == t_statement) {
-                                    // replace existing same statement if possible
-                                    t_statements[index] = t_statement;
-                                } else {
-                                    t_statements.push(t_statement);
-                                }
+                                t_statements.push_statement(t_statement);
                             }
                         }
                     }
