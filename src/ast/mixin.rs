@@ -1,5 +1,5 @@
 use ast::{Node, TransformedNode, CompileErr};
-use ast::transform::{Transform, TransformResult, TransformContext};
+use ast::transform::{Transform, TransformContext};
 use scope::{ScopeData};
 use std::cell::RefCell;
 use std::rc::Rc;

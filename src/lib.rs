@@ -4,17 +4,20 @@
 //! in the game.
 
 #![feature(rustc_private)]
+#![feature(trace_macros)]
 #![feature(plugin)]
 #![plugin(indoc)]
 #[macro_use] extern crate lazy_static;
 #[macro_use] extern crate quick_error;
+#[macro_use] extern crate superfilter_macro;
+
 
 extern crate regex;
 extern crate arena;
 extern crate lalrpop_util;
 
 use arena::TypedArena;
-use ast::transform::{TransformResult, RenderContext, RenderConfig};
+use ast::transform::{RenderContext, RenderConfig};
 use std::io::Write;
 use ast::Node;
 use std::rc::Rc;

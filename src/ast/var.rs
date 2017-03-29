@@ -1,5 +1,5 @@
 use ast::{TransformedNode, CompileErr, Node};
-use ast::transform::{Transform, TransformResult, TransformContext};
+use ast::transform::{Transform, TransformContext};
 
 /// AST Structure that represents a reference to a variable
 #[derive(Debug)]
