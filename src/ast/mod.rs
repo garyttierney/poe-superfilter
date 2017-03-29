@@ -87,6 +87,9 @@ macro_rules! as_ref {
     )
 }
 
+/// Data structure to holds all node types that can occur in the acstract syntax tree.
+/// The InnerTransform derivation implements the Deref trait for this enum so the transform
+/// method can be called directly on the node and the inner value will receive the method call.
 #[derive(Debug,InnerTransform)]
 pub enum Node<'ast> {
     Filter(Filter<'ast>),
@@ -102,6 +105,9 @@ pub enum Node<'ast> {
     Color(color::Color<'ast>)
 }
 
+/// Holds fully transformed nodes that can be rendered.
+/// Calls to methods of the TransformResult trait on the inner values can be performed with no
+/// explicit conversion because this struct implements Deref into &TransformResult.
 #[derive(Debug,Clone,PartialEq,InnerTransformResult)]
 pub enum TransformedNode<'ast> {
     Root(Vec<&'ast TransformedNode<'ast>>),
@@ -112,6 +118,7 @@ pub enum TransformedNode<'ast> {
     ExpandedNodes(Vec<&'ast TransformedNode<'ast>>)
 }
 
+/// Implements rendering for lists of nodes by rendering each item in the list
 impl <'ast> TransformResult for Vec<&'ast TransformedNode<'ast>> {
     fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
         for node in self {
