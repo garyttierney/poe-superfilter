@@ -31,6 +31,7 @@ use lalrpop_util::ParseError;
 use tok::Tok;
 use tok::Location as TokenLocation;
 use std::ops::Deref;
+use std::path::PathBuf;
 
 pub struct Filter<'ast> {
     pub nodes: Vec<&'ast Node<'ast>>,
@@ -45,12 +46,16 @@ impl <'ast> Debug for Filter<'ast> {
 }
 
 impl <'a> Filter<'a> {
-    pub fn transform_begin(&'a self, ast_arena: &'a TypedArena<Node<'a>>, root_scope: Rc<RefCell<ScopeData<'a>>>)
-                           -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
+    pub fn transform_begin(&'a self,
+                           ast_arena: &'a TypedArena<Node<'a>>,
+                           root_scope: Rc<RefCell<ScopeData<'a>>>,
+                           base_path: Rc<PathBuf>)
+        -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         let root_ctx = TransformContext {
             scope: root_scope,
             transform_arena: &self.transformed_arena,
             ast_arena: ast_arena,
+            path: base_path,
         };
 
         self.transform(root_ctx)
@@ -71,20 +76,6 @@ impl <'a> Transform<'a> for Filter<'a> {
             ctx.alloc_transformed(TransformedNode::Root(transformed_nodes))
         ));
     }
-}
-
-macro_rules! as_ref {
-    ( #[$meta:meta] pub enum $name:ident<'ast> as $trai:ty { $( $variant:ident($arg:ty) ),* } ) => (
-        #[$meta]
-        pub enum $name<'ast> { $( $variant ( $arg ) ),* }
-        impl <'ast> $name<'ast> {
-            pub fn as_ref(&self) -> &($trai) {
-                match *self {
-                    $( $name::$variant ( ref x ) => x as &$trai ),*
-                }
-            }
-        }
-    )
 }
 
 /// Data structure to holds all node types that can occur in the acstract syntax tree.
@@ -149,6 +140,10 @@ quick_error! {
         WrongParameterCount(node: String, expected: usize, actual: usize) {
             description("Wrong mixin call parameter count")
             display("Wrong mixin call parameter count in {:?}: expected {}, got {}", node, expected, actual)
+        }
+        ImportError(node: String) {
+            description("Invalid import path")
+            display("Invalid import expression: {:?}", node)
         }
         Io(inner: IoError) {
             description("IO Error")

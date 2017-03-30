@@ -49,7 +49,10 @@ pub fn compile(contents: &str, out_buf: &mut Write, render_config: &RenderConfig
 
     match filter::parse_Filter(&ast_arena, tokens.into_iter()) {
         Ok(&Node::Filter(ref filter)) => {
-            if let Some(transformed_tree) = filter.transform_begin(&ast_arena, root_scope).unwrap() {
+            let result = filter.transform_begin(&ast_arena,
+                                                root_scope,
+                                                render_config.base_path.clone());
+            if let Some(transformed_tree) = result.unwrap() {
                 transformed_tree.render(render_ctx, out_buf).unwrap();
             }
         },

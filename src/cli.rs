@@ -15,12 +15,13 @@ use std::io;
 use docopt::Docopt;
 use std::path::Path;
 use superfilter::ast::transform::RenderConfig;
+use std::rc::Rc;
 
 const USAGE: &'static str = "
 PoE Superfilter compiler
 
 Usage:
-  superfilter <name> [--output=<file>] [-p]
+  superfilter <path> [--output=<file>] [-p]
   superfilter (-h | --help)
   superfilter --version
 
@@ -33,7 +34,7 @@ Options:
 
 #[derive(Debug, RustcDecodable)]
 struct Args {
-    arg_name: String,
+    arg_path: String,
     flag_output: Option<String>,
     flag_pretty: bool
 }
@@ -43,15 +44,18 @@ pub fn main() {
         .and_then(|d| d.decode())
         .unwrap_or_else(|e| e.exit());
 
-    let mut file = File::open(&args.arg_name).unwrap();
+    let mut file = File::open(&args.arg_path).unwrap();
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
-    // set directory to dir of the loaded file
-    ::std::env::set_current_dir(Path::new(&args.arg_name).parent().unwrap()).unwrap();
 
+    let base_path = Path::new(&args.arg_path)
+        .parent()
+        .unwrap()
+        .to_owned();
     let render_config = RenderConfig {
         pretty: args.flag_pretty,
         indent_str: "    ",
+        base_path: Rc::new(base_path)
     };
 
     if let Some(out_file) = args.flag_output {

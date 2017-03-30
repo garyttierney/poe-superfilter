@@ -106,6 +106,7 @@ impl <'a> Transform<'a> for MixinCall<'a> {
                 scope: Rc::new(RefCell::new(mixin_inner_scope)),
                 transform_arena: ctx.transform_arena,
                 ast_arena: ctx.ast_arena,
+                path: ctx.path.clone(),
             };
 
             // collect transformed statements from lines in the mixin

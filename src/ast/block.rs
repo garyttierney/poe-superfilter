@@ -50,6 +50,7 @@ impl <'a> Transform<'a> for Block<'a> {
             )),
             transform_arena: ctx.transform_arena,
             ast_arena: ctx.ast_arena,
+            path: ctx.path.clone(),
         };
 
         // collect transformed statements from lines in this block
@@ -72,7 +73,13 @@ impl <'a> Transform<'a> for Block<'a> {
                 }
             }
             &Block::Import(ref path) => {
-                let mut file = fs::File::open(path)?;
+                let resolved_file_path = ctx.path.clone().join(path);
+                let new_base_path = resolved_file_path
+                    .parent()
+                    .ok_or(CompileErr::ImportError(format!("{:?}", self)))?
+                    .to_owned();
+
+                let mut file = fs::File::open(resolved_file_path)?;
                 let mut contents = String::new();
                 file.read_to_string(&mut contents)?;
 
@@ -80,8 +87,10 @@ impl <'a> Transform<'a> for Block<'a> {
                 {
                     match filter::parse_Filter(ctx.ast_arena, tokens.into_iter()) {
                         Ok(&Node::Filter(ref filter)) => {
-                            if let Some(&TransformedNode::Root(ref nodes)) =
-                                    filter.transform_begin(ctx.ast_arena, ctx.scope.clone()).unwrap() {
+                            let transform_result = filter.transform_begin(ctx.ast_arena,
+                                                                          ctx.scope.clone(),
+                                                                          Rc::new(new_base_path));
+                            if let Some(&TransformedNode::Root(ref nodes)) = transform_result.unwrap() {
                                 for n in nodes {
                                     t_statements.push(n);
                                 }

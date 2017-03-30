@@ -6,6 +6,7 @@ use std::cell::RefMut;
 use std::cell::RefCell;
 use std::io::Write;
 use ast::{CompileErr,TransformedNode,Node};
+use std::path::PathBuf;
 
 /// This trait needs to be implemented for any abstract syntax tree structure, it contains the
 /// functions to transform the structure's representation into the final structure before it gets
@@ -21,7 +22,8 @@ pub trait Transform<'a> {
 pub struct TransformContext<'a> {
     pub scope: Rc<RefCell<ScopeData<'a>>>,
     pub transform_arena: &'a TypedArena<TransformedNode<'a>>,
-    pub ast_arena: &'a TypedArena<Node<'a>>
+    pub ast_arena: &'a TypedArena<Node<'a>>,
+    pub path: Rc<PathBuf>
 }
 
 impl <'a> TransformContext<'a> {
@@ -60,7 +62,8 @@ pub trait TransformResult {
 #[derive(Debug)]
 pub struct RenderConfig {
     pub pretty: bool,
-    pub indent_str: &'static str
+    pub indent_str: &'static str,
+    pub base_path: Rc<PathBuf>
 }
 
 impl RenderConfig {
