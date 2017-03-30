@@ -63,7 +63,7 @@ pub trait TransformResult {
 pub struct RenderConfig {
     pub pretty: bool,
     pub indent_str: &'static str,
-    pub base_path: Rc<PathBuf>
+    pub base_path: PathBuf
 }
 
 impl RenderConfig {

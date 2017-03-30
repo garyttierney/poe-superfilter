@@ -40,6 +40,40 @@ impl <'a> NodeList<'a> for Vec<&'a TransformedNode<'a>> {
         }
     }
 }
+impl <'a>  Block<'a> {
+    fn transform_import(&self, path: &String, ctx: TransformContext<'a>)
+        -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
+
+        let resolved_file_path = ctx.path.clone().join(path);
+        let new_base_path = resolved_file_path
+            .parent()
+            .ok_or(CompileErr::ImportError(format!("{:?}", self)))?
+            .to_owned();
+
+        let mut file = fs::File::open(resolved_file_path)?;
+        let mut contents = String::new();
+        file.read_to_string(&mut contents)?;
+
+        let tokens = Box::new(tok::tokenize(&contents));
+        {
+            match filter::parse_Filter(ctx.ast_arena, tokens.into_iter()) {
+                Ok(&Node::Filter(ref filter)) => {
+                    let transform_result = filter.transform_begin(ctx.ast_arena,
+                                                                  ctx.scope.clone(),
+                                                                  Rc::new(new_base_path));
+                    if let Some(&TransformedNode::Root(ref nodes)) = transform_result.unwrap() {
+                        return Ok(Some(ctx.alloc_transformed(TransformedNode::ExpandedNodes(
+                            nodes.to_owned()
+                        ))))
+                    } else {
+                        return Ok(None);
+                    }
+                },
+                _ => return Err(CompileErr::Unknown)
+            }
+        }
+    }
+}
 
 impl <'a> Transform<'a> for Block<'a> {
     fn transform(&self, ctx: TransformContext<'a>)
@@ -72,39 +106,7 @@ impl <'a> Transform<'a> for Block<'a> {
                     }
                 }
             }
-            &Block::Import(ref path) => {
-                let resolved_file_path = ctx.path.clone().join(path);
-                let new_base_path = resolved_file_path
-                    .parent()
-                    .ok_or(CompileErr::ImportError(format!("{:?}", self)))?
-                    .to_owned();
-
-                let mut file = fs::File::open(resolved_file_path)?;
-                let mut contents = String::new();
-                file.read_to_string(&mut contents)?;
-
-                let tokens = Box::new(tok::tokenize(&contents));
-                {
-                    match filter::parse_Filter(ctx.ast_arena, tokens.into_iter()) {
-                        Ok(&Node::Filter(ref filter)) => {
-                            let transform_result = filter.transform_begin(ctx.ast_arena,
-                                                                          ctx.scope.clone(),
-                                                                          Rc::new(new_base_path));
-                            if let Some(&TransformedNode::Root(ref nodes)) = transform_result.unwrap() {
-                                for n in nodes {
-                                    t_statements.push(n);
-                                }
-                                return Ok(Some(ctx.alloc_transformed(TransformedNode::ExpandedNodes(
-                                    t_statements
-                                ))))
-                            } else {
-                                return Ok(None);
-                            }
-                        },
-                        _ => return Err(CompileErr::Unknown)
-                    }
-                }
-            }
+            &Block::Import(ref path) => return self.transform_import(path, ctx)
         }
 
         Ok(Some(ctx.alloc_transformed(TransformedNode::Block(

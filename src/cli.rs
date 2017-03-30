@@ -15,7 +15,6 @@ use std::io;
 use docopt::Docopt;
 use std::path::Path;
 use superfilter::ast::transform::RenderConfig;
-use std::rc::Rc;
 
 const USAGE: &'static str = "
 PoE Superfilter compiler
@@ -55,7 +54,7 @@ pub fn main() {
     let render_config = RenderConfig {
         pretty: args.flag_pretty,
         indent_str: "    ",
-        base_path: Rc::new(base_path)
+        base_path: base_path
     };
 
     if let Some(out_file) = args.flag_output {

@@ -51,7 +51,7 @@ pub fn compile(contents: &str, out_buf: &mut Write, render_config: &RenderConfig
         Ok(&Node::Filter(ref filter)) => {
             let result = filter.transform_begin(&ast_arena,
                                                 root_scope,
-                                                render_config.base_path.clone());
+                                                Rc::new(render_config.base_path.clone()));
             if let Some(transformed_tree) = result.unwrap() {
                 transformed_tree.render(render_ctx, out_buf).unwrap();
             }

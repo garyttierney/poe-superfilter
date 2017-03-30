@@ -55,7 +55,7 @@ impl <'a> Filter<'a> {
             scope: root_scope,
             transform_arena: &self.transformed_arena,
             ast_arena: ast_arena,
-            path: base_path,
+            path: base_path
         };
 
         self.transform(root_ctx)
