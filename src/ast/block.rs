@@ -102,10 +102,7 @@ impl <'a> Transform<'a> for Block<'a> {
             match self {
                 &Block::Show(_) => PlainBlock::Show(t_statements),
                 &Block::Hide(_) => PlainBlock::Hide(t_statements),
-                node => {
-                    println!("{:?}", node);
-                    unimplemented!()
-                }
+                _ => unreachable!()
             }
         ))))
     }

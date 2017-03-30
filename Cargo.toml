@@ -5,17 +5,16 @@ authors = ["Stefan Kaufhold <cere@fastmail.fm>"]
 build = "build.rs" # LALRPOP preprocessing
 
 [dependencies]
-lalrpop-util = "0.12.0"
-regex = "0.1"
-lazy_static = "0.2"
-indoc = "^0.1"
+lalrpop-util = "^0.12"
+regex = "^0.2"
+lazy_static = "^0.2"
 quick-error= "^1.1"
-docopt = "0.7"
-rustc-serialize = "0.3"
+docopt = "^0.7"
+rustc-serialize = "^0.3"
 superfilter_macro = { path = "superfilter_macro" }
 
 [build-dependencies]
-lalrpop = "0.12.0"
+lalrpop = "^0.12"
 
 [lib]
 name = "superfilter"

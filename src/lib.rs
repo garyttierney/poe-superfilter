@@ -4,9 +4,6 @@
 //! in the game.
 
 #![feature(rustc_private)]
-#![feature(trace_macros)]
-#![feature(plugin)]
-#![plugin(indoc)]
 #[macro_use] extern crate lazy_static;
 #[macro_use] extern crate quick_error;
 #[macro_use] extern crate superfilter_macro;
