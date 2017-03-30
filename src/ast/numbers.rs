@@ -25,26 +25,30 @@ impl <'a> Transform<'a> for ValueExpression<'a> {
             ValueExpression::Number(ref num_box) => num_box.transform(ctx.clone()),
             ValueExpression::Op(ref a, ref op, ref b) => {
                 // transform each operand
-                let t_a = a.transform(ctx.clone())?;
-                if let None = t_a {
-                    return Err(CompileErr::MissingValue(format!("{:?}", t_a)))
+                let transformed_operands = (
+                    a.transform(ctx.clone())?,
+                    b.transform(ctx.clone())?
+                );
+
+                match transformed_operands {
+                    // abort if one of the nodes returned nothing
+                    (None, _) => return Err(CompileErr::MissingValue(format!("{:?}", a))),
+                    (_, None) => return Err(CompileErr::MissingValue(format!("{:?}", b))),
+                    (Some(a_trans), Some(b_trans)) => {
+                        // get return values from transformed nodes
+                        let a_val = a_trans.return_value();
+                        let b_val = b_trans.return_value();
+
+                        // Perform actual math operations
+                        let result = match *op {
+                            NumberOperation::Add => a_val + b_val,
+                            NumberOperation::Mul => a_val * b_val,
+                            NumberOperation::Div => a_val / b_val,
+                            NumberOperation::Sub => a_val - b_val,
+                        };
+                        return Ok(Some(ctx.alloc_transformed(TransformedNode::Value(result))))
+                    }
                 }
-
-                let t_b = b.transform(ctx.clone())?;
-                if let None = t_b {
-                    return Err(CompileErr::MissingValue(format!("{:?}", t_b)))
-                }
-
-                let a_val = t_a.unwrap().return_value();
-                let b_val = t_b.unwrap().return_value();
-
-                let result = match *op {
-                    NumberOperation::Add => a_val + b_val,
-                    NumberOperation::Mul => a_val * b_val,
-                    NumberOperation::Div => a_val / b_val,
-                    NumberOperation::Sub => a_val - b_val,
-                };
-                Ok(Some(ctx.alloc_transformed(TransformedNode::Value(result))))
             }
         }
     }
