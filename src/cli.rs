@@ -15,6 +15,7 @@ use std::io;
 use docopt::Docopt;
 use std::path::Path;
 use superfilter::ast::transform::RenderConfig;
+use std::time::SystemTime;
 
 const USAGE: &'static str = "
 PoE Superfilter compiler
@@ -39,6 +40,8 @@ struct Args {
 }
 
 pub fn main() {
+    let start_time = SystemTime::now();
+
     let args: Args = Docopt::new(USAGE)
         .and_then(|d| d.decode())
         .unwrap_or_else(|e| e.exit());
@@ -57,10 +60,24 @@ pub fn main() {
         base_path: base_path
     };
 
-    if let Some(out_file) = args.flag_output {
-        let mut file = File::create(out_file).unwrap();
-        superfilter::compile(&contents, &mut file, &render_config);
-    } else {
-        superfilter::compile(&contents, &mut io::stdout(), &render_config);
+    let result = {
+        if let Some(out_file) = args.flag_output {
+            let mut file = File::create(out_file).unwrap();
+            superfilter::compile(&contents, &mut file, &render_config)
+        } else {
+            superfilter::compile(&contents, &mut io::stdout(), &render_config)
+        }
+    };
+
+    let compile_time = start_time.elapsed().unwrap();
+
+    match result {
+        Ok(_) => {
+            println!("Compilation successful ({}.{}s)", compile_time.as_secs(), compile_time.subsec_nanos() / 100000);
+        },
+        Err(err) => {
+            println!("Compilation failed:");
+            println!("{}", err)
+        }
     }
 }
