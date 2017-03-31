@@ -8,9 +8,15 @@ in the game.
 
 ```
 Usage:
-  superfilter <name> [--output=<file>]
+  superfilter <path> [--output=<file>] [-p]
   superfilter (-h | --help)
   superfilter --version
+
+Options:
+  -h --help        Show this screen.
+  --version, -v    Show version.
+  --pretty, -p     Include indentation and other formatting in the output
+  --output=<file>  Output file.
 ```
 
 Check out the [syntax documentation](doc/syntax.md) to get started.
