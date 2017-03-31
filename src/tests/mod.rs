@@ -1,5 +1,5 @@
 
-use arena::TypedArena;
+use typed_arena::Arena;
 
 use super::*;
 
@@ -11,6 +11,6 @@ fn basic_vars() {
         Rarity Magic");
 
     let tokens = Box::new(tok::tokenize(sfilter));
-    let ast_arena = TypedArena::new();
+    let ast_arena = Arena::new();
     let filter = filter::parse_Filter(&ast_arena, tokens.into_iter());
 }

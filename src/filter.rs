@@ -4,7 +4,7 @@ use ast::block_statements as stm;
 use ast::Node;
 use tok::Location as TokenLocation;
 use tok::Tok;
-use arena::TypedArena;
+use typed_arena::Arena;
 extern crate lalrpop_util as __lalrpop_util;
 
 mod __parse__Filter {
@@ -16,7 +16,7 @@ mod __parse__Filter {
     use ast::Node;
     use tok::Location as TokenLocation;
     use tok::Tok;
-    use arena::TypedArena;
+    use typed_arena::Arena;
     extern crate lalrpop_util as __lalrpop_util;
     use super::__ToTriple;
     #[allow(dead_code)]
@@ -611,7 +611,7 @@ mod __parse__Filter {
         __TOKEN: __ToTriple<'ast, Error=char>,
         __TOKENS: IntoIterator<Item=__TOKEN>,
     >(
-        arena: &'ast TypedArena<Node<'ast>>,
+        arena: &'ast Arena<Node<'ast>>,
         __tokens0: __TOKENS,
     ) -> Result<&'ast Node<'ast>, __lalrpop_util::ParseError<TokenLocation, Tok, char>>
     {
@@ -793,7 +793,7 @@ mod __parse__Filter {
     pub fn __reduce<
         'ast,
     >(
-        arena: &'ast TypedArena<Node<'ast>>,
+        arena: &'ast Arena<Node<'ast>>,
         __action: i32,
         __lookahead_start: Option<&TokenLocation>,
         __states: &mut ::std::vec::Vec<i32>,
@@ -2576,7 +2576,7 @@ pub use self::__parse__Filter::parse_Filter;
 pub fn __action0<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
@@ -2587,7 +2587,7 @@ pub fn __action0<
 pub fn __action1<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, defs, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     (_, first, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
     (_, rest, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
@@ -2597,7 +2597,7 @@ pub fn __action1<
         let mut nodes = defs;
         nodes.push(first);
         nodes.extend(rest);
-        arena.alloc(Node::Filter(ast::Filter { nodes: nodes, transformed_arena: TypedArena::new() }))
+        arena.alloc(Node::Filter(ast::Filter { nodes: nodes, transformed_arena: Arena::new() }))
     }
 }
 
@@ -2605,12 +2605,12 @@ pub fn __action1<
 pub fn __action2<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
     arena.alloc(Node::Filter(
-        ast::Filter { nodes: __0, transformed_arena: TypedArena::new() }
+        ast::Filter { nodes: __0, transformed_arena: Arena::new() }
     ))
 }
 
@@ -2618,7 +2618,7 @@ pub fn __action2<
 pub fn __action3<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, ast::var::VarDefinition<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
@@ -2629,7 +2629,7 @@ pub fn __action3<
 pub fn __action4<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
@@ -2640,7 +2640,7 @@ pub fn __action4<
 pub fn __action5<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, __0, _): (TokenLocation, String, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
@@ -2653,7 +2653,7 @@ pub fn __action5<
 pub fn __action6<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, __0, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
@@ -2668,7 +2668,7 @@ pub fn __action6<
 pub fn __action7<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, __0, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
@@ -2683,7 +2683,7 @@ pub fn __action7<
 pub fn __action8<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, name, _): (TokenLocation, String, TokenLocation),
     (_, args, _): (TokenLocation, ::std::option::Option<Vec<String>>, TokenLocation),
@@ -2711,7 +2711,7 @@ pub fn __action8<
 pub fn __action9<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
@@ -2722,7 +2722,7 @@ pub fn __action9<
 pub fn __action10<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
@@ -2733,7 +2733,7 @@ pub fn __action10<
 pub fn __action11<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, id, _): (TokenLocation, String, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
@@ -2750,7 +2750,7 @@ pub fn __action11<
 pub fn __action12<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, String, TokenLocation),
 ) -> &'ast Node<'ast>
 {
@@ -2763,7 +2763,7 @@ pub fn __action12<
 pub fn __action13<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, n, _): (TokenLocation, String, TokenLocation),
     (_, val, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
@@ -2781,7 +2781,7 @@ pub fn __action13<
 pub fn __action14<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, n, _): (TokenLocation, String, TokenLocation),
     (_, cond, _): (TokenLocation, stm::Condition<'ast>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
@@ -2799,7 +2799,7 @@ pub fn __action14<
 pub fn __action15<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, n, _): (TokenLocation, String, TokenLocation),
     (_, params, _): (TokenLocation, ::std::option::Option<Vec<&'ast Node<'ast>>>, TokenLocation),
@@ -2818,7 +2818,7 @@ pub fn __action15<
 pub fn __action16<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
@@ -2829,7 +2829,7 @@ pub fn __action16<
 pub fn __action17<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
@@ -2840,7 +2840,7 @@ pub fn __action17<
 pub fn __action18<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
@@ -2851,7 +2851,7 @@ pub fn __action18<
 pub fn __action19<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, ast::var::VarDefinition<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
@@ -2862,7 +2862,7 @@ pub fn __action19<
 pub fn __action20<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
@@ -2873,7 +2873,7 @@ pub fn __action20<
 pub fn __action21<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, String, TokenLocation),
 ) -> String
 {
@@ -2884,7 +2884,7 @@ pub fn __action21<
 pub fn __action22<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, String, TokenLocation),
 ) -> String
 {
@@ -2895,7 +2895,7 @@ pub fn __action22<
 pub fn __action23<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, op, _): (TokenLocation, stm::ComparisonOperator, TokenLocation),
     (_, v, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> stm::Condition<'ast>
@@ -2907,7 +2907,7 @@ pub fn __action23<
 pub fn __action24<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> stm::ComparisonOperator
 {
@@ -2918,7 +2918,7 @@ pub fn __action24<
 pub fn __action25<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> stm::ComparisonOperator
 {
@@ -2929,7 +2929,7 @@ pub fn __action25<
 pub fn __action26<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> stm::ComparisonOperator
 {
@@ -2940,7 +2940,7 @@ pub fn __action26<
 pub fn __action27<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> stm::ComparisonOperator
 {
@@ -2951,7 +2951,7 @@ pub fn __action27<
 pub fn __action28<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> stm::ComparisonOperator
 {
@@ -2962,7 +2962,7 @@ pub fn __action28<
 pub fn __action29<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, i64, TokenLocation),
 ) -> &'ast Node<'ast>
 {
@@ -2975,7 +2975,7 @@ pub fn __action29<
 pub fn __action30<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, f64, TokenLocation),
 ) -> &'ast Node<'ast>
 {
@@ -2988,7 +2988,7 @@ pub fn __action30<
 pub fn __action31<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, l, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, r, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
@@ -3003,7 +3003,7 @@ pub fn __action31<
 pub fn __action32<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, l, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, r, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
@@ -3018,7 +3018,7 @@ pub fn __action32<
 pub fn __action33<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
@@ -3029,7 +3029,7 @@ pub fn __action33<
 pub fn __action34<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, l, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, r, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
@@ -3044,7 +3044,7 @@ pub fn __action34<
 pub fn __action35<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, l, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, r, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
@@ -3059,7 +3059,7 @@ pub fn __action35<
 pub fn __action36<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
@@ -3070,7 +3070,7 @@ pub fn __action36<
 pub fn __action37<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
@@ -3081,7 +3081,7 @@ pub fn __action37<
 pub fn __action38<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
@@ -3092,7 +3092,7 @@ pub fn __action38<
 pub fn __action39<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, String, TokenLocation),
 ) -> &'ast Node<'ast>
 {
@@ -3103,7 +3103,7 @@ pub fn __action39<
 pub fn __action40<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
@@ -3116,7 +3116,7 @@ pub fn __action40<
 pub fn __action41<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, r, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
     (_, g, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
     (_, b, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
@@ -3135,7 +3135,7 @@ pub fn __action41<
 pub fn __action42<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, r, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
     (_, g, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
     (_, b, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
@@ -3155,7 +3155,7 @@ pub fn __action42<
 pub fn __action43<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, Vec<&'ast Node<'ast>>, TokenLocation),
 ) -> ::std::option::Option<Vec<&'ast Node<'ast>>>
 {
@@ -3166,7 +3166,7 @@ pub fn __action43<
 pub fn __action44<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::option::Option<Vec<&'ast Node<'ast>>>
@@ -3178,7 +3178,7 @@ pub fn __action44<
 pub fn __action45<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, __0, _): (TokenLocation, Vec<&'ast Node<'ast>>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
@@ -3191,7 +3191,7 @@ pub fn __action45<
 pub fn __action46<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     (_, e, _): (TokenLocation, ::std::option::Option<&'ast Node<'ast>>, TokenLocation),
 ) -> Vec<&'ast Node<'ast>>
@@ -3210,7 +3210,7 @@ pub fn __action46<
 pub fn __action47<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
@@ -3221,7 +3221,7 @@ pub fn __action47<
 pub fn __action48<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     (_, e, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> ::std::vec::Vec<&'ast Node<'ast>>
@@ -3233,7 +3233,7 @@ pub fn __action48<
 pub fn __action49<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, Vec<String>, TokenLocation),
 ) -> ::std::option::Option<Vec<String>>
 {
@@ -3244,7 +3244,7 @@ pub fn __action49<
 pub fn __action50<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::option::Option<Vec<String>>
@@ -3256,7 +3256,7 @@ pub fn __action50<
 pub fn __action51<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, __0, _): (TokenLocation, Vec<String>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
@@ -3269,7 +3269,7 @@ pub fn __action51<
 pub fn __action52<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
     (_, e, _): (TokenLocation, ::std::option::Option<String>, TokenLocation),
 ) -> Vec<String>
@@ -3288,7 +3288,7 @@ pub fn __action52<
 pub fn __action53<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::vec::Vec<&'ast Node<'ast>>
@@ -3300,7 +3300,7 @@ pub fn __action53<
 pub fn __action54<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
 ) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
@@ -3311,7 +3311,7 @@ pub fn __action54<
 pub fn __action55<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::vec::Vec<&'ast Node<'ast>>
@@ -3323,7 +3323,7 @@ pub fn __action55<
 pub fn __action56<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
 ) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
@@ -3334,7 +3334,7 @@ pub fn __action56<
 pub fn __action57<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::vec::Vec<&'ast Node<'ast>>
@@ -3346,7 +3346,7 @@ pub fn __action57<
 pub fn __action58<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
 ) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
@@ -3357,7 +3357,7 @@ pub fn __action58<
 pub fn __action59<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
@@ -3368,7 +3368,7 @@ pub fn __action59<
 pub fn __action60<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     (_, e, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> ::std::vec::Vec<&'ast Node<'ast>>
@@ -3380,7 +3380,7 @@ pub fn __action60<
 pub fn __action61<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
@@ -3391,7 +3391,7 @@ pub fn __action61<
 pub fn __action62<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     (_, e, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> ::std::vec::Vec<&'ast Node<'ast>>
@@ -3403,7 +3403,7 @@ pub fn __action62<
 pub fn __action63<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
@@ -3414,7 +3414,7 @@ pub fn __action63<
 pub fn __action64<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     (_, e, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> ::std::vec::Vec<&'ast Node<'ast>>
@@ -3426,7 +3426,7 @@ pub fn __action64<
 pub fn __action65<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, String, TokenLocation),
 ) -> ::std::option::Option<String>
 {
@@ -3437,7 +3437,7 @@ pub fn __action65<
 pub fn __action66<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::option::Option<String>
@@ -3449,7 +3449,7 @@ pub fn __action66<
 pub fn __action67<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::vec::Vec<String>
@@ -3461,7 +3461,7 @@ pub fn __action67<
 pub fn __action68<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
 ) -> ::std::vec::Vec<String>
 {
@@ -3472,7 +3472,7 @@ pub fn __action68<
 pub fn __action69<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, String, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
 ) -> String
@@ -3484,7 +3484,7 @@ pub fn __action69<
 pub fn __action70<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> ::std::option::Option<&'ast Node<'ast>>
 {
@@ -3495,7 +3495,7 @@ pub fn __action70<
 pub fn __action71<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::option::Option<&'ast Node<'ast>>
@@ -3507,7 +3507,7 @@ pub fn __action71<
 pub fn __action72<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::vec::Vec<&'ast Node<'ast>>
@@ -3519,7 +3519,7 @@ pub fn __action72<
 pub fn __action73<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
 ) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
@@ -3530,7 +3530,7 @@ pub fn __action73<
 pub fn __action74<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
 ) -> &'ast Node<'ast>
@@ -3542,7 +3542,7 @@ pub fn __action74<
 pub fn __action75<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> ::std::vec::Vec<&'ast Node<'ast>>
 {
@@ -3553,7 +3553,7 @@ pub fn __action75<
 pub fn __action76<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     (_, e, _): (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> ::std::vec::Vec<&'ast Node<'ast>>
@@ -3565,7 +3565,7 @@ pub fn __action76<
 pub fn __action77<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, __0, _): (TokenLocation, String, TokenLocation),
 ) -> ::std::vec::Vec<String>
 {
@@ -3576,7 +3576,7 @@ pub fn __action77<
 pub fn __action78<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
     (_, e, _): (TokenLocation, String, TokenLocation),
 ) -> ::std::vec::Vec<String>
@@ -3588,7 +3588,7 @@ pub fn __action78<
 pub fn __action79<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, Vec<&'ast Node<'ast>>, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -3613,7 +3613,7 @@ pub fn __action79<
 pub fn __action80<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -3644,7 +3644,7 @@ pub fn __action80<
 pub fn __action81<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -3671,7 +3671,7 @@ pub fn __action81<
 pub fn __action82<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, Vec<String>, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -3696,7 +3696,7 @@ pub fn __action82<
 pub fn __action83<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -3729,7 +3729,7 @@ pub fn __action83<
 pub fn __action84<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -3758,7 +3758,7 @@ pub fn __action84<
 pub fn __action85<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, &'ast Node<'ast>, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
 ) -> ::std::vec::Vec<&'ast Node<'ast>>
@@ -3781,7 +3781,7 @@ pub fn __action85<
 pub fn __action86<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     __1: (TokenLocation, &'ast Node<'ast>, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -3806,7 +3806,7 @@ pub fn __action86<
 pub fn __action87<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, ::std::option::Option<&'ast Node<'ast>>, TokenLocation),
 ) -> Vec<&'ast Node<'ast>>
 {
@@ -3829,7 +3829,7 @@ pub fn __action87<
 pub fn __action88<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     __1: (TokenLocation, ::std::option::Option<&'ast Node<'ast>>, TokenLocation),
 ) -> Vec<&'ast Node<'ast>>
@@ -3852,7 +3852,7 @@ pub fn __action88<
 pub fn __action89<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, String, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
 ) -> ::std::vec::Vec<String>
@@ -3875,7 +3875,7 @@ pub fn __action89<
 pub fn __action90<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -3900,7 +3900,7 @@ pub fn __action90<
 pub fn __action91<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, ::std::option::Option<String>, TokenLocation),
 ) -> Vec<String>
 {
@@ -3923,7 +3923,7 @@ pub fn __action91<
 pub fn __action92<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
     __1: (TokenLocation, ::std::option::Option<String>, TokenLocation),
 ) -> Vec<String>
@@ -3946,7 +3946,7 @@ pub fn __action92<
 pub fn __action93<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     __1: (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
@@ -3971,7 +3971,7 @@ pub fn __action93<
 pub fn __action94<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     __1: (TokenLocation, &'ast Node<'ast>, TokenLocation),
     __2: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
@@ -3996,7 +3996,7 @@ pub fn __action94<
 pub fn __action95<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
@@ -4019,7 +4019,7 @@ pub fn __action95<
 pub fn __action96<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     __1: (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> &'ast Node<'ast>
@@ -4042,7 +4042,7 @@ pub fn __action96<
 pub fn __action97<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, &'ast Node<'ast>, TokenLocation),
     __1: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
 ) -> &'ast Node<'ast>
@@ -4067,7 +4067,7 @@ pub fn __action97<
 pub fn __action98<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     __1: (TokenLocation, &'ast Node<'ast>, TokenLocation),
     __2: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
@@ -4092,7 +4092,7 @@ pub fn __action98<
 pub fn __action99<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> &'ast Node<'ast>
@@ -4115,7 +4115,7 @@ pub fn __action99<
 pub fn __action100<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
 ) -> &'ast Node<'ast>
 {
@@ -4136,7 +4136,7 @@ pub fn __action100<
 pub fn __action101<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
 ) -> &'ast Node<'ast>
@@ -4161,7 +4161,7 @@ pub fn __action101<
 pub fn __action102<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
     __2: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
@@ -4186,7 +4186,7 @@ pub fn __action102<
 pub fn __action103<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
 ) -> &'ast Node<'ast>
@@ -4211,7 +4211,7 @@ pub fn __action103<
 pub fn __action104<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
     __2: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
@@ -4236,7 +4236,7 @@ pub fn __action104<
 pub fn __action105<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -4269,7 +4269,7 @@ pub fn __action105<
 pub fn __action106<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -4302,7 +4302,7 @@ pub fn __action106<
 pub fn __action107<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -4329,7 +4329,7 @@ pub fn __action107<
 pub fn __action108<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -4356,7 +4356,7 @@ pub fn __action108<
 pub fn __action109<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> Vec<&'ast Node<'ast>>
 {
@@ -4377,7 +4377,7 @@ pub fn __action109<
 pub fn __action110<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> Vec<&'ast Node<'ast>>
@@ -4400,7 +4400,7 @@ pub fn __action110<
 pub fn __action111<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
     __1: (TokenLocation, &'ast Node<'ast>, TokenLocation),
 ) -> Vec<&'ast Node<'ast>>
@@ -4423,7 +4423,7 @@ pub fn __action111<
 pub fn __action112<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, ::std::vec::Vec<&'ast Node<'ast>>, TokenLocation),
 ) -> Vec<&'ast Node<'ast>>
 {
@@ -4446,7 +4446,7 @@ pub fn __action112<
 pub fn __action113<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, String, TokenLocation),
 ) -> Vec<String>
 {
@@ -4467,7 +4467,7 @@ pub fn __action113<
 pub fn __action114<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> Vec<String>
@@ -4490,7 +4490,7 @@ pub fn __action114<
 pub fn __action115<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
 ) -> Vec<String>
@@ -4513,7 +4513,7 @@ pub fn __action115<
 pub fn __action116<
     'ast,
 >(
-    arena: &'ast TypedArena<Node<'ast>>,
+    arena: &'ast Arena<Node<'ast>>,
     __0: (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
 ) -> Vec<String>
 {

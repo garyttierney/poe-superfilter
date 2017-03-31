@@ -1,5 +1,5 @@
 use scope::{ScopeData, ScopeValue};
-use arena::TypedArena;
+use typed_arena::Arena;
 use std::rc::Rc;
 use std::cell::Ref;
 use std::cell::RefMut;
@@ -21,8 +21,8 @@ pub trait Transform<'a> {
 #[derive(Clone)]
 pub struct TransformContext<'a> {
     pub scope: Rc<RefCell<ScopeData<'a>>>,
-    pub transform_arena: &'a TypedArena<TransformedNode<'a>>,
-    pub ast_arena: &'a TypedArena<Node<'a>>,
+    pub transform_arena: &'a Arena<TransformedNode<'a>>,
+    pub ast_arena: &'a Arena<Node<'a>>,
     pub path: Rc<PathBuf>
 }
 

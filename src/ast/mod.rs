@@ -24,7 +24,7 @@ use std::cell::RefCell;
 use std::io::Write;
 use std::io::Error as IoError;
 use std::convert::From;
-use arena::TypedArena;
+use typed_arena::Arena;
 use std::fmt::Formatter;
 use std::fmt::Error as FmtError;
 use lalrpop_util::ParseError;
@@ -35,7 +35,7 @@ use std::path::PathBuf;
 
 pub struct Filter<'ast> {
     pub nodes: Vec<&'ast Node<'ast>>,
-    pub transformed_arena: TypedArena<TransformedNode<'ast>>
+    pub transformed_arena: Arena<TransformedNode<'ast>>
 }
 
 impl <'ast> Debug for Filter<'ast> {
@@ -47,7 +47,7 @@ impl <'ast> Debug for Filter<'ast> {
 
 impl <'a> Filter<'a> {
     pub fn transform_begin(&'a self,
-                           ast_arena: &'a TypedArena<Node<'a>>,
+                           ast_arena: &'a Arena<Node<'a>>,
                            root_scope: Rc<RefCell<ScopeData<'a>>>,
                            base_path: Rc<PathBuf>)
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {

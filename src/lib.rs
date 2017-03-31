@@ -3,17 +3,15 @@
 //! written in the extended syntax down to a pure loot filter that can be used
 //! in the game.
 
-#![feature(rustc_private)]
 #[macro_use] extern crate lazy_static;
 #[macro_use] extern crate quick_error;
 #[macro_use] extern crate superfilter_macro;
 
-
 extern crate regex;
-extern crate arena;
+extern crate typed_arena;
 extern crate lalrpop_util;
 
-use arena::TypedArena;
+use typed_arena::Arena;
 use ast::transform::{RenderContext, RenderConfig};
 use std::io::Write;
 use ast::Node;
@@ -39,7 +37,7 @@ mod scope;
 /// Compiles a complete filter into vanilla loot filter syntax
 pub fn compile(contents: &str, out_buf: &mut Write, render_config: &RenderConfig) {
     let tokens = Box::new(tok::tokenize(contents));
-    let ast_arena = TypedArena::new();
+    let ast_arena = Arena::new();
     let root_scope = Rc::new(RefCell::new(ScopeData::new(None)));
 
     let render_ctx = RenderContext {

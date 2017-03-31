@@ -6,10 +6,10 @@ use ast::block_statements as stm;
 use ast::Node;
 use tok::Location as TokenLocation;
 use tok::Tok;
-use arena::TypedArena;
+use typed_arena::Arena;
 
 #[LALR]
-grammar<'ast>(arena: &'ast TypedArena<Node<'ast>>);
+grammar<'ast>(arena: &'ast Arena<Node<'ast>>);
 
 extern {
     type Location = TokenLocation;
@@ -46,10 +46,10 @@ pub Filter : &'ast Node<'ast> = {
         let mut nodes = defs;
         nodes.push(first);
         nodes.extend(rest);
-        arena.alloc(Node::Filter(ast::Filter { nodes: nodes, transformed_arena: TypedArena::new() }))
+        arena.alloc(Node::Filter(ast::Filter { nodes: nodes, transformed_arena: Arena::new() }))
     },
     DefinitionBlock* => arena.alloc(Node::Filter(
-        ast::Filter { nodes: <>, transformed_arena: TypedArena::new() }
+        ast::Filter { nodes: <>, transformed_arena: Arena::new() }
     )),
 };
 
