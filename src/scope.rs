@@ -204,7 +204,7 @@ impl TransformResult for ScopeValue {
             ScopeValue::List(ref list) => {
                 for val in list {
                     val.render(ctx, buf)?;
-                    buf.write(" ".as_ref())?;
+                    buf.write(b" ")?;
                 };
             },
             ScopeValue::None => ()

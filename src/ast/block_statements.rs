@@ -54,7 +54,7 @@ impl TransformResult for PlainSetValueStatement {
         ctx.write_indent(buf)?;
         buf.write(self.name.as_ref())?;
         for val in &self.values {
-            buf.write(" ".as_ref())?;
+            buf.write(b" ")?;
             val.render(ctx, buf)?;
         }
         buf.write(LINE_END)?;
@@ -105,11 +105,11 @@ impl TransformResult for PlainConditionStatement {
     fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
         ctx.write_indent(buf)?;
         buf.write(self.name.as_ref())?;
-        buf.write(" ".as_ref())?;
+        buf.write(b" ")?;
         self.condition.operator.render(ctx, buf)?;
-        buf.write(" ".as_ref())?;
+        buf.write(b" ")?;
         self.condition.value.render(ctx, buf)?;
-        buf.write("\n".as_ref())?;
+        buf.write(LINE_END)?;
         Ok(())
     }
 }

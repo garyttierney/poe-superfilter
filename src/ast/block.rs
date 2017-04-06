@@ -4,6 +4,7 @@ use scope::ScopeData;
 use std::rc::Rc;
 use std::cell::RefCell;
 use std::io::Write;
+use LINE_END;
 
 /// Top level statements, can be Blocks of instructions
 /// like Show/Hide/Mixin or single top-level statements,
@@ -91,11 +92,13 @@ impl <'a> TransformResult for PlainBlock<'a> {
     fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
         let nodes = match *self {
             PlainBlock::Show(ref nodes) => {
-                buf.write("Show\n".as_ref())?;
+                buf.write(b"Show")?;
+                buf.write(LINE_END)?;
                 nodes
             },
             PlainBlock::Hide(ref nodes) => {
-                buf.write("Hide\n".as_ref())?;
+                buf.write(b"Hide")?;
+                buf.write(LINE_END)?;
                 nodes
             }
         };
