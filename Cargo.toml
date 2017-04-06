@@ -28,5 +28,5 @@ name = "superfilter"
 path = "src/lib.rs"
 
 [[bin]]
-name = "superfilter_cli"
+name = "superfilter"
 path = "src/cli.rs"
