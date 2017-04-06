@@ -1,3 +1,5 @@
+//! This is a support library for poe-superfilter, it contains procedural macros needed in it.
+
 extern crate proc_macro;
 extern crate syn;
 #[macro_use] extern crate quote;
@@ -5,6 +7,7 @@ extern crate syn;
 use syn::{DeriveInput};
 use proc_macro::TokenStream;
 
+/// Macro for custom derive of the Transform Trait
 #[proc_macro_derive(InnerTransform)]
 pub fn inner_transform(input: TokenStream) -> TokenStream {
     // Construct a string representation of the type definition
@@ -49,6 +52,7 @@ fn impl_transform(ast: &DeriveInput) -> quote::Tokens {
     tokens
 }
 
+/// Macro for custom derive of the TransformResult Trait
 #[proc_macro_derive(InnerTransformResult)]
 pub fn inner_transform_result(input: TokenStream) -> TokenStream {
     // Construct a string representation of the type definition
