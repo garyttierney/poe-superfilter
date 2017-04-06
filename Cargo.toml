@@ -3,6 +3,10 @@ name = "poe-superfilter"
 version = "0.1.0"
 authors = ["Stefan Kaufhold <cere@fastmail.fm>"]
 build = "build.rs" # LALRPOP preprocessing
+exclude = [
+    "examples/*",
+    "doc/*"
+]
 
 [dependencies]
 lalrpop-util = "^0.12"
@@ -16,12 +20,6 @@ superfilter_macro = { path = "superfilter_macro" }
 
 [build-dependencies]
 lalrpop = "^0.12"
-
-[package]
-exclude = [
-    "examples/*",
-    "doc/*"
-]
 
 [lib]
 name = "superfilter"
