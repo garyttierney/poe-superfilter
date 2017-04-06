@@ -17,6 +17,12 @@ superfilter_macro = { path = "superfilter_macro" }
 [build-dependencies]
 lalrpop = "^0.12"
 
+[package]
+exclude = [
+    "examples/*",
+    "doc/*"
+]
+
 [lib]
 name = "superfilter"
 path = "src/lib.rs"
