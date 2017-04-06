@@ -35,8 +35,10 @@ mod tests;
 #[allow(dead_code)]
 mod scope;
 
+const LINE_END : &'static [u8] = b"\r\n";
+
 /// Compiles a complete filter into vanilla loot filter syntax
-pub fn compile(contents: &str, out_buf: &mut Write, render_config: &RenderConfig)
+pub fn compile(contents: &str, file: String, out_buf: &mut Write, render_config: &RenderConfig)
         -> Result<(),CompileErr> {
     let tokens = Box::new(tok::tokenize(contents));
     let ast_arena = Arena::new();
@@ -47,7 +49,7 @@ pub fn compile(contents: &str, out_buf: &mut Write, render_config: &RenderConfig
         indent_level: 0,
     };
 
-    match filter::parse_Filter(&ast_arena, tokens.into_iter()) {
+    match filter::parse_Filter(&ast_arena, file.as_str(), tokens.into_iter()) {
         Ok(&Node::Filter(ref filter)) => {
             let result = filter.transform_begin(&ast_arena,
                                                 root_scope,

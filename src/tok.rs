@@ -38,8 +38,8 @@ impl Display for Tok {
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct Location {
-    line: isize,
-    pos: isize
+    pub line: isize,
+    pub pos: isize
 }
 
 impl Display for Location {

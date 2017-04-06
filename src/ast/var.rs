@@ -1,11 +1,20 @@
-use ast::{TransformedNode, CompileErr, Node};
+use ast::{TransformedNode, CompileErr, Node, AstLocation};
 use ast::transform::{Transform, TransformContext};
+use std::fmt;
 
 /// AST Structure that represents a reference to a variable
-#[derive(Debug)]
+#[derive(Clone)]
 pub struct VarReference {
-    pub identifier: String
+    pub identifier: String,
+    pub location: AstLocation
 }
+
+impl fmt::Debug for VarReference {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "${}", self.identifier)
+    }
+}
+
 impl <'a> Transform<'a> for VarReference {
     #[allow(unused_variables)]
     fn transform(&self, ctx: TransformContext<'a>)
@@ -15,8 +24,12 @@ impl <'a> Transform<'a> for VarReference {
             Some(val) => Ok(Some(
                 ctx.alloc_transformed(TransformedNode::Value(val))
             )),
-            None => Err(CompileErr::MissingVarRef(self.identifier.clone()))
+            None => Err(CompileErr::MissingVarRef(format!("{:?}", self), self.location()))
         }
+    }
+
+    fn location(&self) -> AstLocation {
+        self.location.clone()
     }
 }
 
@@ -24,7 +37,8 @@ impl <'a> Transform<'a> for VarReference {
 #[derive(Debug, Clone)]
 pub struct VarDefinition<'a> {
     pub identifier: String,
-    pub values: Vec<&'a Node<'a>>
+    pub values: Vec<&'a Node<'a>>,
+    pub location: AstLocation
 }
 
 impl <'a> Transform<'a> for VarDefinition<'a> {
@@ -38,5 +52,9 @@ impl <'a> Transform<'a> for VarDefinition<'a> {
             }
         }
         Ok(None)
+    }
+
+    fn location(&self) -> AstLocation {
+        self.location.clone()
     }
 }

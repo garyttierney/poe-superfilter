@@ -62,10 +62,10 @@ pub fn main() {
 
     let result = {
         if let Some(out_file) = args.flag_output {
-            let mut file = File::create(out_file).unwrap();
-            superfilter::compile(&contents, &mut file, &render_config)
+            let mut out_stream = File::create(out_file).unwrap();
+            superfilter::compile(&contents, args.arg_path.clone(), &mut out_stream, &render_config)
         } else {
-            superfilter::compile(&contents, &mut io::stdout(), &render_config)
+            superfilter::compile(&contents, args.arg_path.clone(), &mut io::stdout(), &render_config)
         }
     };
 

@@ -1,15 +1,17 @@
-use ast::{Node, TransformedNode, CompileErr};
+use ast::{Node, TransformedNode, CompileErr, AstLocation};
 use ast::transform::{Transform, TransformContext};
 use scope::{ScopeData};
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::fmt;
 
 /// Name and parameter specs for a mixin
 #[derive(Debug, Clone)]
 pub struct Mixin<'a> {
     pub name: String,
     pub parameters: Vec<Param<'a>>,
-    pub statements: Vec<&'a Node<'a>>
+    pub statements: Vec<&'a Node<'a>>,
+    pub location: AstLocation
 }
 
 #[derive(Debug, Clone)]
@@ -31,7 +33,7 @@ impl <'a> Transform<'a> for Mixin<'a> {
                         default: Some(t_value.clone()),
                     })
                 } else {
-                    return Err(CompileErr::MissingValue(format!("{:?}", self)))
+                    return Err(CompileErr::MissingValue(format!("{:?}", self), self.location.clone()))
                 }
             } else {
                 t_params.push(PlainParam {
@@ -52,6 +54,10 @@ impl <'a> Transform<'a> for Mixin<'a> {
 
         Ok(None)
     }
+
+    fn location(&self) -> AstLocation {
+        self.location.clone()
+    }
 }
 
 /// (Mixin) Parameter name and default values
@@ -69,22 +75,36 @@ pub struct PlainParam<'a> {
 }
 
 /// Represents a mixin include with name and parameters
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct MixinCall<'a> {
     pub name: String,
-    pub parameters: Vec<&'a Node<'a>>
+    pub parameters: Vec<&'a Node<'a>>,
+    pub location: AstLocation
+}
+
+impl <'a> fmt::Debug for MixinCall<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "MixinCall +{}(", self.name)?;
+        for param in &self.parameters {
+            write!(f, "{:?}, ", param)?;
+        }
+        write!(f, ")")
+    }
 }
 
 pub type ResolvedMixin<'a> = Vec<&'a TransformedNode<'a>>;
 
 impl <'a> Transform<'a> for MixinCall<'a> {
-    #[allow(unused_variables)]
     fn transform(&self, ctx: TransformContext<'a>)
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         if let Some(mixin) = ctx.ref_scope().mixin(&self.name) {
             // catch parameter count mismatch
             if mixin.parameters.len() != self.parameters.len() {
-                return Err(CompileErr::WrongParameterCount(format!("{:?}", self), mixin.parameters.len(), self.parameters.len()));
+                return Err(CompileErr::WrongParameterCount(format!("{:?}", self),
+                                                           mixin.parameters.len(),
+                                                           self.parameters.len(),
+                                                           self.location.clone()
+                ));
             }
 
             // transform parameters in this call
@@ -93,7 +113,7 @@ impl <'a> Transform<'a> for MixinCall<'a> {
                 if let Some(t_param) = param.transform(ctx.clone())? {
                     t_params.push(t_param);
                 } else {
-                    return Err(CompileErr::MissingValue(format!("{:?}", param)))
+                    return Err(CompileErr::MissingValue(format!("{:?}", param), self.location.clone()));
                 }
             }
 
@@ -120,7 +140,10 @@ impl <'a> Transform<'a> for MixinCall<'a> {
                 ctx.alloc_transformed(TransformedNode::ExpandedNodes(t_statements))
             ))
         } else {
-            Err(CompileErr::MissingVarRef(self.name.clone()))
+            Err(CompileErr::MissingVarRef(self.name.clone(), self.location.clone()))
         }
+    }
+    fn location(&self) -> AstLocation {
+        self.location.clone()
     }
 }

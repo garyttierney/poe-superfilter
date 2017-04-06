@@ -5,7 +5,7 @@ use std::cell::Ref;
 use std::cell::RefMut;
 use std::cell::RefCell;
 use std::io::Write;
-use ast::{CompileErr,TransformedNode,Node};
+use ast::{CompileErr,TransformedNode,Node,AstLocation};
 use std::path::PathBuf;
 
 /// This trait needs to be implemented for any abstract syntax tree structure, it contains the
@@ -16,6 +16,8 @@ pub trait Transform<'a> {
     /// plain GGG loot filter syntax
     fn transform(&self, ctx: TransformContext<'a>)
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr>;
+
+    fn location(&self) -> AstLocation;
 }
 
 #[derive(Clone)]

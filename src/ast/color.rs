@@ -1,4 +1,4 @@
-use ast::{CompileErr,TransformedNode};
+use ast::{CompileErr,TransformedNode,AstLocation};
 use ast::transform::{Transform,TransformContext};
 use ast::Node;
 
@@ -25,5 +25,8 @@ impl <'a> Transform<'a> for Color<'a> {
     fn transform(&self, ctx: TransformContext<'a>)
         -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
         unimplemented!();
+    }
+    fn location(&self) -> AstLocation {
+        unimplemented!()
     }
 }

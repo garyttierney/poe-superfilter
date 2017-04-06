@@ -1,21 +1,24 @@
-use ast::{Node,TransformedNode,CompileErr};
+use ast::{Node, TransformedNode, CompileErr, AstLocation};
 use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
-use scope::{ScopeData};
+use scope::ScopeData;
 use std::rc::Rc;
 use std::cell::RefCell;
-use std::io::{Write, Read};
-use tok;
-use std::fs;
-use filter;
+use std::io::Write;
 
 /// Top level statements, can be Blocks of instructions
 /// like Show/Hide/Mixin or single top-level statements,
 /// e.g. variable definitions and imports
 #[derive(Debug, Clone)]
-pub enum Block<'a> {
-    Show(Vec<&'a Node<'a>>),
-    Hide(Vec<&'a Node<'a>>),
-    Import(String),
+pub struct  Block<'a> {
+    pub nodes: Vec<&'a Node<'a>>,
+    pub variant: BlockType,
+    pub location: AstLocation
+}
+
+#[derive(Debug, Clone)]
+pub enum BlockType {
+    Show,
+    Hide,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -40,40 +43,6 @@ impl <'a> NodeList<'a> for Vec<&'a TransformedNode<'a>> {
         }
     }
 }
-impl <'a>  Block<'a> {
-    fn transform_import(&self, path: &String, ctx: TransformContext<'a>)
-        -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
-
-        let resolved_file_path = ctx.path.clone().join(path);
-        let new_base_path = resolved_file_path
-            .parent()
-            .ok_or(CompileErr::ImportError(format!("{:?}", self)))?
-            .to_owned();
-
-        let mut file = fs::File::open(resolved_file_path)?;
-        let mut contents = String::new();
-        file.read_to_string(&mut contents)?;
-
-        let tokens = Box::new(tok::tokenize(&contents));
-        {
-            match filter::parse_Filter(ctx.ast_arena, tokens.into_iter()) {
-                Ok(&Node::Filter(ref filter)) => {
-                    let transform_result = filter.transform_begin(ctx.ast_arena,
-                                                                  ctx.scope.clone(),
-                                                                  Rc::new(new_base_path));
-                    if let Some(&TransformedNode::Root(ref nodes)) = transform_result.unwrap() {
-                        return Ok(Some(ctx.alloc_transformed(TransformedNode::ExpandedNodes(
-                            nodes.to_owned()
-                        ))))
-                    } else {
-                        return Ok(None);
-                    }
-                },
-                _ => return Err(CompileErr::Unknown)
-            }
-        }
-    }
-}
 
 impl <'a> Transform<'a> for Block<'a> {
     fn transform(&self, ctx: TransformContext<'a>)
@@ -89,33 +58,32 @@ impl <'a> Transform<'a> for Block<'a> {
 
         // collect transformed statements from lines in this block
         let mut t_statements : Vec<&TransformedNode> = Vec::new();
-        match self {
-            &Block::Show(ref statements) | &Block::Hide(ref statements) => {
-                for statement in statements {
-                    if let Some(t_statement) = statement.transform(block_ctx.clone())? {
-                        match *t_statement {
-                            TransformedNode::ExpandedNodes(ref resolved_stmts) => {
-                                for stmt in resolved_stmts {
-                                    t_statements.push_statement(stmt);
-                                }
-                            },
-                            _ => {
-                                t_statements.push_statement(t_statement);
-                            }
+
+        for statement in &self.nodes {
+            if let Some(t_statement) = statement.transform(block_ctx.clone())? {
+                match *t_statement {
+                    TransformedNode::ExpandedNodes(ref resolved_stmts) => {
+                        for stmt in resolved_stmts {
+                            t_statements.push_statement(stmt);
                         }
+                    },
+                    _ => {
+                        t_statements.push_statement(t_statement);
                     }
                 }
             }
-            &Block::Import(ref path) => return self.transform_import(path, ctx)
         }
 
         Ok(Some(ctx.alloc_transformed(TransformedNode::Block(
-            match self {
-                &Block::Show(_) => PlainBlock::Show(t_statements),
-                &Block::Hide(_) => PlainBlock::Hide(t_statements),
-                _ => unreachable!()
+            match self.variant {
+                BlockType::Show => PlainBlock::Show(t_statements),
+                BlockType::Hide => PlainBlock::Hide(t_statements)
             }
         ))))
+    }
+
+    fn location(&self) -> AstLocation {
+        unimplemented!()
     }
 }
 

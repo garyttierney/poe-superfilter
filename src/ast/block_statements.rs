@@ -1,21 +1,23 @@
 
-use ast::{TransformedNode, CompileErr, Node};
+use ast::{TransformedNode, CompileErr, Node, AstLocation};
 use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
 use scope::ScopeValue;
 use std::io::Write;
 use std::cmp::PartialEq;
+use LINE_END;
 
 /// AST structure for a value set or other instruction statement
 #[derive(Debug, Clone)]
 pub struct SetValueStatement<'a> {
     pub name : String,
-    pub values : Vec<&'a Node<'a>>
+    pub values : Vec<&'a Node<'a>>,
+    pub location: AstLocation
 }
 
 #[derive(Debug,Clone)]
 pub struct PlainSetValueStatement {
     pub name: String,
-    pub values: Vec<ScopeValue>
+    pub values: Vec<ScopeValue>,
 }
 
 impl PartialEq for PlainSetValueStatement {
@@ -41,6 +43,10 @@ impl <'a> Transform<'a> for SetValueStatement<'a> {
             }
         ))))
     }
+
+    fn location(&self) -> AstLocation {
+        self.location.clone()
+    }
 }
 
 impl TransformResult for PlainSetValueStatement {
@@ -51,7 +57,7 @@ impl TransformResult for PlainSetValueStatement {
             buf.write(" ".as_ref())?;
             val.render(ctx, buf)?;
         }
-        buf.write("\n".as_ref())?;
+        buf.write(LINE_END)?;
         Ok(())
     }
 }
@@ -60,7 +66,8 @@ impl TransformResult for PlainSetValueStatement {
 #[derive(Debug, Clone)]
 pub struct ConditionStatement<'a> {
     pub name : String,
-    pub condition : Condition<'a>
+    pub condition : Condition<'a>,
+    pub location: AstLocation
 }
 
 #[derive(Debug, Clone)]
@@ -88,6 +95,10 @@ impl <'a> Transform<'a> for ConditionStatement<'a> {
         }
         return Err(CompileErr::Unknown);
     }
+
+    fn location(&self) -> AstLocation {
+        self.location.clone()
+    }
 }
 
 impl TransformResult for PlainConditionStatement {
@@ -108,7 +119,7 @@ impl TransformResult for PlainConditionStatement {
 #[derive(Debug, Clone)]
 pub struct Condition<'a> {
     pub value: &'a Node<'a>,
-    pub operator: ComparisonOperator
+    pub operator: ComparisonOperator,
 }
 
 #[derive(Debug, Clone)]
