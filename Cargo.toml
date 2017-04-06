@@ -1,5 +1,6 @@
 [package]
 name = "poe-superfilter"
+description = "Extended syntax compiler for Path of Exile loot filters"
 version = "0.1.0"
 authors = ["Stefan Kaufhold <cere@fastmail.fm>"]
 build = "build.rs" # LALRPOP preprocessing
@@ -16,7 +17,7 @@ quick-error= "^1.1"
 docopt = "^0.7"
 rustc-serialize = "^0.3"
 typed-arena = "1.2"
-superfilter_macro = { path = "superfilter_macro" }
+superfilter_macro = { path = "superfilter_macro", version = "0.1.0" }
 
 [build-dependencies]
 lalrpop = "^0.12"
