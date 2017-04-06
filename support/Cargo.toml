@@ -1,6 +1,7 @@
 [package]
-name = "superfilter_macro"
+name = "poe-superfilter-support"
 version = "0.1.0"
+description = "Support crate with procedural macros for poe-superfilter"
 authors = ["Stefan Kaufhold <cere@fastmail.fm>"]
 
 [dependencies]
