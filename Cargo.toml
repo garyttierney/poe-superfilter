@@ -3,6 +3,7 @@ name = "poe-superfilter"
 description = "Extended syntax compiler for Path of Exile loot filters"
 version = "0.1.0"
 authors = ["Stefan Kaufhold <cere@fastmail.fm>"]
+license = "MIT"
 build = "build.rs" # LALRPOP preprocessing
 exclude = [
     "examples/*",
