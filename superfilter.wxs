@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='windows-1252'?>
+<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
+  <Product Name='Superfilter' Id='65FEC018-039F-44F8-A0BB-7F99A54F2576' UpgradeCode='02D9F6AB-A5A0-4C53-A770-54B748B1B19D'
+    Language='1033' Codepage='1252' Version='0.1.1' Manufacturer='Stefan Kaufhold'>
+
+    <Package Id='*' Keywords='Installer' Description="Path of Exile Superfilter Compiler"
+      Manufacturer='Stefan Kaufhold'
+      InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />
+
+    <Media Id='1' Cabinet='Main.cab' EmbedCab='yes' />
+
+    <WixVariable Id="WixUILicenseRtf" Value="installer_license.rtf" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id='Superfilter' Name='Superfilter'>
+          <Directory Id='INSTALLDIR' Name='0.1.1'>
+
+            <Component Id='MainExecutable' Guid='A15583A9-A03D-410C-AA5F-001A53732D71'>
+              <File Id='SuperfilterEXE' Name='superfilter.exe' DiskId='1' Source='target\release\superfilter_cli.exe' KeyPath='yes'>
+                <Shortcut Id="startmenuSuperfilter011" Directory="ProgramMenuDir" Name="Superfilter 0.1.1" WorkingDirectory='INSTALLDIR' Icon="Superfilter.exe" IconIndex="0" Advertise="yes" />
+                <Shortcut Id="desktopSuperfilter011" Directory="DesktopFolder" Name="Superfilter 0.1.1" WorkingDirectory='INSTALLDIR' Icon="Superfilter.exe" IconIndex="0" Advertise="yes" />
+              </File>
+            </Component>
+
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <Directory Id="ProgramMenuFolder" Name="Programs">
+        <Directory Id="ProgramMenuDir" Name="Superfilter 1.0">
+          <Component Id="ProgramMenuDir" Guid="C587217E-B85F-497A-9AA5-FA96BC1F91CE">
+            <RemoveFolder Id='ProgramMenuDir' On='uninstall' />
+            <RegistryValue Root='HKCU' Key='Software\[Manufacturer]\[ProductName]' Type='string' Value='' KeyPath='yes' />
+          </Component>
+        </Directory>
+      </Directory>
+
+      <Directory Id="DesktopFolder" Name="Desktop" />
+    </Directory>
+
+    <Feature Id='Complete' Level='1'>
+      <ComponentRef Id='MainExecutable' />
+      <ComponentRef Id='ProgramMenuDir' />
+    </Feature>
+
+    <UIRef Id="WixUI_Minimal" />
+    <UIRef Id="WixUI_ErrorProgressText" />
+
+    <Icon Id="Superfilter.exe" SourceFile="target\release\superfilter_cli.exe" />
+
+  </Product>
+</Wix>

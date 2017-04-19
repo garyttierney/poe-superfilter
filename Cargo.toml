@@ -5,6 +5,7 @@ version = "0.1.0"
 authors = ["Stefan Kaufhold <cere@fastmail.fm>"]
 license = "MIT"
 build = "build.rs" # LALRPOP preprocessing
+repository = "https://github.com/skaufhold/poe-superfilter"
 exclude = [
     "examples/*",
     "doc/*"

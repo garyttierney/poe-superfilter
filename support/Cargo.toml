@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Support crate with procedural macros for poe-superfilter"
 authors = ["Stefan Kaufhold <cere@fastmail.fm>"]
 license = "MIT"
+repository = "https://github.com/skaufhold/poe-superfilter"
 
 [dependencies]
 syn = "0.11"
