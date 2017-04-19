@@ -1,15 +1,23 @@
-﻿$version = "v0.1.1"
-$input_file = "examples/full_filter.sf"
-$output_file = "examples/full_filter.filter"
+﻿$requiredVersion = "v0.1"
+$inputFile = "examples\full_filter.sf"
+$outputFile = "examples\full_filter.filter"
 
-$sf_dir = ${env:ProgramFiles(x86)} + "\Superfilter\" + $version
-$sf_dir_exists = Test-Path -Path $sf_dir -PathType Container
-if (!$sf_dir_exists) {
-    Write-Host "The requested superfilter version is not installed."
-    Write-Host "Please visit https://github.com/skaufhold/poe-superfilter/releases and download $version"
+$sfBaseDir = ${env:ProgramFiles(x86)} + "\Superfilter"
+
+if (!(Test-Path -Path $sfBaseDir -PathType Container)) {
+    Write-Host "You don't seem to have the Superfilter compiler installed."
+    Write-Host "Please visit https://github.com/skaufhold/poe-superfilter/releases and download it."
+}
+
+$availableVersion = Get-ChildItem $sfBaseDir | Where-Object{$_.PSIsContainer} | Select-Object -Last 1 | Out-Null
+
+if ($requiredVersion -gt $availableVersion) {
+    Write-Host "You don't have the required Superfilter version installed."
+    Write-Host "This filter requires at least $requiredVersion, your latest version is $availableVersion."
+    Write-Host "Please visit https://github.com/skaufhold/poe-superfilter/releases and download a more current release."
 } else {
-    $sf_bin = $sf_dir + "\superfilter.exe"
-    & $sf_bin $input_file --output="$output_file" --pretty
+    $sfBin = $sfBaseDir + "\" + $availableVersion + "\superfilter.exe"
+    & $sfBin $inputFile --output="$outputFile" --pretty
 }
 
 Write-Host "Press any key to exit"

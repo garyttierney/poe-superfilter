@@ -29,7 +29,7 @@ Options:
   -h --help        Show this screen.
   --version, -v    Show version.
   --pretty, -p     Include indentation and other formatting in the output
-  --output=<file>  Output file.
+  --output=<file>  Output file. If this option is omitted, the output will be printed to the console.
 ";
 
 #[derive(Debug, RustcDecodable)]
