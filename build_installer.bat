@@ -1,2 +1,2 @@
-candle superfilter.wxs
-light -ext WixUIExtension superfilter.wixobj
+candle installer\superfilter.wxs
+light -ext WixUIExtension installer\superfilter.wixobj
