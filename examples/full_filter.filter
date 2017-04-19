@@ -1,0 +1,16 @@
+Show
+    Class Flask
+    Rarity Magic
+    BaseType Small
+    SetBorderColor 100 100 100
+    SetFontSize 45
+    ItemLevel <= 5
+Show
+    Class Flask
+    Rarity Magic
+    BaseType Medium
+    SetBorderColor 100 100 100
+    SetFontSize 38
+    SetTextColor 100 100 255 255
+    ItemLevel <= 8
+    ItemLevel >= 3
