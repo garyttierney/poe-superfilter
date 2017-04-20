@@ -6,6 +6,7 @@ of other useful things to GGG's loot filter syntax and compiles filters
 written in the extended syntax down to a pure loot filter that can be used
 in the game.
 
+**You can download the current version on the [releases page](https://github.com/skaufhold/poe-superfilter/releases) of this repository.**
 
 # Syntax
 
