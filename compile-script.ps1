@@ -7,9 +7,12 @@ $sfBaseDir = ${env:ProgramFiles(x86)} + "\Superfilter"
 if (!(Test-Path -Path $sfBaseDir -PathType Container)) {
     Write-Host "You don't seem to have the Superfilter compiler installed."
     Write-Host "Please visit https://github.com/skaufhold/poe-superfilter/releases and download it."
+    Write-Host "Press any key to exit"
+    $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    exit
 }
 
-$availableVersion = Get-ChildItem $sfBaseDir | Where-Object{$_.PSIsContainer} | Select-Object -Last 1 | Out-Null
+$availableVersion = Get-ChildItem $sfBaseDir | Where-Object{$_.PSIsContainer} | Select-Object -Last 1
 
 if ($requiredVersion -gt $availableVersion) {
     Write-Host "You don't have the required Superfilter version installed."

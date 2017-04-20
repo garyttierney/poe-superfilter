@@ -139,3 +139,10 @@ checks whether Superfilter is installed and whether it is a sufficiently recent 
 it isn't, it prints an error message and directs the user to the download page to install the tool.
 To use the script, you just need to change the filenames in it to whatever your filter needs and then
 execute it to recompile your filter.
+
+# Roadmap
+
+Things to come, in no particular order:
+
+* full test suite, to make it easier for collaborators to contribute
+* conditionals: conditional blocks and statements
