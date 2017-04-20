@@ -146,3 +146,5 @@ Things to come, in no particular order:
 
 * full test suite, to make it easier for collaborators to contribute
 * conditionals: conditional blocks and statements
+* comment handling and Filtration support: instead of discarding all comments during parsing, add support for passing them
+  through and/or add specific support for filtration segments
