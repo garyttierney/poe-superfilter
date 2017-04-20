@@ -9,7 +9,7 @@
 
     <Media Id='1' Cabinet='Main.cab' EmbedCab='yes' />
 
-    <WixVariable Id="WixUILicenseRtf" Value="installer_license.rtf" />
+    <WixVariable Id="WixUILicenseRtf" Value="installer/installer_license.rtf" />
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
 
     <Directory Id='TARGETDIR' Name='SourceDir'>
@@ -18,7 +18,7 @@
           <Directory Id='INSTALLDIR' Name='v0.1.1'>
 
             <Component Id='MainExecutable' Guid='A15583A9-A03D-410C-AA5F-001A53732D71'>
-              <File Id='SuperfilterEXE' Name='superfilter.exe' DiskId='1' Source='target\release\superfilter_cli.exe' KeyPath='yes'>
+              <File Id='SuperfilterEXE' Name='superfilter.exe' DiskId='1' Source='target\release\superfilter.exe' KeyPath='yes'>
                 <Shortcut Id="startmenuSuperfilter011" Directory="ProgramMenuDir" Name="Superfilter v0.1.1" WorkingDirectory='INSTALLDIR' Icon="Superfilter.exe" IconIndex="0" Advertise="yes" />
                 <Shortcut Id="desktopSuperfilter011" Directory="DesktopFolder" Name="Superfilter v0.1.1" WorkingDirectory='INSTALLDIR' Icon="Superfilter.exe" IconIndex="0" Advertise="yes" />
               </File>
@@ -48,7 +48,7 @@
     <UIRef Id="WixUI_Minimal" />
     <UIRef Id="WixUI_ErrorProgressText" />
 
-    <Icon Id="Superfilter.exe" SourceFile="target\release\superfilter_cli.exe" />
+    <Icon Id="Superfilter.exe" SourceFile="target\release\superfilter.exe" />
 
   </Product>
 </Wix>
