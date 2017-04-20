@@ -41,6 +41,7 @@
     </Directory>
 
     <Component Id="PathEnv" Directory='INSTALLDIR' Guid="8157166E-29A8-443F-B878-7FB0F4436551">
+      <CreateFolder />
       <Environment Id="PATH" Name="PATH" Value="[INSTALLDIR]" Permanent="yes" Part="last" Action="set" System="yes" />
     </Component>
 
