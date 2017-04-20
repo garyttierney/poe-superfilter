@@ -40,12 +40,19 @@
       <Directory Id="DesktopFolder" Name="Desktop" />
     </Directory>
 
-    <Feature Id='Complete' Level='1'>
+    <Component Id="PathEnv" Directory='INSTALLDIR' Guid="8157166E-29A8-443F-B878-7FB0F4436551">
+      <Environment Id="PATH" Name="PATH" Value="[INSTALLDIR]" Permanent="yes" Part="last" Action="set" System="yes" />
+    </Component>
+
+    <Feature Id='Complete' Level='1' Title='Superfilter Binary' AllowAdvertise='no' Absent='disallow'>
       <ComponentRef Id='MainExecutable' />
       <ComponentRef Id='ProgramMenuDir' />
     </Feature>
+    <Feature Id='Path' Level='1' Title='Add Superfilter to PATH' AllowAdvertise='no'>
+      <ComponentRef Id='PathEnv' />
+    </Feature>
 
-    <UIRef Id="WixUI_Minimal" />
+    <UIRef Id="WixUI_FeatureTree" />
     <UIRef Id="WixUI_ErrorProgressText" />
 
     <Icon Id="Superfilter.exe" SourceFile="target\release\superfilter.exe" />
