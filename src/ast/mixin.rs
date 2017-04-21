@@ -78,7 +78,7 @@ pub struct PlainParam {
 #[derive(Clone)]
 pub struct MixinCall {
     pub name: String,
-    pub parameters: Vec<Vec<Node>>,
+    pub parameters: Vec<Node>,
     pub location: AstLocation
 }
 
@@ -109,27 +109,11 @@ impl Transform for MixinCall {
 
             // transform parameters in this call
             let mut t_params : Vec<ScopeValue> = Vec::new();
+
             for param in &self.parameters {
-                let transform_results : Vec<Result<Option<TransformedNode>, CompileErr>> = param.iter().map(|p| p.transform(ctx.clone())).collect();
-                // return on any transform errors in the param values
-                if transform_results.iter().any(|r| r.is_err()) {
-                    return transform_results.into_iter().find(|r| r.is_err()).unwrap();
-                }
-
-
-                // get results from transform return values. unwrap is ok since we already checked for None values
-                let transform_options : Vec<Option<TransformedNode>> = transform_results.into_iter().map(|o| o.unwrap()).collect();
-
-                if transform_options.iter().any(|r| r.is_none()) {
-                    return Err(CompileErr::MissingValue(format!("{:?}", param), self.location.clone()));
-                }
-
-                let return_values : Vec<ScopeValue> = transform_options.into_iter().map(|r| r.unwrap().return_value()).collect();
-
-                if return_values.len() == 1 {
-                    t_params.push(return_values[0].clone());
-                } else {
-                    t_params.push(ScopeValue::List(return_values))
+                match param.transform(ctx.clone())? {
+                    Some(transformed_param) => t_params.push(transformed_param.return_value()),
+                    None => return Err(CompileErr::MissingValue(format!("{:?}", param), param.location().clone()))
                 }
             }
 

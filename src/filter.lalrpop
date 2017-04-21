@@ -117,10 +117,10 @@ Comma<T>: Vec<T> = {
 };
 
 VarDefinition : Node  = {
-    <l:@L> <id:VarIdentifier> "=" <v:Value+> <r:@R> "\n" => Node::VarDefinition(
+    <l:@L> <id:VarIdentifier> "=" <v:Value> <r:@R> "\n" => Node::VarDefinition(
         VarDefinition {
             identifier: id,
-            values: v,
+            values: Box::new(v),
             location: AstLocation::new(l, r, file.to_owned())
         }
     )
@@ -136,10 +136,10 @@ VarReference : Node = {
 };
 
 SetValueStmt : Node = {
-    <l:@L> <n:Constant> <val:Value+> <r:@R> "\n" => Node::SetValueStmt(
+    <l:@L> <n:Constant> <val:Value> <r:@R> "\n" => Node::SetValueStmt(
         stm::SetValueStatement {
             name: n,
-            values: val,
+            values: Box::new(val),
             location: AstLocation::new(l, r, file.to_owned())
         }
     )
@@ -156,7 +156,7 @@ ConditionStmt : Node = {
 };
 
 MixinCall : Node = {
-    <l:@L> "+" <n:Constant> <params:("(" <Comma<Value+>> ")")?> <r:@R> "\n" => Node::MixinCall(
+    <l:@L> "+" <n:Constant> <params:("(" <Comma<Value>> ")")?> <r:@R> "\n" => Node::MixinCall(
         ast::mixin::MixinCall {
             name: n,
             parameters: params.unwrap_or(vec![]),
@@ -170,10 +170,6 @@ Statement : Node = {
     ConditionStmt,
     MixinCall,
     VarDefinition,
-};
-
-Value : Node = {
-    ValueExpression,
 };
 
 RawStrLiteral : String = {
@@ -206,6 +202,16 @@ NumberLiteral : Node = {
     <l:@L> <num:Float> <r:@R> => Node::Expression(
         ExpressionNode::Val(ExpressionValue::Decimal(num), AstLocation::new(l, r, file.to_owned()))
     ),
+};
+
+Value : Node = {
+    <values:ValueExpression+> => {
+        if values.len() == 1 {
+            values[0].clone()
+        } else {
+            Node::Value(ExpressionValue::List(values))
+        }
+    }
 };
 
 ValueExpression : Node = {

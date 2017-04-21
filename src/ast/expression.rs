@@ -10,7 +10,8 @@ pub enum ExpressionValue {
     String(String),
     Int(i64),
     Decimal(f64),
-    Var(VarReference)
+    Var(VarReference),
+    List(Vec<Node>)
 }
 
 impl fmt::Debug for ExpressionValue {
@@ -19,7 +20,13 @@ impl fmt::Debug for ExpressionValue {
             ExpressionValue::String(ref v) => write!(f, "{:?}", v),
             ExpressionValue::Int(ref v) => write!(f, "{:?}", v),
             ExpressionValue::Decimal(ref v) => write!(f, "{:?}", v),
-            ExpressionValue::Var(ref v) => write!(f, "{:?}", v)
+            ExpressionValue::Var(ref v) => write!(f, "{:?}", v),
+            ExpressionValue::List(ref v) => {
+                for item in v {
+                    write!(f, "{:?}", item)?;
+                }
+                Ok(())
+            }
         }
     }
 }
@@ -29,6 +36,17 @@ impl Transform for ExpressionValue {
                  -> Result<Option<TransformedNode>, CompileErr> {
         match *self {
             ExpressionValue::Var(ref node) => node.transform(ctx),
+            ExpressionValue::List(ref list) => {
+                let mut transformed_values: Vec<ScopeValue> = vec![];
+                for value in list {
+                    if let Some(t_value) = value.transform(ctx.clone())? {
+                        transformed_values.push(t_value.return_value());
+                    }/*else {
+                        return Err(CompileErr::MissingValue(format!("{:?}", value), self.location.clone()));
+                    }*/
+                }
+                Ok(Some(TransformedNode::Value(ScopeValue::List(transformed_values))))
+            }
             ref val => {
                 Ok(Some(TransformedNode::Value(
                     match *val {

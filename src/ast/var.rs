@@ -1,6 +1,5 @@
 use ast::{TransformedNode, CompileErr, Node, AstLocation};
 use ast::transform::{Transform, TransformContext};
-use scope::ScopeValue;
 use std::fmt;
 
 /// AST Structure that represents a reference to a variable
@@ -38,24 +37,19 @@ impl Transform for VarReference {
 #[derive(Debug, Clone)]
 pub struct VarDefinition {
     pub identifier: String,
-    pub values: Vec<Node>,
+    pub values: Box<Node>,
     pub location: AstLocation
 }
 
 impl Transform for VarDefinition {
     fn transform(&self, ctx: TransformContext)
                      -> Result<Option<TransformedNode>, CompileErr> {
-        // transform values and collect them in a vec
-        let mut return_values = Vec::new();
-        for val in &self.values {
-            if let Some(t_val) = val.transform(ctx.clone())? {
-                return_values.push(t_val.return_value())
-            }
+        if let Some(transformed_value) = self.values.transform(ctx.clone())? {
+            // export variable to parent scope
+            ctx.mut_scope()
+                .push_var(self.identifier.clone(), transformed_value.return_value());
         }
 
-        // export variable to parent scope
-        ctx.mut_scope()
-            .push_var(self.identifier.clone(), ScopeValue::List(return_values));
         Ok(None)
     }
 

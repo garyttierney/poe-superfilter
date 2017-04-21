@@ -8,7 +8,6 @@
 #[macro_use] extern crate superfilter_macro;
 
 extern crate regex;
-extern crate typed_arena;
 extern crate lalrpop_util;
 
 use ast::transform::{RenderContext, RenderConfig};

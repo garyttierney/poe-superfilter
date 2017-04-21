@@ -10,14 +10,14 @@ use LINE_END;
 #[derive(Debug, Clone)]
 pub struct SetValueStatement {
     pub name : String,
-    pub values : Vec<Node>,
+    pub values : Box<Node>,
     pub location: AstLocation
 }
 
 #[derive(Debug,Clone)]
 pub struct PlainSetValueStatement {
     pub name: String,
-    pub values: Vec<ScopeValue>,
+    pub values: ScopeValue,
 }
 
 impl PartialEq for PlainSetValueStatement {
@@ -29,17 +29,17 @@ impl PartialEq for PlainSetValueStatement {
 impl <'a> Transform for SetValueStatement {
     fn transform(&self, ctx: TransformContext)
         -> Result<Option<TransformedNode>, CompileErr> {
-        let mut transformed_values: Vec<ScopeValue> = vec![];
-        for value in &self.values {
-            if let Some(t_value) = value.transform(ctx.clone())? {
-                transformed_values.push(t_value.return_value());
-            }
+
+        let transformed_values = self.values.transform(ctx)?;
+
+        if transformed_values.is_none() {
+            return Err(CompileErr::MissingValue(format!("{:?}", self.values), self.values.location().clone()));
         }
 
         Ok(Some(TransformedNode::SetValueStmt(
             PlainSetValueStatement {
                 name: self.name.clone(),
-                values: transformed_values
+                values: transformed_values.unwrap().return_value()
             }
         )))
     }
@@ -53,10 +53,8 @@ impl TransformResult for PlainSetValueStatement {
     fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
         ctx.write_indent(buf)?;
         buf.write(self.name.as_ref())?;
-        for val in &self.values {
-            buf.write(b" ")?;
-            val.render(ctx, buf)?;
-        }
+        buf.write(b" ")?;
+        self.values.render(ctx, buf)?;
         buf.write(LINE_END)?;
         Ok(())
     }
