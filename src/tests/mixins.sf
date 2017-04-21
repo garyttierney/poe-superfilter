@@ -1,0 +1,9 @@
+Mixin TestMixin($rarity, $class, $color)
+   Class $class
+   Rarity $rarity
+   SetBorderColor $color
+   SetFontSize 38
+
+Show
+   +TestMixin("Magic", "Flask", 100 100 100)
+   SetFontSize 45

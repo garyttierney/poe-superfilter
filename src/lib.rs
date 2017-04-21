@@ -58,6 +58,7 @@ pub fn compile(contents: &str, file: String, out_buf: &mut Write, render_config:
                 transformed_tree.render(render_ctx, out_buf).unwrap();
             }
         },
+        Err(err) => return Err(CompileErr::ParseError(err)),
         _ => panic!()
     }
     Ok(())

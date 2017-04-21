@@ -159,7 +159,7 @@ ConditionStmt : &'ast Node<'ast> = {
 };
 
 MixinCall : &'ast Node<'ast> = {
-    <l:@L> "+" <n:Constant> <params:("(" <Comma<Value>> ")")?> <r:@R> "\n" => arena.alloc(Node::MixinCall(
+    <l:@L> "+" <n:Constant> <params:("(" <Comma<Value+>> ")")?> <r:@R> "\n" => arena.alloc(Node::MixinCall(
         ast::mixin::MixinCall {
             name: n,
             parameters: params.unwrap_or(vec![]),

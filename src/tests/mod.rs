@@ -6,7 +6,6 @@ use super::ast::transform::RenderConfig;
 
 fn load_example(file_name : &str) -> String {
     let path = "src/tests/".to_owned() + file_name;
-    println!("{}", path);
     let mut file = File::open(path).unwrap();
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
@@ -39,4 +38,9 @@ fn test_compile(input_file : &str, expected_output_file : &str) {
 #[test]
 fn test_vars() {
     test_compile("vars.sf", "vars.filter")
+}
+
+#[test]
+fn test_mixins() {
+    test_compile("mixins.sf", "mixins.filter")
 }

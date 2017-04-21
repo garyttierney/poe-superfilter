@@ -1,6 +1,6 @@
 use ast::{Node, TransformedNode, CompileErr, AstLocation};
-use ast::transform::{Transform, TransformContext};
-use scope::{ScopeData};
+use ast::transform::{Transform, TransformContext, TransformResult};
+use scope::{ScopeData, ScopeValue};
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::fmt;
@@ -78,7 +78,7 @@ pub struct PlainParam<'a> {
 #[derive(Clone)]
 pub struct MixinCall<'a> {
     pub name: String,
-    pub parameters: Vec<&'a Node<'a>>,
+    pub parameters: Vec<Vec<&'a Node<'a>>>,
     pub location: AstLocation
 }
 
@@ -108,15 +108,32 @@ impl <'a> Transform<'a> for MixinCall<'a> {
             }
 
             // transform parameters in this call
-            let mut t_params = Vec::new();
+            let mut t_params : Vec<ScopeValue> = Vec::new();
             for param in &self.parameters {
-                if let Some(t_param) = param.transform(ctx.clone())? {
-                    t_params.push(t_param);
-                } else {
+                let transform_results : Vec<Result<Option<&TransformedNode>, CompileErr>> = param.iter().map(|p| p.transform(ctx.clone())).collect();
+                // return on any transform errors in the param values
+                if transform_results.iter().any(|r| r.is_err()) {
+                    return transform_results.into_iter().find(|r| r.is_err()).unwrap();
+                }
+
+
+                // get results from transform return values. unwrap is ok since we already checked for None values
+                let transform_options : Vec<Option<&TransformedNode>> = transform_results.into_iter().map(|o| o.unwrap()).collect();
+
+                if transform_options.iter().any(|r| r.is_none()) {
                     return Err(CompileErr::MissingValue(format!("{:?}", param), self.location.clone()));
+                }
+
+                let return_values : Vec<ScopeValue> = transform_options.into_iter().map(|r| r.unwrap().return_value()).collect();
+
+                if return_values.len() == 1 {
+                    t_params.push(return_values[0].clone());
+                } else {
+                    t_params.push(ScopeValue::List(return_values))
                 }
             }
 
+            // create scope for this mixin call, include parameter values
             let mut mixin_inner_scope = ScopeData::new(Some(ctx.scope.clone()));
             for i in 0..self.parameters.len() {
                 mixin_inner_scope.push_var(mixin.parameters[i].name.clone(), t_params[i].return_value())
