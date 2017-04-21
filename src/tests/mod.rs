@@ -32,7 +32,7 @@ fn test_compile(input_file : &str, expected_output_file : &str) {
     super::compile(&sf_file, input_file.to_owned(), &mut result_vec, &render_config).unwrap();
 
     let result_str = String::from_utf8(result_vec).unwrap();
-    assert!(expected_result.eq(&result_str))
+    assert_eq!(expected_result, result_str)
 }
 
 #[test]
@@ -43,4 +43,9 @@ fn test_vars() {
 #[test]
 fn test_mixins() {
     test_compile("mixins.sf", "mixins.filter")
+}
+
+#[test]
+fn simple_expressions() {
+    test_compile("simple_expr.sf", "simple_expr.filter")
 }

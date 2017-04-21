@@ -1,0 +1,9 @@
+Show
+    Statement1 10 * 1.26      # 12.6 -> rounds to 13
+    Statement2 10 * 1.25      # 12.5 -> rounds to 13
+    Statement3 10 * 1.24      # 12.4 -> rounds to 12
+    Statement4 10 + 10        # 20
+    Statement5 10 + 10 * 1.5  # 25 (test operator precedence)
+    Statement6 10 / 3         # 3
+    Statement7 10.0 / 3 * 100 # 333
+    Statement8 10 / 3 * 100   # 300
