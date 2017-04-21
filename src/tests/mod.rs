@@ -68,3 +68,8 @@ fn import() {
 fn statement_override() {
     test_compile("statement_override.sf", "statement_override.filter")
 }
+
+#[test]
+fn conditional_blocks() {
+    test_compile("conditional_blocks.sf", "conditional_blocks.filter")
+}
