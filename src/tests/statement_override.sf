@@ -1,0 +1,5 @@
+Show
+    SetFontSize 38
+    SetFontSize 40
+    ItemLevel <= 8
+    ItemLevel >= 3
