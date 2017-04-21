@@ -54,6 +54,7 @@ pub fn main() {
         .parent()
         .unwrap()
         .to_owned();
+
     let render_config = RenderConfig {
         pretty: args.flag_pretty,
         indent_str: "    ",

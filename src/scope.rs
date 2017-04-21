@@ -202,10 +202,11 @@ impl TransformResult for ScopeValue {
             },
             ScopeValue::Int(ref v) => { buf.write(v.to_string().as_ref())?; },
             ScopeValue::List(ref list) => {
-                for val in list {
-                    val.render(ctx, buf)?;
+                for i in 0..(list.len() - 1) {
+                    list[i].render(ctx, buf)?;
                     buf.write(b" ")?;
-                };
+                }
+                list[list.len() - 1].render(ctx, buf)?;
             },
             ScopeValue::None => ()
         };
