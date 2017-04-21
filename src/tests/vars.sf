@@ -1,0 +1,4 @@
+$var = 255 255 255
+
+Show
+    SetBorderColor $var
