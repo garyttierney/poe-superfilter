@@ -24,20 +24,20 @@ impl fmt::Debug for ExpressionValue {
     }
 }
 
-impl<'a> Transform<'a> for ExpressionValue {
-    fn transform(&self, ctx: TransformContext<'a>)
-                 -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
+impl Transform for ExpressionValue {
+    fn transform(&self, ctx: TransformContext)
+                 -> Result<Option<TransformedNode>, CompileErr> {
         match *self {
             ExpressionValue::Var(ref node) => node.transform(ctx),
             ref val => {
-                Ok(Some(ctx.alloc_transformed(TransformedNode::Value(
+                Ok(Some(TransformedNode::Value(
                     match *val {
                         ExpressionValue::String(ref s) => ScopeValue::String(s.clone()),
                         ExpressionValue::Int(i) => ScopeValue::Int(i),
                         ExpressionValue::Decimal(f) => ScopeValue::Decimal(f),
                         _ => unreachable!()
                     }
-                ))))
+                )))
             }
         }
     }
@@ -48,12 +48,12 @@ impl<'a> Transform<'a> for ExpressionValue {
 }
 
 #[derive(Clone)]
-pub enum ExpressionNode<'ast> {
+pub enum ExpressionNode {
     Val(ExpressionValue, AstLocation),
-    Op(&'ast Node<'ast>, ExpressionOperation, &'ast Node<'ast>)
+    Op(Box<Node>, ExpressionOperation, Box<Node>)
 }
 
-impl <'a> fmt::Debug for ExpressionNode<'a> {
+impl fmt::Debug for ExpressionNode {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             ExpressionNode::Val(ref v, _) => write!(f, "{:?}", v),
@@ -62,9 +62,9 @@ impl <'a> fmt::Debug for ExpressionNode<'a> {
     }
 }
 
-impl<'a> ExpressionNode<'a> {
-    fn transform_op(&self, ctx: TransformContext<'a>, a: &'a Node<'a>, op: &ExpressionOperation, b: &'a Node<'a>)
-                        -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
+impl ExpressionNode {
+    fn transform_op(&self, ctx: TransformContext, a: &Node, op: &ExpressionOperation, b: &Node)
+                        -> Result<Option<TransformedNode>, CompileErr> {
         // transform each operand
         let transformed_operands = (
             a.transform(ctx.clone())?,
@@ -87,15 +87,15 @@ impl<'a> ExpressionNode<'a> {
                     ExpressionOperation::Div => a_val / b_val,
                     ExpressionOperation::Sub => a_val - b_val,
                 };
-                return Ok(Some(ctx.alloc_transformed(TransformedNode::Value(result))))
+                return Ok(Some(TransformedNode::Value(result)))
             }
         }
     }
 }
 
-impl <'a> Transform<'a> for ExpressionNode<'a> {
-    fn transform(&self, ctx: TransformContext<'a>)
-                 -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
+impl Transform for ExpressionNode {
+    fn transform(&self, ctx: TransformContext)
+                 -> Result<Option<TransformedNode>, CompileErr> {
         match *self {
             ExpressionNode::Val(ref value, _) => value.transform(ctx),
             ExpressionNode::Op(ref a, ref op, ref b) => self.transform_op(ctx, a, op, b)
@@ -125,7 +125,7 @@ pub enum ExpressionOperation {
 }
 
 /// Implements TransformResult for any string
-impl<'a> TransformResult for String {
+impl TransformResult for String {
     fn return_value(&self) -> ScopeValue {
         ScopeValue::String(self.clone())
     }

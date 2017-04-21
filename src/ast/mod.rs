@@ -24,7 +24,6 @@ use std::cell::RefCell;
 use std::io::Write;
 use std::io::Error as IoError;
 use std::convert::From;
-use typed_arena::Arena;
 
 use std::fmt;
 use std::fmt::Formatter;
@@ -36,29 +35,26 @@ use tok::Location as TokenLocation;
 use std::ops::Deref;
 use std::path::PathBuf;
 
-pub struct Filter<'ast> {
-    pub nodes: Vec<&'ast Node<'ast>>,
-    pub transformed_arena: Arena<TransformedNode<'ast>>,
+#[derive(Clone)]
+pub struct Filter {
+    pub nodes: Vec<Node>,
     pub location: AstLocation
 }
 
-impl<'ast> Debug for Filter<'ast> {
+impl Debug for Filter {
     fn fmt(&self, f: &mut Formatter) -> Result<(), FmtError> {
         self.nodes.fmt(f)?;
         Ok(())
     }
 }
 
-impl<'a> Filter<'a> {
-    pub fn transform_begin(&'a self,
-                           ast_arena: &'a Arena<Node<'a>>,
-                           root_scope: Rc<RefCell<ScopeData<'a>>>,
+impl Filter {
+    pub fn transform_begin(&self,
+                           root_scope: Rc<RefCell<ScopeData>>,
                            base_path: Rc<PathBuf>)
-                           -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
+                           -> Result<Option<TransformedNode>, CompileErr> {
         let root_ctx = TransformContext {
             scope: root_scope,
-            transform_arena: &self.transformed_arena,
-            ast_arena: ast_arena,
             path: base_path
         };
 
@@ -66,10 +62,10 @@ impl<'a> Filter<'a> {
     }
 }
 
-impl<'a> Transform<'a> for Filter<'a> {
-    fn transform(&self, ctx: TransformContext<'a>)
-                 -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
-        let mut transformed_nodes: Vec<&TransformedNode<'a>> = Vec::with_capacity(self.nodes.len());
+impl Transform for Filter {
+    fn transform(&self, ctx: TransformContext)
+                 -> Result<Option<TransformedNode>, CompileErr> {
+        let mut transformed_nodes: Vec<TransformedNode> = Vec::with_capacity(self.nodes.len());
 
         for node in &self.nodes {
             if let Some(t_node) = node.transform(ctx.clone())? {
@@ -77,7 +73,7 @@ impl<'a> Transform<'a> for Filter<'a> {
             }
         }
         return Ok(Some(
-            ctx.alloc_transformed(TransformedNode::Root(transformed_nodes))
+            TransformedNode::Root(transformed_nodes)
         ));
     }
 
@@ -89,39 +85,39 @@ impl<'a> Transform<'a> for Filter<'a> {
 /// Data structure to holds all node types that can occur in the acstract syntax tree.
 /// The InnerTransform derivation implements the Deref trait for this enum so the transform
 /// method can be called directly on the node and the inner value will receive the method call.
-#[derive(Debug, InnerTransform)]
-pub enum Node<'ast> {
-    Filter(Filter<'ast>),
+#[derive(Debug, InnerTransform, Clone)]
+pub enum Node {
+    Filter(Filter),
     Import(ImportStatement),
-    Block(block::Block<'ast>),
-    SetValueStmt(SetValueStatement<'ast>),
-    ConditionStmt(ConditionStatement<'ast>),
+    Block(block::Block),
+    SetValueStmt(SetValueStatement),
+    ConditionStmt(ConditionStatement),
 
-    Expression(ExpressionNode<'ast>),
+    Expression(ExpressionNode),
     Value(ExpressionValue),
 
     VarRef(VarReference),
-    VarDefinition(VarDefinition<'ast>),
-    Mixin(Mixin<'ast>),
-    MixinCall(MixinCall<'ast>),
-    Color(color::Color<'ast>)
+    VarDefinition(VarDefinition),
+    Mixin(Mixin),
+    MixinCall(MixinCall),
+    Color(color::Color)
 }
 
 /// Holds fully transformed nodes that can be rendered.
 /// Calls to methods of the TransformResult trait on the inner values can be performed with no
 /// explicit conversion because this struct implements Deref into &TransformResult.
 #[derive(Debug, Clone, PartialEq, InnerTransformResult)]
-pub enum TransformedNode<'ast> {
-    Root(Vec<&'ast TransformedNode<'ast>>),
-    Block(block::PlainBlock<'ast>),
+pub enum TransformedNode {
+    Root(Vec<TransformedNode>),
+    Block(block::PlainBlock),
     SetValueStmt(PlainSetValueStatement),
     ConditionStmt(PlainConditionStatement),
     Value(ScopeValue),
-    ExpandedNodes(Vec<&'ast TransformedNode<'ast>>)
+    ExpandedNodes(Vec<TransformedNode>)
 }
 
 /// Implements rendering for lists of nodes by rendering each item in the list
-impl<'ast> TransformResult for Vec<&'ast TransformedNode<'ast>> {
+impl TransformResult for Vec<TransformedNode> {
     fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
         for node in self {
             node.render(ctx, buf)?;

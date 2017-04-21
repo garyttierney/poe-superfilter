@@ -3,14 +3,14 @@ use ast::transform::{Transform,TransformContext};
 use ast::Node;
 
 #[derive(Debug, Clone)]
-pub struct Color<'a> {
-    pub r: &'a Node<'a>,
-    pub g: &'a Node<'a>,
-    pub b: &'a Node<'a>,
-    pub a: &'a Node<'a>
+pub struct Color {
+    pub r: Box<Node>,
+    pub g: Box<Node>,
+    pub b: Box<Node>,
+    pub a: Box<Node>
 }
 
-impl <'a> Color<'a> {
+impl <'a> Color {
 }
 
 pub struct PlainColor {
@@ -20,10 +20,10 @@ pub struct PlainColor {
     pub a: u8
 }
 
-impl <'a> Transform<'a> for Color<'a> {
+impl Transform for Color {
     #[allow(unused_variables)]
-    fn transform(&self, ctx: TransformContext<'a>)
-        -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
+    fn transform(&self, ctx: TransformContext)
+        -> Result<Option<TransformedNode>, CompileErr> {
         unimplemented!();
     }
     fn location(&self) -> AstLocation {

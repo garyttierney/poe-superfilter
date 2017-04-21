@@ -11,7 +11,6 @@ extern crate regex;
 extern crate typed_arena;
 extern crate lalrpop_util;
 
-use typed_arena::Arena;
 use ast::transform::{RenderContext, RenderConfig};
 use ast::CompileErr;
 use std::io::Write;
@@ -41,7 +40,6 @@ const LINE_END : &'static [u8] = b"\r\n";
 pub fn compile(contents: &str, file: String, out_buf: &mut Write, render_config: &RenderConfig)
         -> Result<(),CompileErr> {
     let tokens = Box::new(tok::tokenize(contents));
-    let ast_arena = Arena::new();
     let root_scope = Rc::new(RefCell::new(ScopeData::new(None)));
 
     let render_ctx = RenderContext {
@@ -49,10 +47,9 @@ pub fn compile(contents: &str, file: String, out_buf: &mut Write, render_config:
         indent_level: 0,
     };
 
-    match filter::parse_Filter(&ast_arena, file.as_str(), tokens.into_iter()) {
-        Ok(&Node::Filter(ref filter)) => {
-            let result = filter.transform_begin(&ast_arena,
-                                                root_scope,
+    match filter::parse_Filter(file.as_str(), tokens.into_iter()) {
+        Ok(Node::Filter(ref filter)) => {
+            let result = filter.transform_begin(root_scope,
                                                 Rc::new(render_config.base_path.clone()))?;
             if let Some(transformed_tree) = result {
                 transformed_tree.render(render_ctx, out_buf).unwrap();

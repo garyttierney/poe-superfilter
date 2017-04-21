@@ -8,9 +8,9 @@ use LINE_END;
 
 /// AST structure for a value set or other instruction statement
 #[derive(Debug, Clone)]
-pub struct SetValueStatement<'a> {
+pub struct SetValueStatement {
     pub name : String,
-    pub values : Vec<&'a Node<'a>>,
+    pub values : Vec<Node>,
     pub location: AstLocation
 }
 
@@ -26,22 +26,22 @@ impl PartialEq for PlainSetValueStatement {
     }
 }
 
-impl <'a> Transform<'a> for SetValueStatement<'a> {
-    fn transform(&self, ctx: TransformContext<'a>)
-        -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
+impl <'a> Transform for SetValueStatement {
+    fn transform(&self, ctx: TransformContext)
+        -> Result<Option<TransformedNode>, CompileErr> {
         let mut transformed_values: Vec<ScopeValue> = vec![];
         for value in &self.values {
-            if let Some(t_value) = try!(value.transform(ctx.clone())) {
+            if let Some(t_value) = value.transform(ctx.clone())? {
                 transformed_values.push(t_value.return_value());
             }
         }
 
-        Ok(Some(ctx.alloc_transformed(TransformedNode::SetValueStmt(
+        Ok(Some(TransformedNode::SetValueStmt(
             PlainSetValueStatement {
                 name: self.name.clone(),
                 values: transformed_values
             }
-        ))))
+        )))
     }
 
     fn location(&self) -> AstLocation {
@@ -64,9 +64,9 @@ impl TransformResult for PlainSetValueStatement {
 
 /// AST structure for a condition statement
 #[derive(Debug, Clone)]
-pub struct ConditionStatement<'a> {
+pub struct ConditionStatement {
     pub name : String,
-    pub condition : Condition<'a>,
+    pub condition : Condition,
     pub location: AstLocation
 }
 
@@ -82,16 +82,16 @@ impl PartialEq for PlainConditionStatement {
     }
 }
 
-impl <'a> Transform<'a> for ConditionStatement<'a> {
-    fn transform(&self, ctx: TransformContext<'a>)
-        -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
+impl Transform for ConditionStatement {
+    fn transform(&self, ctx: TransformContext)
+        -> Result<Option<TransformedNode>, CompileErr> {
         if let Some(t_value) = self.condition.value.transform(ctx.clone())? {
-            return Ok(Some(ctx.alloc_transformed(TransformedNode::ConditionStmt(
+            return Ok(Some(TransformedNode::ConditionStmt(
                 PlainConditionStatement {
                     name: self.name.clone(),
                     condition: PlainCondition { value: t_value.return_value(), operator: self.condition.operator },
                 }
-            ))));
+            )));
         }
         return Err(CompileErr::Unknown);
     }
@@ -117,8 +117,8 @@ impl TransformResult for PlainConditionStatement {
 /// AST structure for a condition. This node is always embedded, so there is no
 /// corresponding variant for it in the ast::Node enum
 #[derive(Debug, Clone)]
-pub struct Condition<'a> {
-    pub value: &'a Node<'a>,
+pub struct Condition {
+    pub value: Box<Node>,
     pub operator: ComparisonOperator,
 }
 

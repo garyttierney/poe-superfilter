@@ -6,13 +6,12 @@ use ast::{Node, AstLocation, Filter};
 use ast::block::{Block, BlockType};
 use tok::Location as TokenLocation;
 use tok::Tok;
-use typed_arena::Arena;
 use ast::import::ImportStatement;
 use ast::var::{VarDefinition,VarReference};
 use ast::expression::{ExpressionValue, ExpressionNode, ExpressionOperation};
 
 #[LALR]
-grammar<'ast, 'b>(arena: &'ast Arena<Node<'ast>>, file: &'b str);
+grammar<'b>(file: &'b str);
 
 extern {
     type Location = TokenLocation;
@@ -44,69 +43,67 @@ extern {
     }
 }
 
-pub Filter : &'ast Node<'ast> = {
+pub Filter : Node = {
     <l:@L> <defs:DefinitionBlock*> <first:ContentBlock> <rest:AnyBlock*> <r:@R> => {
         let mut nodes = defs;
         nodes.push(first);
         nodes.extend(rest);
-        arena.alloc(Node::Filter(Filter {
+        Node::Filter(Filter {
             nodes: nodes,
-            transformed_arena: Arena::new(),
             location: AstLocation::new(l, r, file.to_owned())
-        }))
+        })
     },
-    <l:@L> <defs:DefinitionBlock*> <r:@R> => arena.alloc(Node::Filter(
+    <l:@L> <defs:DefinitionBlock*> <r:@R> => Node::Filter(
         Filter {
             nodes: defs,
-            transformed_arena: Arena::new(),
             location: AstLocation::new(l, r, file.to_owned())
         }
-    )),
+    ),
 };
 
-DefinitionBlock : &'ast Node<'ast> = {
+DefinitionBlock : Node = {
     VarDefinition,
     ImportBlock
 };
 
-ImportBlock : &'ast Node<'ast> = <l:@L> "Import" <path:RawStrLiteral> <r:@R> "\n" => arena.alloc(Node::Import(
+ImportBlock : Node = <l:@L> "Import" <path:RawStrLiteral> <r:@R> "\n" => Node::Import(
     ImportStatement {
         path: path,
         location: AstLocation::new(l, r, file.to_owned())
     }
-));
+);
 
 BlockType : BlockType = {
     "Show" => BlockType::Show,
     "Hide" => BlockType::Hide
 };
 
-ContentBlock : &'ast Node<'ast> = {
-    <l:@L> <t:BlockType> "\n" <stmts:Statement*> <r:@R> => arena.alloc(Node::Block(
+ContentBlock : Node = {
+    <l:@L> <t:BlockType> "\n" <stmts:Statement*> <r:@R> => Node::Block(
         Block {
             nodes: stmts,
             variant: t,
             location: AstLocation::new(l, r, file.to_owned())
         }
-    )),
+    ),
     <l:@L> "Mixin" <name:Constant> <args:("(" <Comma<VarIdentifier>> ")")?> "\n" <instructions:Statement*> <r:@R> => {
         let params = args
             .unwrap_or(vec![])
             .iter()
             .map(|param_name| ast::mixin::Param { name: param_name.clone(), default: None })
             .collect();
-        arena.alloc(Node::Mixin(
+        Node::Mixin(
             ast::mixin::Mixin{
                 name: name,
                 parameters: params,
                 statements: instructions,
                 location: AstLocation::new(l, r, file.to_owned())
             }
-        ))
+        )
     }
 };
 
-AnyBlock : &'ast Node<'ast> = { ImportBlock, ContentBlock };
+AnyBlock : Node = { ImportBlock, ContentBlock };
 
 Comma<T>: Vec<T> = {
     <v:(<T> ",")*> <e:T?> => match e {
@@ -119,63 +116,63 @@ Comma<T>: Vec<T> = {
     }
 };
 
-VarDefinition : &'ast Node<'ast>  = {
-    <l:@L> <id:VarIdentifier> "=" <v:Value+> <r:@R> "\n" => arena.alloc(Node::VarDefinition(
+VarDefinition : Node  = {
+    <l:@L> <id:VarIdentifier> "=" <v:Value+> <r:@R> "\n" => Node::VarDefinition(
         VarDefinition {
             identifier: id,
             values: v,
             location: AstLocation::new(l, r, file.to_owned())
         }
-    ))
+    )
 };
 
-VarReference : &'ast Node<'ast> = {
-    <l:@L> <ident:VarIdentifier> <r:@R> => arena.alloc(Node::Value(ExpressionValue::Var(
+VarReference : Node = {
+    <l:@L> <ident:VarIdentifier> <r:@R> => Node::Value(ExpressionValue::Var(
         VarReference {
             identifier: ident,
             location: AstLocation::new(l, r, file.to_owned())
         }
-    )))
+    ))
 };
 
-SetValueStmt : &'ast Node<'ast> = {
-    <l:@L> <n:Constant> <val:Value+> <r:@R> "\n" => arena.alloc(Node::SetValueStmt(
+SetValueStmt : Node = {
+    <l:@L> <n:Constant> <val:Value+> <r:@R> "\n" => Node::SetValueStmt(
         stm::SetValueStatement {
             name: n,
             values: val,
             location: AstLocation::new(l, r, file.to_owned())
         }
-    ))
+    )
 };
 
-ConditionStmt : &'ast Node<'ast> = {
-    <l:@L> <n: Constant> <cond: Condition> <r:@R> "\n" => arena.alloc(Node::ConditionStmt(
+ConditionStmt : Node = {
+    <l:@L> <n: Constant> <cond: Condition> <r:@R> "\n" => Node::ConditionStmt(
         stm::ConditionStatement {
             name: n,
             condition: cond,
             location: AstLocation::new(l, r, file.to_owned())
         }
-    ))
+    )
 };
 
-MixinCall : &'ast Node<'ast> = {
-    <l:@L> "+" <n:Constant> <params:("(" <Comma<Value+>> ")")?> <r:@R> "\n" => arena.alloc(Node::MixinCall(
+MixinCall : Node = {
+    <l:@L> "+" <n:Constant> <params:("(" <Comma<Value+>> ")")?> <r:@R> "\n" => Node::MixinCall(
         ast::mixin::MixinCall {
             name: n,
             parameters: params.unwrap_or(vec![]),
             location: AstLocation::new(l, r, file.to_owned())
         }
-    ))
+    )
 };
 
-Statement : &'ast Node<'ast> = {
+Statement : Node = {
     SetValueStmt,
     ConditionStmt,
     MixinCall,
     VarDefinition,
 };
 
-Value : &'ast Node<'ast> = {
+Value : Node = {
     ValueExpression,
 };
 
@@ -184,14 +181,14 @@ RawStrLiteral : String = {
     Constant => String::from(<>),
 };
 
-StrLiteral : &'ast Node<'ast> = {
-    <l:@L> <s:RawStrLiteral> <r:@R> => arena.alloc(Node::Value(
+StrLiteral : Node = {
+    <l:@L> <s:RawStrLiteral> <r:@R> => Node::Value(
         ExpressionValue::String(s)
-    ))
+    )
 };
 
-Condition : stm::Condition<'ast> = {
-    <op:ComparisonOperator> <v:Value> => stm::Condition { value: v, operator: op }
+Condition : stm::Condition = {
+    <op:ComparisonOperator> <v:Value> => stm::Condition { value: Box::new(v), operator: op }
 };
 
 ComparisonOperator : stm::ComparisonOperator = {
@@ -202,56 +199,56 @@ ComparisonOperator : stm::ComparisonOperator = {
     "=" =>  stm::ComparisonOperator::Eql
 };
 
-NumberLiteral : &'ast Node<'ast> = {
-    <l:@L> <num:Num> <r:@R> => arena.alloc(Node::Expression(
+NumberLiteral : Node = {
+    <l:@L> <num:Num> <r:@R> => Node::Expression(
         ExpressionNode::Val(ExpressionValue::Int(num), AstLocation::new(l, r, file.to_owned()))
-    )),
-    <l:@L> <num:Float> <r:@R> => arena.alloc(Node::Expression(
+    ),
+    <l:@L> <num:Float> <r:@R> => Node::Expression(
         ExpressionNode::Val(ExpressionValue::Decimal(num), AstLocation::new(l, r, file.to_owned()))
-    )),
+    ),
 };
 
-ValueExpression : &'ast Node<'ast> = {
-    <l:ValueExpression> "+" <r:ValueFactor> => arena.alloc(Node::Expression(
-        ExpressionNode::Op(l, ExpressionOperation::Add, r)
-    )),
-    <l:ValueExpression> "-" <r:ValueFactor> => arena.alloc(Node::Expression(
-        ExpressionNode::Op(l, ExpressionOperation::Sub, r)
-    )),
+ValueExpression : Node = {
+    <l:ValueExpression> "+" <r:ValueFactor> => Node::Expression(
+        ExpressionNode::Op(Box::new(l), ExpressionOperation::Add, Box::new(r))
+    ),
+    <l:ValueExpression> "-" <r:ValueFactor> => Node::Expression(
+        ExpressionNode::Op(Box::new(l), ExpressionOperation::Sub, Box::new(r))
+    ),
     ValueFactor
 };
 
-ValueFactor : &'ast Node<'ast> = {
-    <l:ValueFactor> "*" <r:ValueTerm> => arena.alloc(Node::Expression(
-        ExpressionNode::Op(l, ExpressionOperation::Mul, r)
-    )),
-    <l:ValueFactor> "/" <r:ValueTerm> => arena.alloc(Node::Expression(
-        ExpressionNode::Op(l, ExpressionOperation::Div, r)
-    )),
+ValueFactor : Node = {
+    <l:ValueFactor> "*" <r:ValueTerm> => Node::Expression(
+        ExpressionNode::Op(Box::new(l), ExpressionOperation::Mul, Box::new(r))
+    ),
+    <l:ValueFactor> "/" <r:ValueTerm> => Node::Expression(
+        ExpressionNode::Op(Box::new(l), ExpressionOperation::Div, Box::new(r))
+    ),
     ValueTerm
 };
 
-ValueTerm : &'ast Node<'ast> = {
+ValueTerm : Node = {
     VarReference,
     NumberLiteral,
     StrLiteral,
     "(" <ValueExpression> ")" => <>
 };
 
-Color: &'ast Node<'ast> = {
-    <r:ValueTerm> <g:ValueTerm> <b:ValueTerm> <a:ValueTerm> => arena.alloc(Node::Color(ast::color::Color {
-        r: r,
-        g: g,
-        b: b,
-        a: a
-    })),
-    <left:@L> <r:ValueTerm> <g:ValueTerm> <b:ValueTerm> <right:@R> => arena.alloc(Node::Color(ast::color::Color {
-        r: r,
-        g: g,
-        b: b,
-        a: arena.alloc(Node::Expression(
+Color: Node = {
+    <r:ValueTerm> <g:ValueTerm> <b:ValueTerm> <a:ValueTerm> => Node::Color(ast::color::Color {
+        r: Box::new(r),
+        g: Box::new(g),
+        b: Box::new(b),
+        a: Box::new(a)
+    }),
+    <left:@L> <r:ValueTerm> <g:ValueTerm> <b:ValueTerm> <right:@R> => Node::Color(ast::color::Color {
+        r: Box::new(r),
+        g: Box::new(g),
+        b: Box::new(b),
+        a: Box::new(Node::Expression(
             ExpressionNode::Val(ExpressionValue::Int(255),
             AstLocation::new(left, right, file.to_owned())
         )))
-    }))
+    })
 };

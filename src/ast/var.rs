@@ -16,14 +16,14 @@ impl fmt::Debug for VarReference {
     }
 }
 
-impl <'a> Transform<'a> for VarReference {
+impl Transform for VarReference {
     #[allow(unused_variables)]
-    fn transform(&self, ctx: TransformContext<'a>)
-                     -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
+    fn transform(&self, ctx: TransformContext)
+                     -> Result<Option<TransformedNode>, CompileErr> {
         // try to resolve variable reference
         match ctx.ref_scope().var(&self.identifier) {
             Some(val) => Ok(Some(
-                ctx.alloc_transformed(TransformedNode::Value(val))
+                TransformedNode::Value(val)
             )),
             None => Err(CompileErr::MissingVarRef(format!("{:?}", self), self.location()))
         }
@@ -36,15 +36,15 @@ impl <'a> Transform<'a> for VarReference {
 
 /// AST node for variable definitions
 #[derive(Debug, Clone)]
-pub struct VarDefinition<'a> {
+pub struct VarDefinition {
     pub identifier: String,
-    pub values: Vec<&'a Node<'a>>,
+    pub values: Vec<Node>,
     pub location: AstLocation
 }
 
-impl <'a> Transform<'a> for VarDefinition<'a> {
-    fn transform(&self, ctx: TransformContext<'a>)
-                     -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
+impl Transform for VarDefinition {
+    fn transform(&self, ctx: TransformContext)
+                     -> Result<Option<TransformedNode>, CompileErr> {
         // transform values and collect them in a vec
         let mut return_values = Vec::new();
         for val in &self.values {

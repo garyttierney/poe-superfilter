@@ -39,8 +39,8 @@ fn impl_transform(ast: &DeriveInput) -> quote::Tokens {
     };
 
     let tokens = quote! {
-        impl <'a> Deref for #name<'a> {
-            type Target = Transform<'a> + 'a;
+        impl Deref for #name {
+            type Target = Transform;
             fn deref(&self) -> &Self::Target {
                 match *self {
                     #variant_tokens
@@ -84,8 +84,8 @@ fn impl_transform_result(ast: &DeriveInput) -> quote::Tokens {
     };
 
     let tokens = quote! {
-        impl <'a> Deref for #name<'a> {
-            type Target = TransformResult + 'a;
+        impl Deref for #name {
+            type Target = TransformResult;
             fn deref(&self) -> &Self::Target {
                 match *self {
                     #variant_tokens

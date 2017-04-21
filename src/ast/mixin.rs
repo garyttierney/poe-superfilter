@@ -7,26 +7,26 @@ use std::fmt;
 
 /// Name and parameter specs for a mixin
 #[derive(Debug, Clone)]
-pub struct Mixin<'a> {
+pub struct Mixin {
     pub name: String,
-    pub parameters: Vec<Param<'a>>,
-    pub statements: Vec<&'a Node<'a>>,
+    pub parameters: Vec<Param>,
+    pub statements: Vec<Node>,
     pub location: AstLocation
 }
 
 #[derive(Debug, Clone)]
-pub struct PreparedMixin<'a> {
+pub struct PreparedMixin {
     pub name: String,
-    pub parameters: Vec<PlainParam<'a>>,
-    pub statements: Vec<&'a Node<'a>>
+    pub parameters: Vec<PlainParam>,
+    pub statements: Vec<Node>
 }
 
-impl <'a> Transform<'a> for Mixin<'a> {
-    fn transform(&self, ctx: TransformContext<'a>)
-        -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
+impl Transform for Mixin {
+    fn transform(&self, ctx: TransformContext)
+        -> Result<Option<TransformedNode>, CompileErr> {
         let mut t_params = Vec::new();
         for param in &self.parameters {
-            if let Some(default_value) = param.default {
+            if let Some(ref default_value) = param.default {
                 if let Some(t_value) = default_value.transform(ctx.clone())? {
                     t_params.push(PlainParam {
                         name: param.name.clone(),
@@ -62,27 +62,27 @@ impl <'a> Transform<'a> for Mixin<'a> {
 
 /// (Mixin) Parameter name and default values
 #[derive(Debug, Clone)]
-pub struct Param<'a> {
+pub struct Param {
     pub name: String,
-    pub default: Option<&'a Node<'a>>
+    pub default: Option<Node>
 }
 
 /// (Mixin) Parameter name and default values
 #[derive(Debug, Clone)]
-pub struct PlainParam<'a> {
+pub struct PlainParam {
     pub name: String,
-    pub default: Option<TransformedNode<'a>>
+    pub default: Option<TransformedNode>
 }
 
 /// Represents a mixin include with name and parameters
 #[derive(Clone)]
-pub struct MixinCall<'a> {
+pub struct MixinCall {
     pub name: String,
-    pub parameters: Vec<Vec<&'a Node<'a>>>,
+    pub parameters: Vec<Vec<Node>>,
     pub location: AstLocation
 }
 
-impl <'a> fmt::Debug for MixinCall<'a> {
+impl <'a> fmt::Debug for MixinCall {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "MixinCall +{}(", self.name)?;
         for param in &self.parameters {
@@ -92,11 +92,11 @@ impl <'a> fmt::Debug for MixinCall<'a> {
     }
 }
 
-pub type ResolvedMixin<'a> = Vec<&'a TransformedNode<'a>>;
+pub type ResolvedMixin<'a> = Vec<TransformedNode>;
 
-impl <'a> Transform<'a> for MixinCall<'a> {
-    fn transform(&self, ctx: TransformContext<'a>)
-        -> Result<Option<&'a TransformedNode<'a>>, CompileErr> {
+impl Transform for MixinCall {
+    fn transform(&self, ctx: TransformContext)
+        -> Result<Option<TransformedNode>, CompileErr> {
         if let Some(mixin) = ctx.ref_scope().mixin(&self.name) {
             // catch parameter count mismatch
             if mixin.parameters.len() != self.parameters.len() {
@@ -110,7 +110,7 @@ impl <'a> Transform<'a> for MixinCall<'a> {
             // transform parameters in this call
             let mut t_params : Vec<ScopeValue> = Vec::new();
             for param in &self.parameters {
-                let transform_results : Vec<Result<Option<&TransformedNode>, CompileErr>> = param.iter().map(|p| p.transform(ctx.clone())).collect();
+                let transform_results : Vec<Result<Option<TransformedNode>, CompileErr>> = param.iter().map(|p| p.transform(ctx.clone())).collect();
                 // return on any transform errors in the param values
                 if transform_results.iter().any(|r| r.is_err()) {
                     return transform_results.into_iter().find(|r| r.is_err()).unwrap();
@@ -118,7 +118,7 @@ impl <'a> Transform<'a> for MixinCall<'a> {
 
 
                 // get results from transform return values. unwrap is ok since we already checked for None values
-                let transform_options : Vec<Option<&TransformedNode>> = transform_results.into_iter().map(|o| o.unwrap()).collect();
+                let transform_options : Vec<Option<TransformedNode>> = transform_results.into_iter().map(|o| o.unwrap()).collect();
 
                 if transform_options.iter().any(|r| r.is_none()) {
                     return Err(CompileErr::MissingValue(format!("{:?}", param), self.location.clone()));
@@ -141,8 +141,6 @@ impl <'a> Transform<'a> for MixinCall<'a> {
 
             let inner_ctx = TransformContext {
                 scope: Rc::new(RefCell::new(mixin_inner_scope)),
-                transform_arena: ctx.transform_arena,
-                ast_arena: ctx.ast_arena,
                 path: ctx.path.clone(),
             };
 
@@ -154,12 +152,13 @@ impl <'a> Transform<'a> for MixinCall<'a> {
                 }
             }
             Ok(Some(
-                ctx.alloc_transformed(TransformedNode::ExpandedNodes(t_statements))
+                TransformedNode::ExpandedNodes(t_statements)
             ))
         } else {
             Err(CompileErr::MissingVarRef(self.name.clone(), self.location.clone()))
         }
     }
+
     fn location(&self) -> AstLocation {
         self.location.clone()
     }

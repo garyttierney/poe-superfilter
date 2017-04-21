@@ -1,47 +1,36 @@
 use scope::{ScopeData, ScopeValue};
-use typed_arena::Arena;
 use std::rc::Rc;
 use std::cell::Ref;
 use std::cell::RefMut;
 use std::cell::RefCell;
 use std::io::Write;
-use ast::{CompileErr,TransformedNode,Node,AstLocation};
+use ast::{CompileErr,TransformedNode,AstLocation};
 use std::path::PathBuf;
 
 /// This trait needs to be implemented for any abstract syntax tree structure, it contains the
 /// functions to transform the structure's representation into the final structure before it gets
 /// rendered into plain GGG syntax tree output
-pub trait Transform<'a> {
+pub trait Transform {
     /// Perform any transformations that need to be done before rendering this structure into
     /// plain GGG loot filter syntax
-    fn transform(&self, ctx: TransformContext<'a>)
-        -> Result<Option<&'a TransformedNode<'a>>, CompileErr>;
+    fn transform(&self, ctx: TransformContext)
+        -> Result<Option<TransformedNode>, CompileErr>;
 
     fn location(&self) -> AstLocation;
 }
 
 #[derive(Clone)]
-pub struct TransformContext<'a> {
-    pub scope: Rc<RefCell<ScopeData<'a>>>,
-    pub transform_arena: &'a Arena<TransformedNode<'a>>,
-    pub ast_arena: &'a Arena<Node<'a>>,
+pub struct TransformContext {
+    pub scope: Rc<RefCell<ScopeData>>,
     pub path: Rc<PathBuf>
 }
 
-impl <'a> TransformContext<'a> {
-    pub fn alloc_transformed(&self, node: TransformedNode<'a>) -> &'a TransformedNode<'a> {
-        self.transform_arena.alloc(node)
-    }
-
-    pub fn alloc_ast(&self, node: Node<'a>) -> &'a Node<'a> {
-        self.ast_arena.alloc(node)
-    }
-
-    pub fn mut_scope(&self) -> RefMut<ScopeData<'a>> {
+impl TransformContext {
+    pub fn mut_scope(&self) -> RefMut<ScopeData> {
         self.scope.borrow_mut()
     }
 
-    pub fn ref_scope(&self) -> Ref<ScopeData<'a>> {
+    pub fn ref_scope(&self) -> Ref<ScopeData> {
         self.scope.borrow()
     }
 }
@@ -82,7 +71,7 @@ pub struct RenderContext<'a> {
 }
 
 impl <'a> RenderContext<'a> {
-    pub fn write_indent(&self, buf: &'a mut Write) -> ::std::io::Result<usize> {
+    pub fn write_indent(&self, buf: &mut Write) -> ::std::io::Result<usize> {
         if self.config.indent() {
             let mut written = 0;
 
