@@ -3,9 +3,9 @@ use std::path::Path;
 use std::io::Read;
 use std::fs::File;
 use super::ast::transform::RenderConfig;
+use std::env;
 
-fn load_example(file_name : &str) -> String {
-    let path = "src/tests/".to_owned() + file_name;
+fn load_example(path : &str) -> String {
     let mut file = File::open(path).unwrap();
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
@@ -13,6 +13,10 @@ fn load_example(file_name : &str) -> String {
 }
 
 fn test_compile(input_file : &str, expected_output_file : &str) {
+    let mut current_path = env::current_dir().unwrap();
+    current_path.push("src/tests");
+    env::set_current_dir(current_path).unwrap();
+
     let sf_file = load_example(input_file);
     let expected_result = load_example(expected_output_file);
 
@@ -36,16 +40,21 @@ fn test_compile(input_file : &str, expected_output_file : &str) {
 }
 
 #[test]
-fn test_vars() {
+fn vars() {
     test_compile("vars.sf", "vars.filter")
 }
 
 #[test]
-fn test_mixins() {
+fn mixins() {
     test_compile("mixins.sf", "mixins.filter")
 }
 
 #[test]
 fn simple_expressions() {
     test_compile("simple_expr.sf", "simple_expr.filter")
+}
+
+#[test]
+fn import() {
+    test_compile("import.sf", "import.filter")
 }
