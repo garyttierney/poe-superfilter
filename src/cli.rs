@@ -5,6 +5,8 @@
 //!
 //! This crate is a CLI application that exposes the functionality of the compiler library. 
 
+#![feature(rustc_private)]
+
 extern crate superfilter;
 extern crate rustc_serialize;
 extern crate docopt;
@@ -75,7 +77,7 @@ pub fn main() {
     match result {
         Ok(_) => {
             println!("Compilation successful ({}.{}s)", compile_time.as_secs(), compile_time.subsec_nanos() / 100000);
-        },
+        }
         Err(err) => {
             println!("Compilation failed:");
             println!("{}", err)

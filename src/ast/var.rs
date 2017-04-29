@@ -1,5 +1,5 @@
 use ast::{TransformedNode, CompileErr, Node, AstLocation};
-use ast::transform::{Transform, TransformContext};
+use ast::transform::{Transform, TransformContext, TransformResult};
 use std::fmt;
 
 /// AST Structure that represents a reference to a variable

@@ -32,7 +32,6 @@ use std::fmt::Error as FmtError;
 use lalrpop_util::ParseError;
 use tok::Tok;
 use tok::Location as TokenLocation;
-use std::ops::Deref;
 use std::path::PathBuf;
 
 #[derive(Clone)]
@@ -150,6 +149,8 @@ impl fmt::Display for AstLocation {
     }
 }
 
+pub type CompileResult<T> = Result<T, CompileErr>;
+
 quick_error! {
     #[derive(Debug)]
     pub enum CompileErr {
@@ -171,6 +172,14 @@ quick_error! {
         WrongParameterCount(node: String, expected: usize, actual: usize, location: AstLocation) {
             description("Wrong mixin call parameter count")
             display("Wrong mixin call parameter count in {}: expected {}, got {} at {}", node, expected, actual, location)
+        }
+        IncompatibleTypes(value: String, type_name: &'static str) {
+            description("Cannot convert value to a given type")
+            display("Cannot convert {} to {}.", value, type_name)
+        }
+        UnsupportedOperation(value: String, type_name: &'static str, op: &'static str) {
+            description("Operation is unsupported by this type")
+            display("{} operation cannot be performed with {} because it is not supported by {}.", op, value, type_name)
         }
         ImportError(node: String, location: AstLocation) {
             description("Invalid import path")

@@ -28,6 +28,9 @@ pub enum Tok {
     Hide,
     Mixin,
     Import,
+    If,
+    True,
+    False
 }
 
 impl Display for Tok {
@@ -223,6 +226,9 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
             "Hide" => Tok::Hide,
             "Mixin" => Tok::Mixin,
             "Import" => Tok::Import,
+            "if" => Tok::If,
+            "True" => Tok::True,
+            "False" => Tok::False,
             _ => Tok::Constant(id)
         }
     }

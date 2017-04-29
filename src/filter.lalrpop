@@ -35,6 +35,9 @@ extern {
         "<=" => Tok::Lte,
         "<" => Tok::Lt,
         "=" => Tok::Eql,
+        "if" => Tok::If,
+        "True" => Tok::True,
+        "False" => Tok::False,
         Num => Tok::Num(<i64>),
         Float => Tok::Float(<f64>),
         QuotedStrLiteral => Tok::StrLiteral(<String>),
@@ -79,11 +82,12 @@ BlockType : BlockType = {
 };
 
 ContentBlock : Node = {
-    <l:@L> <t:BlockType> "\n" <stmts:Statement*> <r:@R> => Node::Block(
+    <l:@L> <t:BlockType> <condition:("if" <ValueExpression>)?> "\n" <stmts:Statement*> <r:@R> => Node::Block(
         Block {
             nodes: stmts,
             variant: t,
-            location: AstLocation::new(l, r, file.to_owned())
+            location: AstLocation::new(l, r, file.to_owned()),
+            condition: None
         }
     ),
     <l:@L> "Mixin" <name:Constant> <args:("(" <Comma<VarIdentifier>> ")")?> "\n" <instructions:Statement*> <r:@R> => {
@@ -146,13 +150,17 @@ SetValueStmt : Node = {
 };
 
 ConditionStmt : Node = {
-    <l:@L> <n: Constant> <cond: Condition> <r:@R> "\n" => Node::ConditionStmt(
+    <l:@L> <n: Constant> <cond: StmCondition> <r:@R> "\n" => Node::ConditionStmt(
         stm::ConditionStatement {
             name: n,
             condition: cond,
             location: AstLocation::new(l, r, file.to_owned())
         }
     )
+};
+
+StmCondition : stm::Condition = {
+    <op:ComparisonOperator> <v:ValueExpression> => stm::Condition { value: Box::new(v), operator: op }
 };
 
 MixinCall : Node = {
@@ -183,10 +191,6 @@ StrLiteral : Node = {
     )
 };
 
-Condition : stm::Condition = {
-    <op:ComparisonOperator> <v:Value> => stm::Condition { value: Box::new(v), operator: op }
-};
-
 ComparisonOperator : stm::ComparisonOperator = {
     ">=" => stm::ComparisonOperator::Gte,
     ">" =>  stm::ComparisonOperator::Gt,
@@ -215,26 +219,33 @@ Value : Node = {
 };
 
 ValueExpression : Node = {
-    <l:ValueExpression> "+" <r:ValueFactor> => Node::Expression(
+    <l:ValueExpression> <op:ComparisonOperator> <r:SumExpression> => Node::Expression(
+        ExpressionNode::Op(Box::new(l), ExpressionOperation::from(op), Box::new(r))
+    ),
+    SumExpression
+};
+
+SumExpression : Node = {
+    <l:SumExpression> "+" <r:FactorExpression> => Node::Expression(
         ExpressionNode::Op(Box::new(l), ExpressionOperation::Add, Box::new(r))
     ),
-    <l:ValueExpression> "-" <r:ValueFactor> => Node::Expression(
+    <l:SumExpression> "-" <r:FactorExpression> => Node::Expression(
         ExpressionNode::Op(Box::new(l), ExpressionOperation::Sub, Box::new(r))
     ),
-    ValueFactor
+    FactorExpression
 };
 
-ValueFactor : Node = {
-    <l:ValueFactor> "*" <r:ValueTerm> => Node::Expression(
+FactorExpression : Node = {
+    <l:FactorExpression> "*" <r:ExpressionTerm> => Node::Expression(
         ExpressionNode::Op(Box::new(l), ExpressionOperation::Mul, Box::new(r))
     ),
-    <l:ValueFactor> "/" <r:ValueTerm> => Node::Expression(
+    <l:FactorExpression> "/" <r:ExpressionTerm> => Node::Expression(
         ExpressionNode::Op(Box::new(l), ExpressionOperation::Div, Box::new(r))
     ),
-    ValueTerm
+    ExpressionTerm
 };
 
-ValueTerm : Node = {
+ExpressionTerm : Node = {
     VarReference,
     NumberLiteral,
     StrLiteral,
@@ -242,13 +253,13 @@ ValueTerm : Node = {
 };
 
 Color: Node = {
-    <r:ValueTerm> <g:ValueTerm> <b:ValueTerm> <a:ValueTerm> => Node::Color(ast::color::Color {
+    <r:ExpressionTerm> <g:ExpressionTerm> <b:ExpressionTerm> <a:ExpressionTerm> => Node::Color(ast::color::Color {
         r: Box::new(r),
         g: Box::new(g),
         b: Box::new(b),
         a: Box::new(a)
     }),
-    <left:@L> <r:ValueTerm> <g:ValueTerm> <b:ValueTerm> <right:@R> => Node::Color(ast::color::Color {
+    <left:@L> <r:ExpressionTerm> <g:ExpressionTerm> <b:ExpressionTerm> <right:@R> => Node::Color(ast::color::Color {
         r: Box::new(r),
         g: Box::new(g),
         b: Box::new(b),

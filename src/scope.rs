@@ -4,8 +4,10 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use ast::transform::{TransformResult, RenderContext};
 use std::io::Write;
-use ast::CompileErr;
-use std::ops::{Add, Sub, Mul, Div};
+use ast::{CompileErr, CompileResult};
+use std::cmp::{Ordering, PartialEq, PartialOrd};
+use std::convert::{TryFrom, TryInto};
+use std::fmt::Debug;
 
 /// Symbol table structure that hold variables and mixins that are available in a scope
 #[derive(Debug, Clone)]
@@ -67,149 +69,283 @@ impl ScopeData {
     }
 }
 
+#[derive(Debug,Clone)]
+pub struct NoValue {}
+pub static NO_VALUE : NoValue = NoValue {};
+
+pub trait InnerScopeValue : TransformResult + Debug + Sized {
+    fn try_add(self, _: Self) -> CompileResult<ScopeValue> {
+        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), self.type_name(), "+"))
+    }
+
+    fn try_sub(self, _: Self) -> CompileResult<ScopeValue> {
+        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), self.type_name(), "-"))
+    }
+
+    fn try_mul(self, _: Self) -> CompileResult<ScopeValue> {
+        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), self.type_name(), "*"))
+    }
+
+    fn try_div(self, _: Self) -> CompileResult<ScopeValue> {
+        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), self.type_name(), "/"))
+    }
+
+    fn try_cmp(&self, _: &Self) -> CompileResult<Ordering> {
+        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), self.type_name(), "="))
+    }
+
+    fn try_eq(&self, _: &Self) -> CompileResult<bool>
+        where Self: Sized {
+        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), self.type_name(), "<=>"))
+    }
+
+    fn try_gt(&self, other: &Self) -> CompileResult<bool> {
+        let cmp = self.try_cmp(other)?;
+        Ok(cmp == Ordering::Greater)
+    }
+
+    fn try_gte(&self, other: &Self) -> CompileResult<bool> {
+        let cmp = self.try_cmp(other)?;
+        Ok(cmp == Ordering::Greater || cmp == Ordering::Equal)
+    }
+
+    fn try_lt(&self, other: &Self) -> CompileResult<bool> {
+        let cmp = self.try_cmp(other)?;
+        Ok(cmp == Ordering::Less)
+    }
+
+    fn try_lte(&self, other: &Self) -> CompileResult<bool> {
+        let cmp = self.try_cmp(other)?;
+        Ok(cmp == Ordering::Less || cmp == Ordering::Equal)
+    }
+
+    fn type_name(&self) -> &'static str;
+}
+
+
 /// Holds the value of a variable that can be held in a ScopeData instance
-#[derive(Clone,Debug,PartialEq)]
+#[derive(Clone,Debug,InnerScopeValue,InnerTransformResult)]
 pub enum ScopeValue {
-    String(String),
     Int(i64),
     Decimal(f64),
+    Bool(bool),
+    String(String),
     List(Vec<ScopeValue>),
-    None
+    None(&'static NoValue)
 }
 
-impl ScopeValue {
-    pub fn type_name(&self) -> &'static str {
-        match *self {
-            ScopeValue::String(_) => "String",
-            ScopeValue::Int(_) => "Integer",
-            ScopeValue::Decimal(_) => "Decimal",
-            ScopeValue::List(_) => "List",
-            ScopeValue::None => "None",
+impl PartialEq for ScopeValue {
+    fn eq(&self, other: &ScopeValue) -> bool {
+        match self.try_eq(other) {
+            Ok(result) => result,
+            Err(_) => false
         }
     }
 }
 
-impl Add for ScopeValue {
-    type Output = ScopeValue;
+impl InnerScopeValue for i64 {
+    fn try_add(self, other: Self) -> CompileResult<ScopeValue> {
+        Ok(ScopeValue::Int(self + other))
+    }
+    fn try_sub (self, other: Self) -> CompileResult<ScopeValue> {
+        Ok(ScopeValue::Int(self - other))
+    }
+    fn try_mul (self, other: Self) -> CompileResult<ScopeValue> {
+        Ok(ScopeValue::Int(self * other))
+    }
+    fn try_div(self, other: Self) -> CompileResult<ScopeValue> {
+        Ok(ScopeValue::Int(self / other))
+    }
 
-    fn add(self, other: ScopeValue) -> ScopeValue {
-        match self {
-            ScopeValue::Int(a) => {
-                match other {
-                    ScopeValue::Int(b) => ScopeValue::Int(a + b),
-                    ScopeValue::Decimal(b) => ScopeValue::Decimal(a as f64 + b),
-                    ScopeValue::String(b) => ScopeValue::String(format!("{}{}", a, b)),
-                    _ => unimplemented!()
-                }
-            },
-            ScopeValue::Decimal(a) => {
-                match other {
-                    ScopeValue::Int(b) => ScopeValue::Decimal(a + b as f64),
-                    ScopeValue::Decimal(b) => ScopeValue::Decimal(a + b),
-                    _ => unimplemented!()
-                }
-            },
-            _ => unimplemented!()
+    fn try_cmp(&self, other: &Self) -> CompileResult<Ordering> {
+        Ok(self.cmp(other))
+    }
+    fn try_eq(&self, other: &Self) -> CompileResult<bool> {
+        Ok(self == other)
+    }
+
+    fn type_name(&self) -> &'static str { "Int" }
+}
+
+impl TryFrom<ScopeValue> for i64 {
+    type Error = CompileErr;
+
+    fn try_from(value: ScopeValue) -> Result<Self, Self::Error> {
+        match value {
+            ScopeValue::Int(v) => Ok(v),
+            ScopeValue::Decimal(v) => Ok(v.round() as i64),
+            _ => Err(CompileErr::IncompatibleTypes(format!("{:?}", value), "Int"))
         }
     }
 }
 
-impl Sub for ScopeValue {
-    type Output = ScopeValue;
-
-    fn sub(self, other: ScopeValue) -> ScopeValue {
-        match self {
-            ScopeValue::Int(a) => {
-                match other {
-                    ScopeValue::Int(b) => ScopeValue::Int(a - b),
-                    ScopeValue::Decimal(b) => ScopeValue::Decimal(a as f64 - b),
-                    _ => unimplemented!()
-                }
-            },
-            ScopeValue::Decimal(a) => {
-                match other {
-                    ScopeValue::Int(b) => ScopeValue::Decimal(a - b as f64),
-                    ScopeValue::Decimal(b) => ScopeValue::Decimal(a - b),
-                    _ => unimplemented!()
-                }
-            },
-            _ => unimplemented!()
-        }
-    }
-}
-
-
-impl Mul for ScopeValue {
-    type Output = ScopeValue;
-
-    fn mul(self, other: ScopeValue) -> ScopeValue {
-        match self {
-            ScopeValue::Int(a) => {
-                match other {
-                    ScopeValue::Int(b) => ScopeValue::Int(a * b),
-                    ScopeValue::Decimal(b) => ScopeValue::Decimal(a as f64 * b),
-                    _ => unimplemented!()
-                }
-            },
-            ScopeValue::Decimal(a) => {
-                match other {
-                    ScopeValue::Int(b) => ScopeValue::Decimal(a * b as f64),
-                    ScopeValue::Decimal(b) => ScopeValue::Decimal(a * b),
-                    _ => unimplemented!()
-                }
-            },
-            _ => unimplemented!()
-        }
-    }
-}
-
-impl Div for ScopeValue {
-    type Output = ScopeValue;
-
-    fn div(self, other: ScopeValue) -> ScopeValue {
-        match self {
-            ScopeValue::Int(a) => {
-                match other {
-                    ScopeValue::Int(b) => ScopeValue::Int(a / b),
-                    ScopeValue::Decimal(b) => ScopeValue::Decimal(a as f64 / b),
-                    _ => unimplemented!()
-                }
-            },
-            ScopeValue::Decimal(a) => {
-                match other {
-                    ScopeValue::Int(b) => ScopeValue::Decimal(a / b as f64),
-                    ScopeValue::Decimal(b) => ScopeValue::Decimal(a / b),
-                    _ => unimplemented!()
-                }
-            },
-            _ => unimplemented!()
-        }
-    }
-}
-
-impl TransformResult for ScopeValue {
+impl TransformResult for i64 {
     fn return_value(&self) -> ScopeValue {
-        self.clone()
+        ScopeValue::Int(*self)
     }
 
-    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
-        match *self {
-            ScopeValue::String(ref v) => { v.render(ctx, buf)?; },
-            ScopeValue::Decimal(ref v) => {
-                // round float output since vanilla GGG filters only contain integers
-                let rounded = v.round();
-                buf.write(rounded.to_string().as_ref())?;
-            },
-            ScopeValue::Int(ref v) => { buf.write(v.to_string().as_ref())?; },
-            ScopeValue::List(ref list) => {
-                for i in 0..(list.len() - 1) {
-                    list[i].render(ctx, buf)?;
-                    buf.write(b" ")?;
-                }
-                list[list.len() - 1].render(ctx, buf)?;
-            },
-            ScopeValue::None => ()
-        };
+    fn render(&self, _: RenderContext, buf: &mut Write) -> CompileResult<()> {
+        buf.write(self.to_string().as_ref())?;
         Ok(())
+    }
+}
+
+impl InnerScopeValue for f64 {
+    fn try_add (self, other: Self) -> CompileResult<ScopeValue> {
+        Ok(ScopeValue::Decimal(self + other))
+    }
+    fn try_sub (self, other: Self) -> CompileResult<ScopeValue> {
+        Ok(ScopeValue::Decimal(self - other))
+    }
+    fn try_mul (self, other: Self) -> CompileResult<ScopeValue> {
+        Ok(ScopeValue::Decimal(self * other))
+    }
+    fn try_div (self, other: Self) -> CompileResult<ScopeValue> {
+        Ok(ScopeValue::Decimal(self / other))
+    }
+
+    fn try_cmp(&self, other: &Self) -> CompileResult<Ordering> {
+        match self.partial_cmp(other) {
+            Some(ordering) => Ok(ordering),
+            None => panic!()
+        }
+    }
+    fn try_eq(&self, other: &Self) -> CompileResult<bool> {
+        Ok(self == other)
+    }
+
+    fn type_name(&self) -> &'static str { "Float" }
+}
+
+impl TryFrom<ScopeValue> for f64 {
+    type Error = CompileErr;
+
+    fn try_from(value: ScopeValue) -> Result<Self, Self::Error> {
+        match value {
+            ScopeValue::Int(v) => Ok(v as f64),
+            ScopeValue::Decimal(v) => Ok(v),
+            _ => Err(CompileErr::IncompatibleTypes(format!("{:?}", value), "Float"))
+        }
+    }
+}
+
+impl TransformResult for f64 {
+    fn return_value(&self) -> ScopeValue {
+        ScopeValue::Decimal(*self)
+    }
+
+    fn render(&self, _: RenderContext, buf: &mut Write) -> CompileResult<()> {
+        // round float output since vanilla GGG filters only contain integers
+        let rounded = self.round();
+        buf.write(rounded.to_string().as_ref())?;
+        Ok(())
+    }
+}
+
+impl InnerScopeValue for String {
+    fn try_add(self, other: Self) -> CompileResult<ScopeValue> {
+        Ok(ScopeValue::String(self + other.as_ref()))
+    }
+
+    fn try_cmp(&self, other: &Self) -> CompileResult<Ordering> {
+        Ok(self.cmp(other))
+    }
+    fn try_eq(&self, other: &Self) -> CompileResult<bool> {
+        Ok(self == other)
+    }
+
+    fn type_name(&self) -> &'static str { "String" }
+}
+
+impl TryFrom<ScopeValue> for String {
+    type Error = CompileErr;
+
+    fn try_from(value: ScopeValue) -> Result<Self, Self::Error> {
+        match value {
+            ScopeValue::String(s) => Ok(s),
+            ScopeValue::Int(v) => Ok(v.to_string()),
+            ScopeValue::Decimal(v) => Ok(v.to_string()),
+            ScopeValue::Bool(v) => Ok(v.to_string()),
+            //ScopeValue::List(v) => Ok(v.to_string()),
+            _ => Err(CompileErr::IncompatibleTypes(format!("{:?}", value), "String"))
+        }
+    }
+}
+
+impl InnerScopeValue for Vec<ScopeValue> {
+    fn type_name(&self) -> &'static str { "List" }
+}
+
+impl TransformResult for Vec<ScopeValue> {
+    fn return_value(&self) -> ScopeValue {
+        ScopeValue::List(self.clone())
+    }
+
+    fn render(&self, ctx: RenderContext, buf: &mut Write) -> CompileResult<()> {
+        for i in 0..(self.len() - 1) {
+            self[i].render(ctx, buf)?;
+            buf.write(b" ")?;
+        }
+        self[self.len() - 1].render(ctx, buf)
+    }
+}
+
+impl TryFrom<ScopeValue> for Vec<ScopeValue> {
+    type Error = CompileErr;
+
+    fn try_from(value: ScopeValue) -> Result<Self, Self::Error> {
+        match value {
+            ScopeValue::List(list) => Ok(list),
+            _ => Err(CompileErr::IncompatibleTypes(format!("{:?}", value), "List"))
+        }
+    }
+}
+
+impl InnerScopeValue for &'static NoValue {
+    fn try_cmp(&self, _: &Self) -> CompileResult<Ordering> {
+        Ok(Ordering::Equal)
+    }
+    fn try_eq(&self, _: &Self) -> CompileResult<bool> {
+        Ok(true)
+    }
+
+    fn type_name(&self) -> &'static str { "None" }
+}
+
+impl TransformResult for &'static NoValue {
+    fn render(&self, _: RenderContext, _: &mut Write) -> CompileResult<()> {
+        Ok(())
+    }
+}
+
+impl TryFrom<ScopeValue> for &'static NoValue {
+    type Error = CompileErr;
+
+    fn try_from(value: ScopeValue) -> Result<Self, Self::Error> {
+        match value {
+            ScopeValue::None(v) => Ok(v),
+            _ => Err(CompileErr::IncompatibleTypes(format!("{:?}", value), "None"))
+        }
+    }
+}
+
+impl TransformResult for bool {
+    fn render(&self, _: RenderContext, _: &mut Write) -> CompileResult<()> {
+        unimplemented!()
+    }
+}
+
+impl InnerScopeValue for bool {
+    fn type_name(&self) -> &'static str { "Bool" }
+}
+
+impl TryFrom<ScopeValue> for bool {
+    type Error = CompileErr;
+
+    fn try_from(value: ScopeValue) -> Result<Self, Self::Error> {
+        match value {
+            ScopeValue::Bool(v) => Ok(v),
+            _ => Err(CompileErr::IncompatibleTypes(format!("{:?}", value), "Bool"))
+        }
     }
 }

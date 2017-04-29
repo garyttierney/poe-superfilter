@@ -2,14 +2,17 @@ use ast::{Node, TransformedNode, CompileErr, AstLocation};
 use ast::var::VarReference;
 use scope::ScopeValue;
 use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
+use ast::block_statements::ComparisonOperator;
 use std::io::Write;
 use std::fmt;
+use scope::InnerScopeValue;
 
 #[derive(Clone)]
 pub enum ExpressionValue {
     String(String),
     Int(i64),
     Decimal(f64),
+    Bool(bool),
     Var(VarReference),
     List(Vec<Node>)
 }
@@ -21,6 +24,7 @@ impl fmt::Debug for ExpressionValue {
             ExpressionValue::Int(ref v) => write!(f, "{:?}", v),
             ExpressionValue::Decimal(ref v) => write!(f, "{:?}", v),
             ExpressionValue::Var(ref v) => write!(f, "{:?}", v),
+            ExpressionValue::Bool(ref v) => write!(f, "{:?}", v),
             ExpressionValue::List(ref v) => {
                 for item in v {
                     write!(f, "{:?}", item)?;
@@ -100,10 +104,15 @@ impl ExpressionNode {
 
                 // Perform actual math operations
                 let result = match *op {
-                    ExpressionOperation::Add => a_val + b_val,
-                    ExpressionOperation::Mul => a_val * b_val,
-                    ExpressionOperation::Div => a_val / b_val,
-                    ExpressionOperation::Sub => a_val - b_val,
+                    ExpressionOperation::Add => a_val.try_add(b_val)?,
+                    ExpressionOperation::Mul => a_val.try_mul(b_val)?,
+                    ExpressionOperation::Div => a_val.try_div(b_val)?,
+                    ExpressionOperation::Sub => a_val.try_sub(b_val)?,
+                    ExpressionOperation::Eql => ScopeValue::Bool(a_val.try_eq(&b_val)?),
+                    ExpressionOperation::Lt => ScopeValue::Bool(a_val.try_lt(&b_val)?),
+                    ExpressionOperation::Lte => ScopeValue::Bool(a_val.try_lte(&b_val)?),
+                    ExpressionOperation::Gt => ScopeValue::Bool(a_val.try_gt(&b_val)?),
+                    ExpressionOperation::Gte => ScopeValue::Bool(a_val.try_gte(&b_val)?)
                 };
                 return Ok(Some(TransformedNode::Value(result)))
             }
@@ -139,7 +148,25 @@ pub enum ExpressionOperation {
     Mul,
     Div,
     Add,
-    Sub
+    Sub,
+
+    Eql,
+    Lt,
+    Lte,
+    Gt,
+    Gte
+}
+
+impl From<ComparisonOperator> for ExpressionOperation {
+    fn from(op: ComparisonOperator) -> Self {
+        match op {
+            ComparisonOperator::Eql => ExpressionOperation::Eql,
+            ComparisonOperator::Lt => ExpressionOperation::Lt,
+            ComparisonOperator::Lte => ExpressionOperation::Lte,
+            ComparisonOperator::Gt => ExpressionOperation::Gt,
+            ComparisonOperator::Gte => ExpressionOperation::Gte
+        }
+    }
 }
 
 /// Implements TransformResult for any string

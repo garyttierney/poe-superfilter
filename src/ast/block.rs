@@ -13,7 +13,8 @@ use LINE_END;
 pub struct  Block {
     pub nodes: Vec<Node>,
     pub variant: BlockType,
-    pub location: AstLocation
+    pub location: AstLocation,
+    pub condition: Option<Box<Node>>
 }
 
 #[derive(Debug, Clone)]

@@ -1,4 +1,4 @@
-use scope::{ScopeData, ScopeValue};
+use scope::{ScopeData, ScopeValue, NO_VALUE};
 use std::rc::Rc;
 use std::cell::Ref;
 use std::cell::RefMut;
@@ -42,7 +42,7 @@ pub trait TransformResult {
     /// function can be used in parent structures that base their transformation on the result
     /// of child nodes.
     fn return_value(&self) -> ScopeValue {
-        ScopeValue::None
+        ScopeValue::None(&NO_VALUE)
     }
 
     /// Renders the output for this node into a writable stream.

@@ -3,6 +3,8 @@
 //! written in the extended syntax down to a pure loot filter that can be used
 //! in the game.
 
+#![feature(try_from)]
+
 #[macro_use] extern crate lazy_static;
 #[macro_use] extern crate quick_error;
 #[macro_use] extern crate superfilter_macro;
@@ -10,7 +12,7 @@
 extern crate regex;
 extern crate lalrpop_util;
 
-use ast::transform::{RenderContext, RenderConfig};
+use ast::transform::{RenderContext, RenderConfig, TransformResult};
 use ast::CompileErr;
 use std::io::Write;
 use ast::Node;
