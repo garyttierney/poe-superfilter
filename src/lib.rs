@@ -36,7 +36,8 @@ mod tests;
 #[allow(dead_code)]
 mod scope;
 
-const LINE_END : &'static [u8] = b"\r\n";
+#[cfg(windows)] pub const LINE_END: &'static [u8] = b"\r\n";
+#[cfg(not(windows))] pub const LINE_END: &'static [u8] = b"\n";
 
 /// Compiles a complete filter into vanilla loot filter syntax
 pub fn compile(contents: &str, file: PathBuf, out_buf: &mut Write, render_config: &RenderConfig)

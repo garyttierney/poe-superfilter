@@ -4,7 +4,6 @@ use ast::transform::{Transform, TransformResult, TransformContext, RenderContext
 use scope::ScopeValue;
 use std::io::Write;
 use std::cmp::PartialEq;
-use LINE_END;
 
 /// AST structure for a value set or other instruction statement
 #[derive(Debug, Clone)]
@@ -55,7 +54,7 @@ impl TransformResult for PlainSetValueStatement {
         buf.write(self.name.as_ref())?;
         buf.write(b" ")?;
         self.values.render(ctx, buf)?;
-        buf.write(LINE_END)?;
+        buf.write(ctx.config.line_ending)?;
         Ok(())
     }
 }
@@ -107,7 +106,7 @@ impl TransformResult for PlainConditionStatement {
         self.condition.operator.render(ctx, buf)?;
         buf.write(b" ")?;
         self.condition.value.render(ctx, buf)?;
-        buf.write(LINE_END)?;
+        buf.write(ctx.config.line_ending)?;
         Ok(())
     }
 }

@@ -12,6 +12,7 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::io;
 use std::path::Path;
+use superfilter::LINE_END;
 use superfilter::ast::transform::RenderConfig;
 use std::time::SystemTime;
 use clap::{Arg, App};
@@ -36,7 +37,21 @@ pub fn main() {
             .long("output")
             .takes_value(true)
             .value_name("FILE"))
+        .arg(Arg::with_name("line_endings")
+            .help("Type of line ending used (LF OR CRLF) defaults to the platform line ending")
+            .short("l")
+            .long("line-endings")
+            .possible_values(&["lf", "crlf"])
+            .takes_value(true)
+            .value_name("LINE_ENDING"))
         .get_matches();
+
+    let line_ending : &'static [u8] = match matches.value_of("line_endings") {
+        Some("crlf") => b"\r\n",
+        Some("lf") => b"\n",
+        None => LINE_END,
+        _ => panic!("Invalid line ending")
+    };
 
     let input_path = Path::new(matches.value_of("PATH").unwrap()).to_owned();
 
@@ -52,7 +67,8 @@ pub fn main() {
     let render_config = RenderConfig {
         pretty: matches.is_present("pretty"),
         indent_str: "    ",
-        base_path: base_path
+        base_path,
+        line_ending,
     };
 
     let result = match matches.value_of("output") {

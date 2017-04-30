@@ -4,7 +4,6 @@ use scope::{ScopeData, ScopeValue};
 use std::rc::Rc;
 use std::cell::RefCell;
 use std::io::Write;
-use LINE_END;
 
 /// Top level statements, can be Blocks of instructions
 /// like Show/Hide/Mixin or single top-level statements,
@@ -104,12 +103,12 @@ impl TransformResult for PlainBlock {
         let nodes = match *self {
             PlainBlock::Show(ref nodes) => {
                 buf.write(b"Show")?;
-                buf.write(LINE_END)?;
+                buf.write(ctx.config.line_ending)?;
                 nodes
             },
             PlainBlock::Hide(ref nodes) => {
                 buf.write(b"Hide")?;
-                buf.write(LINE_END)?;
+                buf.write(ctx.config.line_ending)?;
                 nodes
             }
         };

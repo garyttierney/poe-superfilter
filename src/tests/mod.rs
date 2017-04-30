@@ -35,7 +35,8 @@ fn test_compile(input_file : &str, expected_output_file : &str) {
     let render_config = RenderConfig {
         pretty: false,
         indent_str: "    ",
-        base_path: base_path
+        base_path: base_path,
+        line_ending: b"\n"
     };
 
     super::compile(&sf_file, Path::new(input_file).to_owned(), &mut result_vec, &render_config).unwrap();

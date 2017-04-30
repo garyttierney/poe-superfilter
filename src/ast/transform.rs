@@ -54,7 +54,8 @@ pub trait TransformResult {
 pub struct RenderConfig {
     pub pretty: bool,
     pub indent_str: &'static str,
-    pub base_path: PathBuf
+    pub base_path: PathBuf,
+    pub line_ending: &'static [u8]
 }
 
 impl RenderConfig {
