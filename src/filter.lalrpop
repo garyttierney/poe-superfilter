@@ -89,7 +89,7 @@ ContentBlock : Node = {
             nodes: stmts,
             variant: t,
             location: AstLocation::new(l, r, file.clone()),
-            condition: None
+            condition: condition.and_then(|inner| Some(Box::new(inner)))
         }
     ),
     <l:@L> "Mixin" <name:Constant> <args:("(" <Comma<VarIdentifier>> ")")?> "\n" <instructions:Statement*> <r:@R> => {
@@ -210,6 +210,15 @@ NumberLiteral : Node = {
     ),
 };
 
+Bool : Node = {
+    <l:@L> "True" <r:@R> => Node::Expression(
+        ExpressionNode::Val(ExpressionValue::Bool(true), AstLocation::new(l, r, file.clone()))
+    ),
+    <l:@L> "False" <r:@R> => Node::Expression(
+        ExpressionNode::Val(ExpressionValue::Bool(false), AstLocation::new(l, r, file.clone()))
+    )
+};
+
 Value : Node = {
     <values:ValueExpression+> => {
         if values.len() == 1 {
@@ -251,6 +260,7 @@ ExpressionTerm : Node = {
     VarReference,
     NumberLiteral,
     StrLiteral,
+    Bool,
     "(" <ValueExpression> ")" => <>
 };
 

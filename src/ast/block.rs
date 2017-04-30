@@ -1,6 +1,6 @@
 use ast::{Node, TransformedNode, CompileErr, AstLocation};
 use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
-use scope::ScopeData;
+use scope::{ScopeData, ScopeValue};
 use std::rc::Rc;
 use std::cell::RefCell;
 use std::io::Write;
@@ -49,6 +49,18 @@ impl NodeList for Vec<TransformedNode> {
 impl Transform for Block {
     fn transform(&self, ctx: TransformContext)
             -> Result<Option<TransformedNode>, CompileErr> {
+        if let Some(ref condition) = self.condition {
+            let condition_result = condition
+                .transform(ctx.clone())?
+                .and_then(|transformed_node| Some(transformed_node.return_value()));
+
+            if let Some(ScopeValue::Bool(b)) = condition_result {
+                if !b {
+                    return Ok(None)
+                }
+            }
+        }
+
         let block_ctx = TransformContext {
             scope: Rc::new(RefCell::new(
                 ScopeData::new(Some(ctx.scope.clone()))

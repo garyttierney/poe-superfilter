@@ -330,6 +330,10 @@ impl TryFrom<ScopeValue> for &'static NoValue {
 }
 
 impl TransformResult for bool {
+    fn return_value(&self) -> ScopeValue {
+        ScopeValue::Bool(*self)
+    }
+
     fn render(&self, _: RenderContext, _: &mut Write) -> CompileResult<()> {
         unimplemented!()
     }

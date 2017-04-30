@@ -1,20 +1,20 @@
-$yes = true
+$yes = True
 $no = 1 > 2
 
-Show if true
+Show if True
     SetStatement 123
 
-Show if false
+Show if False
     SetStatement 234
 
 Show if 2 > 3
-    SetStatement 456
+    SetStatement 345
 
 Show if 3 > 2
-    SetStatement 567
+    SetStatement 456
 
 Show if $yes
-    SetStatement 678
+    SetStatement 567
 
 Show if $no
-    SetStatement 789
+    SetStatement 678

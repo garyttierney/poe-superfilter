@@ -50,13 +50,14 @@ impl Transform for ExpressionValue {
                     }*/
                 }
                 Ok(Some(TransformedNode::Value(ScopeValue::List(transformed_values))))
-            }
+            },
             ref val => {
                 Ok(Some(TransformedNode::Value(
                     match *val {
                         ExpressionValue::String(ref s) => ScopeValue::String(s.clone()),
                         ExpressionValue::Int(i) => ScopeValue::Int(i),
                         ExpressionValue::Decimal(f) => ScopeValue::Decimal(f),
+                        ExpressionValue::Bool(b) => ScopeValue::Bool(b),
                         _ => unreachable!()
                     }
                 )))
