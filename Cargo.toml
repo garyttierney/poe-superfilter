@@ -16,7 +16,7 @@ lalrpop-util = "^0.12"
 regex = "^0.2"
 lazy_static = "^0.2"
 quick-error= "^1.1"
-docopt = "^0.7"
+clap = "^2.23"
 poe-superfilter-support = { path = "support", version = "0.1.1" }
 
 [build-dependencies]

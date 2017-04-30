@@ -129,23 +129,19 @@ impl TransformResult for Vec<TransformedNode> {
 pub struct AstLocation {
     pub begin: TokenLocation,
     pub end: TokenLocation,
-    pub file: String
+    pub file: Rc<PathBuf>
 }
 
 impl AstLocation {
-    pub fn new(l: TokenLocation, r: TokenLocation, file: String)
+    pub fn new(begin: TokenLocation, end: TokenLocation, file: Rc<PathBuf>)
                -> AstLocation {
-        AstLocation {
-            begin: l,
-            end: r,
-            file: file
-        }
+        AstLocation { begin, end, file: file.clone() }
     }
 }
 
 impl fmt::Display for AstLocation {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        write!(f, "{}: {}:{} - {}:{}", self.file, self.begin.line, self.begin.pos, self.end.line, self.end.pos)
+        write!(f, "{:?}: {}:{} - {}:{}", self.file, self.begin.line, self.begin.pos, self.end.line, self.end.pos)
     }
 }
 

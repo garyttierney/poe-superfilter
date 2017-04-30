@@ -1,4 +1,6 @@
 use ast;
+use std::rc::Rc;
+use std::path::PathBuf;
 use ast::block_statements as stm;
 use ast::{Node, AstLocation, Filter};
 use ast::block::{Block, BlockType};
@@ -13,6 +15,8 @@ mod __parse__Filter {
     #![allow(non_snake_case, non_camel_case_types, unused_mut, unused_variables, unused_imports)]
 
     use ast;
+    use std::rc::Rc;
+    use std::path::PathBuf;
     use ast::block_statements as stm;
     use ast::{Node, AstLocation, Filter};
     use ast::block::{Block, BlockType};
@@ -659,11 +663,11 @@ mod __parse__Filter {
         }).collect()
     }
     pub fn parse_Filter<
-        'b,
-        __TOKEN: __ToTriple<'b, Error=char>,
+        'a,
+        __TOKEN: __ToTriple<'a, Error=char>,
         __TOKENS: IntoIterator<Item=__TOKEN>,
     >(
-        file: &'b str,
+        file: &'a Rc<PathBuf>,
         __tokens0: __TOKENS,
     ) -> Result<Node, __lalrpop_util::ParseError<TokenLocation, Tok, char>>
     {
@@ -858,9 +862,9 @@ mod __parse__Filter {
         }
     }
     pub fn __reduce<
-        'b,
+        'a,
     >(
-        file: &'b str,
+        file: &'a Rc<PathBuf>,
         __action: i32,
         __lookahead_start: Option<&TokenLocation>,
         __states: &mut ::std::vec::Vec<i32>,
@@ -2781,9 +2785,9 @@ pub use self::__parse__Filter::parse_Filter;
 
 #[allow(unused_variables)]
 pub fn __action0<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> Node
 {
@@ -2792,9 +2796,9 @@ pub fn __action0<
 
 #[allow(unused_variables)]
 pub fn __action1<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, l, _): (TokenLocation, TokenLocation, TokenLocation),
     (_, defs, _): (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
     (_, first, _): (TokenLocation, Node, TokenLocation),
@@ -2808,16 +2812,16 @@ pub fn __action1<
         nodes.extend(rest);
         Node::Filter(Filter {
             nodes: nodes,
-            location: AstLocation::new(l, r, file.to_owned())
+            location: AstLocation::new(l, r, file.clone())
         })
     }
 }
 
 #[allow(unused_variables)]
 pub fn __action2<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, l, _): (TokenLocation, TokenLocation, TokenLocation),
     (_, defs, _): (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
     (_, r, _): (TokenLocation, TokenLocation, TokenLocation),
@@ -2826,16 +2830,16 @@ pub fn __action2<
     Node::Filter(
         Filter {
             nodes: defs,
-            location: AstLocation::new(l, r, file.to_owned())
+            location: AstLocation::new(l, r, file.clone())
         }
     )
 }
 
 #[allow(unused_variables)]
 pub fn __action3<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> Node
 {
@@ -2844,9 +2848,9 @@ pub fn __action3<
 
 #[allow(unused_variables)]
 pub fn __action4<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> Node
 {
@@ -2855,9 +2859,9 @@ pub fn __action4<
 
 #[allow(unused_variables)]
 pub fn __action5<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, l, _): (TokenLocation, TokenLocation, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, path, _): (TokenLocation, String, TokenLocation),
@@ -2868,16 +2872,16 @@ pub fn __action5<
     Node::Import(
     ImportStatement {
         path: path,
-        location: AstLocation::new(l, r, file.to_owned())
+        location: AstLocation::new(l, r, file.clone())
     }
 )
 }
 
 #[allow(unused_variables)]
 pub fn __action6<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> BlockType
 {
@@ -2886,9 +2890,9 @@ pub fn __action6<
 
 #[allow(unused_variables)]
 pub fn __action7<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> BlockType
 {
@@ -2897,9 +2901,9 @@ pub fn __action7<
 
 #[allow(unused_variables)]
 pub fn __action8<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, l, _): (TokenLocation, TokenLocation, TokenLocation),
     (_, t, _): (TokenLocation, BlockType, TokenLocation),
     (_, condition, _): (TokenLocation, ::std::option::Option<Node>, TokenLocation),
@@ -2912,7 +2916,7 @@ pub fn __action8<
         Block {
             nodes: stmts,
             variant: t,
-            location: AstLocation::new(l, r, file.to_owned()),
+            location: AstLocation::new(l, r, file.clone()),
             condition: None
         }
     )
@@ -2920,9 +2924,9 @@ pub fn __action8<
 
 #[allow(unused_variables)]
 pub fn __action9<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, l, _): (TokenLocation, TokenLocation, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, name, _): (TokenLocation, String, TokenLocation),
@@ -2943,7 +2947,7 @@ pub fn __action9<
                 name: name,
                 parameters: params,
                 statements: instructions,
-                location: AstLocation::new(l, r, file.to_owned())
+                location: AstLocation::new(l, r, file.clone())
             }
         )
     }
@@ -2951,9 +2955,9 @@ pub fn __action9<
 
 #[allow(unused_variables)]
 pub fn __action10<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> Node
 {
@@ -2962,9 +2966,9 @@ pub fn __action10<
 
 #[allow(unused_variables)]
 pub fn __action11<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> Node
 {
@@ -2973,9 +2977,9 @@ pub fn __action11<
 
 #[allow(unused_variables)]
 pub fn __action12<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, l, _): (TokenLocation, TokenLocation, TokenLocation),
     (_, id, _): (TokenLocation, String, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
@@ -2988,16 +2992,16 @@ pub fn __action12<
         VarDefinition {
             identifier: id,
             values: Box::new(v),
-            location: AstLocation::new(l, r, file.to_owned())
+            location: AstLocation::new(l, r, file.clone())
         }
     )
 }
 
 #[allow(unused_variables)]
 pub fn __action13<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, l, _): (TokenLocation, TokenLocation, TokenLocation),
     (_, ident, _): (TokenLocation, String, TokenLocation),
     (_, r, _): (TokenLocation, TokenLocation, TokenLocation),
@@ -3006,16 +3010,16 @@ pub fn __action13<
     Node::Value(ExpressionValue::Var(
         VarReference {
             identifier: ident,
-            location: AstLocation::new(l, r, file.to_owned())
+            location: AstLocation::new(l, r, file.clone())
         }
     ))
 }
 
 #[allow(unused_variables)]
 pub fn __action14<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, l, _): (TokenLocation, TokenLocation, TokenLocation),
     (_, n, _): (TokenLocation, String, TokenLocation),
     (_, val, _): (TokenLocation, Node, TokenLocation),
@@ -3027,16 +3031,16 @@ pub fn __action14<
         stm::SetValueStatement {
             name: n,
             values: Box::new(val),
-            location: AstLocation::new(l, r, file.to_owned())
+            location: AstLocation::new(l, r, file.clone())
         }
     )
 }
 
 #[allow(unused_variables)]
 pub fn __action15<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, l, _): (TokenLocation, TokenLocation, TokenLocation),
     (_, n, _): (TokenLocation, String, TokenLocation),
     (_, cond, _): (TokenLocation, stm::Condition, TokenLocation),
@@ -3048,16 +3052,16 @@ pub fn __action15<
         stm::ConditionStatement {
             name: n,
             condition: cond,
-            location: AstLocation::new(l, r, file.to_owned())
+            location: AstLocation::new(l, r, file.clone())
         }
     )
 }
 
 #[allow(unused_variables)]
 pub fn __action16<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, op, _): (TokenLocation, stm::ComparisonOperator, TokenLocation),
     (_, v, _): (TokenLocation, Node, TokenLocation),
 ) -> stm::Condition
@@ -3067,9 +3071,9 @@ pub fn __action16<
 
 #[allow(unused_variables)]
 pub fn __action17<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, l, _): (TokenLocation, TokenLocation, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, n, _): (TokenLocation, String, TokenLocation),
@@ -3082,16 +3086,16 @@ pub fn __action17<
         ast::mixin::MixinCall {
             name: n,
             parameters: params.unwrap_or(vec![]),
-            location: AstLocation::new(l, r, file.to_owned())
+            location: AstLocation::new(l, r, file.clone())
         }
     )
 }
 
 #[allow(unused_variables)]
 pub fn __action18<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> Node
 {
@@ -3100,9 +3104,9 @@ pub fn __action18<
 
 #[allow(unused_variables)]
 pub fn __action19<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> Node
 {
@@ -3111,9 +3115,9 @@ pub fn __action19<
 
 #[allow(unused_variables)]
 pub fn __action20<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> Node
 {
@@ -3122,9 +3126,9 @@ pub fn __action20<
 
 #[allow(unused_variables)]
 pub fn __action21<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> Node
 {
@@ -3133,9 +3137,9 @@ pub fn __action21<
 
 #[allow(unused_variables)]
 pub fn __action22<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, String, TokenLocation),
 ) -> String
 {
@@ -3144,9 +3148,9 @@ pub fn __action22<
 
 #[allow(unused_variables)]
 pub fn __action23<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, String, TokenLocation),
 ) -> String
 {
@@ -3155,9 +3159,9 @@ pub fn __action23<
 
 #[allow(unused_variables)]
 pub fn __action24<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, l, _): (TokenLocation, TokenLocation, TokenLocation),
     (_, s, _): (TokenLocation, String, TokenLocation),
     (_, r, _): (TokenLocation, TokenLocation, TokenLocation),
@@ -3170,9 +3174,9 @@ pub fn __action24<
 
 #[allow(unused_variables)]
 pub fn __action25<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> stm::ComparisonOperator
 {
@@ -3181,9 +3185,9 @@ pub fn __action25<
 
 #[allow(unused_variables)]
 pub fn __action26<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> stm::ComparisonOperator
 {
@@ -3192,9 +3196,9 @@ pub fn __action26<
 
 #[allow(unused_variables)]
 pub fn __action27<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> stm::ComparisonOperator
 {
@@ -3203,9 +3207,9 @@ pub fn __action27<
 
 #[allow(unused_variables)]
 pub fn __action28<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> stm::ComparisonOperator
 {
@@ -3214,9 +3218,9 @@ pub fn __action28<
 
 #[allow(unused_variables)]
 pub fn __action29<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Tok, TokenLocation),
 ) -> stm::ComparisonOperator
 {
@@ -3225,39 +3229,39 @@ pub fn __action29<
 
 #[allow(unused_variables)]
 pub fn __action30<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, l, _): (TokenLocation, TokenLocation, TokenLocation),
     (_, num, _): (TokenLocation, i64, TokenLocation),
     (_, r, _): (TokenLocation, TokenLocation, TokenLocation),
 ) -> Node
 {
     Node::Expression(
-        ExpressionNode::Val(ExpressionValue::Int(num), AstLocation::new(l, r, file.to_owned()))
+        ExpressionNode::Val(ExpressionValue::Int(num), AstLocation::new(l, r, file.clone()))
     )
 }
 
 #[allow(unused_variables)]
 pub fn __action31<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, l, _): (TokenLocation, TokenLocation, TokenLocation),
     (_, num, _): (TokenLocation, f64, TokenLocation),
     (_, r, _): (TokenLocation, TokenLocation, TokenLocation),
 ) -> Node
 {
     Node::Expression(
-        ExpressionNode::Val(ExpressionValue::Decimal(num), AstLocation::new(l, r, file.to_owned()))
+        ExpressionNode::Val(ExpressionValue::Decimal(num), AstLocation::new(l, r, file.clone()))
     )
 }
 
 #[allow(unused_variables)]
 pub fn __action32<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, values, _): (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
 ) -> Node
 {
@@ -3272,9 +3276,9 @@ pub fn __action32<
 
 #[allow(unused_variables)]
 pub fn __action33<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, l, _): (TokenLocation, Node, TokenLocation),
     (_, op, _): (TokenLocation, stm::ComparisonOperator, TokenLocation),
     (_, r, _): (TokenLocation, Node, TokenLocation),
@@ -3287,9 +3291,9 @@ pub fn __action33<
 
 #[allow(unused_variables)]
 pub fn __action34<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> Node
 {
@@ -3298,9 +3302,9 @@ pub fn __action34<
 
 #[allow(unused_variables)]
 pub fn __action35<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, l, _): (TokenLocation, Node, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, r, _): (TokenLocation, Node, TokenLocation),
@@ -3313,9 +3317,9 @@ pub fn __action35<
 
 #[allow(unused_variables)]
 pub fn __action36<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, l, _): (TokenLocation, Node, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, r, _): (TokenLocation, Node, TokenLocation),
@@ -3328,9 +3332,9 @@ pub fn __action36<
 
 #[allow(unused_variables)]
 pub fn __action37<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> Node
 {
@@ -3339,9 +3343,9 @@ pub fn __action37<
 
 #[allow(unused_variables)]
 pub fn __action38<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, l, _): (TokenLocation, Node, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, r, _): (TokenLocation, Node, TokenLocation),
@@ -3354,9 +3358,9 @@ pub fn __action38<
 
 #[allow(unused_variables)]
 pub fn __action39<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, l, _): (TokenLocation, Node, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, r, _): (TokenLocation, Node, TokenLocation),
@@ -3369,9 +3373,9 @@ pub fn __action39<
 
 #[allow(unused_variables)]
 pub fn __action40<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> Node
 {
@@ -3380,9 +3384,9 @@ pub fn __action40<
 
 #[allow(unused_variables)]
 pub fn __action41<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> Node
 {
@@ -3391,9 +3395,9 @@ pub fn __action41<
 
 #[allow(unused_variables)]
 pub fn __action42<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> Node
 {
@@ -3402,9 +3406,9 @@ pub fn __action42<
 
 #[allow(unused_variables)]
 pub fn __action43<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> Node
 {
@@ -3413,9 +3417,9 @@ pub fn __action43<
 
 #[allow(unused_variables)]
 pub fn __action44<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, __0, _): (TokenLocation, Node, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
@@ -3426,9 +3430,9 @@ pub fn __action44<
 
 #[allow(unused_variables)]
 pub fn __action45<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, r, _): (TokenLocation, Node, TokenLocation),
     (_, g, _): (TokenLocation, Node, TokenLocation),
     (_, b, _): (TokenLocation, Node, TokenLocation),
@@ -3445,9 +3449,9 @@ pub fn __action45<
 
 #[allow(unused_variables)]
 pub fn __action46<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, left, _): (TokenLocation, TokenLocation, TokenLocation),
     (_, r, _): (TokenLocation, Node, TokenLocation),
     (_, g, _): (TokenLocation, Node, TokenLocation),
@@ -3461,16 +3465,16 @@ pub fn __action46<
         b: Box::new(b),
         a: Box::new(Node::Expression(
             ExpressionNode::Val(ExpressionValue::Int(255),
-            AstLocation::new(left, right, file.to_owned())
+            AstLocation::new(left, right, file.clone())
         )))
     })
 }
 
 #[allow(unused_variables)]
 pub fn __action47<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> ::std::vec::Vec<Node>
 {
@@ -3479,9 +3483,9 @@ pub fn __action47<
 
 #[allow(unused_variables)]
 pub fn __action48<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
     (_, e, _): (TokenLocation, Node, TokenLocation),
 ) -> ::std::vec::Vec<Node>
@@ -3491,9 +3495,9 @@ pub fn __action48<
 
 #[allow(unused_variables)]
 pub fn __action49<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Vec<Node>, TokenLocation),
 ) -> ::std::option::Option<Vec<Node>>
 {
@@ -3502,9 +3506,9 @@ pub fn __action49<
 
 #[allow(unused_variables)]
 pub fn __action50<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::option::Option<Vec<Node>>
@@ -3514,9 +3518,9 @@ pub fn __action50<
 
 #[allow(unused_variables)]
 pub fn __action51<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, __0, _): (TokenLocation, Vec<Node>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
@@ -3527,9 +3531,9 @@ pub fn __action51<
 
 #[allow(unused_variables)]
 pub fn __action52<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
     (_, e, _): (TokenLocation, ::std::option::Option<Node>, TokenLocation),
 ) -> Vec<Node>
@@ -3546,9 +3550,9 @@ pub fn __action52<
 
 #[allow(unused_variables)]
 pub fn __action53<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Vec<String>, TokenLocation),
 ) -> ::std::option::Option<Vec<String>>
 {
@@ -3557,9 +3561,9 @@ pub fn __action53<
 
 #[allow(unused_variables)]
 pub fn __action54<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::option::Option<Vec<String>>
@@ -3569,9 +3573,9 @@ pub fn __action54<
 
 #[allow(unused_variables)]
 pub fn __action55<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, __0, _): (TokenLocation, Vec<String>, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
@@ -3582,9 +3586,9 @@ pub fn __action55<
 
 #[allow(unused_variables)]
 pub fn __action56<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
     (_, e, _): (TokenLocation, ::std::option::Option<String>, TokenLocation),
 ) -> Vec<String>
@@ -3601,9 +3605,9 @@ pub fn __action56<
 
 #[allow(unused_variables)]
 pub fn __action57<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::vec::Vec<Node>
@@ -3613,9 +3617,9 @@ pub fn __action57<
 
 #[allow(unused_variables)]
 pub fn __action58<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
 ) -> ::std::vec::Vec<Node>
 {
@@ -3624,9 +3628,9 @@ pub fn __action58<
 
 #[allow(unused_variables)]
 pub fn __action59<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> ::std::option::Option<Node>
 {
@@ -3635,9 +3639,9 @@ pub fn __action59<
 
 #[allow(unused_variables)]
 pub fn __action60<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::option::Option<Node>
@@ -3647,9 +3651,9 @@ pub fn __action60<
 
 #[allow(unused_variables)]
 pub fn __action61<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, _, _): (TokenLocation, Tok, TokenLocation),
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> Node
@@ -3659,9 +3663,9 @@ pub fn __action61<
 
 #[allow(unused_variables)]
 pub fn __action62<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> TokenLocation
@@ -3671,9 +3675,9 @@ pub fn __action62<
 
 #[allow(unused_variables)]
 pub fn __action63<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::vec::Vec<Node>
@@ -3683,9 +3687,9 @@ pub fn __action63<
 
 #[allow(unused_variables)]
 pub fn __action64<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
 ) -> ::std::vec::Vec<Node>
 {
@@ -3694,9 +3698,9 @@ pub fn __action64<
 
 #[allow(unused_variables)]
 pub fn __action65<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::vec::Vec<Node>
@@ -3706,9 +3710,9 @@ pub fn __action65<
 
 #[allow(unused_variables)]
 pub fn __action66<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
 ) -> ::std::vec::Vec<Node>
 {
@@ -3717,9 +3721,9 @@ pub fn __action66<
 
 #[allow(unused_variables)]
 pub fn __action67<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> TokenLocation
@@ -3729,9 +3733,9 @@ pub fn __action67<
 
 #[allow(unused_variables)]
 pub fn __action68<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> ::std::vec::Vec<Node>
 {
@@ -3740,9 +3744,9 @@ pub fn __action68<
 
 #[allow(unused_variables)]
 pub fn __action69<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
     (_, e, _): (TokenLocation, Node, TokenLocation),
 ) -> ::std::vec::Vec<Node>
@@ -3752,9 +3756,9 @@ pub fn __action69<
 
 #[allow(unused_variables)]
 pub fn __action70<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> ::std::vec::Vec<Node>
 {
@@ -3763,9 +3767,9 @@ pub fn __action70<
 
 #[allow(unused_variables)]
 pub fn __action71<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
     (_, e, _): (TokenLocation, Node, TokenLocation),
 ) -> ::std::vec::Vec<Node>
@@ -3775,9 +3779,9 @@ pub fn __action71<
 
 #[allow(unused_variables)]
 pub fn __action72<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> ::std::vec::Vec<Node>
 {
@@ -3786,9 +3790,9 @@ pub fn __action72<
 
 #[allow(unused_variables)]
 pub fn __action73<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
     (_, e, _): (TokenLocation, Node, TokenLocation),
 ) -> ::std::vec::Vec<Node>
@@ -3798,9 +3802,9 @@ pub fn __action73<
 
 #[allow(unused_variables)]
 pub fn __action74<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, String, TokenLocation),
 ) -> ::std::option::Option<String>
 {
@@ -3809,9 +3813,9 @@ pub fn __action74<
 
 #[allow(unused_variables)]
 pub fn __action75<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::option::Option<String>
@@ -3821,9 +3825,9 @@ pub fn __action75<
 
 #[allow(unused_variables)]
 pub fn __action76<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::vec::Vec<String>
@@ -3833,9 +3837,9 @@ pub fn __action76<
 
 #[allow(unused_variables)]
 pub fn __action77<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
 ) -> ::std::vec::Vec<String>
 {
@@ -3844,9 +3848,9 @@ pub fn __action77<
 
 #[allow(unused_variables)]
 pub fn __action78<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, String, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
 ) -> String
@@ -3856,9 +3860,9 @@ pub fn __action78<
 
 #[allow(unused_variables)]
 pub fn __action79<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> ::std::option::Option<Node>
 {
@@ -3867,9 +3871,9 @@ pub fn __action79<
 
 #[allow(unused_variables)]
 pub fn __action80<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::option::Option<Node>
@@ -3879,9 +3883,9 @@ pub fn __action80<
 
 #[allow(unused_variables)]
 pub fn __action81<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> ::std::vec::Vec<Node>
@@ -3891,9 +3895,9 @@ pub fn __action81<
 
 #[allow(unused_variables)]
 pub fn __action82<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
 ) -> ::std::vec::Vec<Node>
 {
@@ -3902,9 +3906,9 @@ pub fn __action82<
 
 #[allow(unused_variables)]
 pub fn __action83<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
     (_, _, _): (TokenLocation, Tok, TokenLocation),
 ) -> Node
@@ -3914,9 +3918,9 @@ pub fn __action83<
 
 #[allow(unused_variables)]
 pub fn __action84<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, Node, TokenLocation),
 ) -> ::std::vec::Vec<Node>
 {
@@ -3925,9 +3929,9 @@ pub fn __action84<
 
 #[allow(unused_variables)]
 pub fn __action85<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
     (_, e, _): (TokenLocation, Node, TokenLocation),
 ) -> ::std::vec::Vec<Node>
@@ -3937,9 +3941,9 @@ pub fn __action85<
 
 #[allow(unused_variables)]
 pub fn __action86<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, __0, _): (TokenLocation, String, TokenLocation),
 ) -> ::std::vec::Vec<String>
 {
@@ -3948,9 +3952,9 @@ pub fn __action86<
 
 #[allow(unused_variables)]
 pub fn __action87<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     (_, v, _): (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
     (_, e, _): (TokenLocation, String, TokenLocation),
 ) -> ::std::vec::Vec<String>
@@ -3960,9 +3964,9 @@ pub fn __action87<
 
 #[allow(unused_variables)]
 pub fn __action88<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, Vec<Node>, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -3985,9 +3989,9 @@ pub fn __action88<
 
 #[allow(unused_variables)]
 pub fn __action89<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, TokenLocation, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
     __2: (TokenLocation, String, TokenLocation),
@@ -4020,9 +4024,9 @@ pub fn __action89<
 
 #[allow(unused_variables)]
 pub fn __action90<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, TokenLocation, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
     __2: (TokenLocation, String, TokenLocation),
@@ -4051,9 +4055,9 @@ pub fn __action90<
 
 #[allow(unused_variables)]
 pub fn __action91<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, Vec<String>, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -4076,9 +4080,9 @@ pub fn __action91<
 
 #[allow(unused_variables)]
 pub fn __action92<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, TokenLocation, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
     __2: (TokenLocation, String, TokenLocation),
@@ -4113,9 +4117,9 @@ pub fn __action92<
 
 #[allow(unused_variables)]
 pub fn __action93<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, TokenLocation, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
     __2: (TokenLocation, String, TokenLocation),
@@ -4146,9 +4150,9 @@ pub fn __action93<
 
 #[allow(unused_variables)]
 pub fn __action94<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, Node, TokenLocation),
 ) -> ::std::option::Option<Node>
@@ -4169,9 +4173,9 @@ pub fn __action94<
 
 #[allow(unused_variables)]
 pub fn __action95<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, TokenLocation, TokenLocation),
     __1: (TokenLocation, BlockType, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -4202,9 +4206,9 @@ pub fn __action95<
 
 #[allow(unused_variables)]
 pub fn __action96<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, TokenLocation, TokenLocation),
     __1: (TokenLocation, BlockType, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -4233,9 +4237,9 @@ pub fn __action96<
 
 #[allow(unused_variables)]
 pub fn __action97<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Node, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
 ) -> ::std::vec::Vec<Node>
@@ -4256,9 +4260,9 @@ pub fn __action97<
 
 #[allow(unused_variables)]
 pub fn __action98<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
     __1: (TokenLocation, Node, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -4281,9 +4285,9 @@ pub fn __action98<
 
 #[allow(unused_variables)]
 pub fn __action99<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, ::std::option::Option<Node>, TokenLocation),
 ) -> Vec<Node>
 {
@@ -4304,9 +4308,9 @@ pub fn __action99<
 
 #[allow(unused_variables)]
 pub fn __action100<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
     __1: (TokenLocation, ::std::option::Option<Node>, TokenLocation),
 ) -> Vec<Node>
@@ -4327,9 +4331,9 @@ pub fn __action100<
 
 #[allow(unused_variables)]
 pub fn __action101<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, String, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
 ) -> ::std::vec::Vec<String>
@@ -4350,9 +4354,9 @@ pub fn __action101<
 
 #[allow(unused_variables)]
 pub fn __action102<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -4375,9 +4379,9 @@ pub fn __action102<
 
 #[allow(unused_variables)]
 pub fn __action103<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, ::std::option::Option<String>, TokenLocation),
 ) -> Vec<String>
 {
@@ -4398,9 +4402,9 @@ pub fn __action103<
 
 #[allow(unused_variables)]
 pub fn __action104<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
     __1: (TokenLocation, ::std::option::Option<String>, TokenLocation),
 ) -> Vec<String>
@@ -4421,9 +4425,9 @@ pub fn __action104<
 
 #[allow(unused_variables)]
 pub fn __action105<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Node, TokenLocation),
     __1: (TokenLocation, Node, TokenLocation),
     __2: (TokenLocation, Node, TokenLocation),
@@ -4450,9 +4454,9 @@ pub fn __action105<
 
 #[allow(unused_variables)]
 pub fn __action106<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, String, TokenLocation),
     __1: (TokenLocation, stm::Condition, TokenLocation),
     __2: (TokenLocation, TokenLocation, TokenLocation),
@@ -4479,9 +4483,9 @@ pub fn __action106<
 
 #[allow(unused_variables)]
 pub fn __action107<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, BlockType, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
     __2: (TokenLocation, Node, TokenLocation),
@@ -4512,9 +4516,9 @@ pub fn __action107<
 
 #[allow(unused_variables)]
 pub fn __action108<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, BlockType, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
     __2: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
@@ -4541,9 +4545,9 @@ pub fn __action108<
 
 #[allow(unused_variables)]
 pub fn __action109<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -4578,9 +4582,9 @@ pub fn __action109<
 
 #[allow(unused_variables)]
 pub fn __action110<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -4609,9 +4613,9 @@ pub fn __action110<
 
 #[allow(unused_variables)]
 pub fn __action111<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
     __1: (TokenLocation, Node, TokenLocation),
     __2: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
@@ -4638,9 +4642,9 @@ pub fn __action111<
 
 #[allow(unused_variables)]
 pub fn __action112<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
     __1: (TokenLocation, TokenLocation, TokenLocation),
 ) -> Node
@@ -4663,9 +4667,9 @@ pub fn __action112<
 
 #[allow(unused_variables)]
 pub fn __action113<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, TokenLocation, TokenLocation),
@@ -4692,9 +4696,9 @@ pub fn __action113<
 
 #[allow(unused_variables)]
 pub fn __action114<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -4727,9 +4731,9 @@ pub fn __action114<
 
 #[allow(unused_variables)]
 pub fn __action115<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, TokenLocation, TokenLocation),
@@ -4756,9 +4760,9 @@ pub fn __action115<
 
 #[allow(unused_variables)]
 pub fn __action116<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, i64, TokenLocation),
     __1: (TokenLocation, TokenLocation, TokenLocation),
 ) -> Node
@@ -4781,9 +4785,9 @@ pub fn __action116<
 
 #[allow(unused_variables)]
 pub fn __action117<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, f64, TokenLocation),
     __1: (TokenLocation, TokenLocation, TokenLocation),
 ) -> Node
@@ -4806,9 +4810,9 @@ pub fn __action117<
 
 #[allow(unused_variables)]
 pub fn __action118<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, String, TokenLocation),
     __1: (TokenLocation, Node, TokenLocation),
     __2: (TokenLocation, TokenLocation, TokenLocation),
@@ -4835,9 +4839,9 @@ pub fn __action118<
 
 #[allow(unused_variables)]
 pub fn __action119<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, String, TokenLocation),
     __1: (TokenLocation, TokenLocation, TokenLocation),
 ) -> Node
@@ -4860,9 +4864,9 @@ pub fn __action119<
 
 #[allow(unused_variables)]
 pub fn __action120<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, String, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
     __2: (TokenLocation, Node, TokenLocation),
@@ -4891,9 +4895,9 @@ pub fn __action120<
 
 #[allow(unused_variables)]
 pub fn __action121<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, String, TokenLocation),
     __1: (TokenLocation, TokenLocation, TokenLocation),
 ) -> Node
@@ -4916,9 +4920,9 @@ pub fn __action121<
 
 #[allow(unused_variables)]
 pub fn __action122<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Node, TokenLocation),
     __1: (TokenLocation, Node, TokenLocation),
     __2: (TokenLocation, Node, TokenLocation),
@@ -4943,9 +4947,9 @@ pub fn __action122<
 
 #[allow(unused_variables)]
 pub fn __action123<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, String, TokenLocation),
     __1: (TokenLocation, stm::Condition, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -4970,9 +4974,9 @@ pub fn __action123<
 
 #[allow(unused_variables)]
 pub fn __action124<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, BlockType, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
     __2: (TokenLocation, Node, TokenLocation),
@@ -5001,9 +5005,9 @@ pub fn __action124<
 
 #[allow(unused_variables)]
 pub fn __action125<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, BlockType, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
     __2: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
@@ -5028,9 +5032,9 @@ pub fn __action125<
 
 #[allow(unused_variables)]
 pub fn __action126<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -5063,9 +5067,9 @@ pub fn __action126<
 
 #[allow(unused_variables)]
 pub fn __action127<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -5092,9 +5096,9 @@ pub fn __action127<
 
 #[allow(unused_variables)]
 pub fn __action128<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
     __1: (TokenLocation, Node, TokenLocation),
     __2: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
@@ -5119,9 +5123,9 @@ pub fn __action128<
 
 #[allow(unused_variables)]
 pub fn __action129<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
 ) -> Node
 {
@@ -5142,9 +5146,9 @@ pub fn __action129<
 
 #[allow(unused_variables)]
 pub fn __action130<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -5169,9 +5173,9 @@ pub fn __action130<
 
 #[allow(unused_variables)]
 pub fn __action131<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -5202,9 +5206,9 @@ pub fn __action131<
 
 #[allow(unused_variables)]
 pub fn __action132<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -5229,9 +5233,9 @@ pub fn __action132<
 
 #[allow(unused_variables)]
 pub fn __action133<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, i64, TokenLocation),
 ) -> Node
 {
@@ -5252,9 +5256,9 @@ pub fn __action133<
 
 #[allow(unused_variables)]
 pub fn __action134<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, f64, TokenLocation),
 ) -> Node
 {
@@ -5275,9 +5279,9 @@ pub fn __action134<
 
 #[allow(unused_variables)]
 pub fn __action135<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, String, TokenLocation),
     __1: (TokenLocation, Node, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -5302,9 +5306,9 @@ pub fn __action135<
 
 #[allow(unused_variables)]
 pub fn __action136<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, String, TokenLocation),
 ) -> Node
 {
@@ -5325,9 +5329,9 @@ pub fn __action136<
 
 #[allow(unused_variables)]
 pub fn __action137<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, String, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
     __2: (TokenLocation, Node, TokenLocation),
@@ -5354,9 +5358,9 @@ pub fn __action137<
 
 #[allow(unused_variables)]
 pub fn __action138<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, String, TokenLocation),
 ) -> Node
 {
@@ -5377,9 +5381,9 @@ pub fn __action138<
 
 #[allow(unused_variables)]
 pub fn __action139<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
     __1: (TokenLocation, Node, TokenLocation),
 ) -> Node
@@ -5402,9 +5406,9 @@ pub fn __action139<
 
 #[allow(unused_variables)]
 pub fn __action140<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
     __1: (TokenLocation, Node, TokenLocation),
     __2: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
@@ -5427,9 +5431,9 @@ pub fn __action140<
 
 #[allow(unused_variables)]
 pub fn __action141<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Node, TokenLocation),
 ) -> Node
 {
@@ -5450,9 +5454,9 @@ pub fn __action141<
 
 #[allow(unused_variables)]
 pub fn __action142<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
     __1: (TokenLocation, Node, TokenLocation),
 ) -> Node
@@ -5473,9 +5477,9 @@ pub fn __action142<
 
 #[allow(unused_variables)]
 pub fn __action143<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Node, TokenLocation),
     __1: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
 ) -> Node
@@ -5498,9 +5502,9 @@ pub fn __action143<
 
 #[allow(unused_variables)]
 pub fn __action144<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
     __1: (TokenLocation, Node, TokenLocation),
     __2: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
@@ -5523,9 +5527,9 @@ pub fn __action144<
 
 #[allow(unused_variables)]
 pub fn __action145<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> Node
@@ -5546,9 +5550,9 @@ pub fn __action145<
 
 #[allow(unused_variables)]
 pub fn __action146<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
 ) -> Node
 {
@@ -5567,9 +5571,9 @@ pub fn __action146<
 
 #[allow(unused_variables)]
 pub fn __action147<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, BlockType, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
     __2: (TokenLocation, Node, TokenLocation),
@@ -5596,9 +5600,9 @@ pub fn __action147<
 
 #[allow(unused_variables)]
 pub fn __action148<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, BlockType, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
     __2: (TokenLocation, Node, TokenLocation),
@@ -5625,9 +5629,9 @@ pub fn __action148<
 
 #[allow(unused_variables)]
 pub fn __action149<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, BlockType, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
 ) -> Node
@@ -5650,9 +5654,9 @@ pub fn __action149<
 
 #[allow(unused_variables)]
 pub fn __action150<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, BlockType, TokenLocation),
     __1: (TokenLocation, Tok, TokenLocation),
     __2: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
@@ -5675,9 +5679,9 @@ pub fn __action150<
 
 #[allow(unused_variables)]
 pub fn __action151<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -5708,9 +5712,9 @@ pub fn __action151<
 
 #[allow(unused_variables)]
 pub fn __action152<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -5741,9 +5745,9 @@ pub fn __action152<
 
 #[allow(unused_variables)]
 pub fn __action153<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -5768,9 +5772,9 @@ pub fn __action153<
 
 #[allow(unused_variables)]
 pub fn __action154<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Tok, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
     __2: (TokenLocation, Tok, TokenLocation),
@@ -5795,9 +5799,9 @@ pub fn __action154<
 
 #[allow(unused_variables)]
 pub fn __action155<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, Node, TokenLocation),
 ) -> Vec<Node>
 {
@@ -5816,9 +5820,9 @@ pub fn __action155<
 
 #[allow(unused_variables)]
 pub fn __action156<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> Vec<Node>
@@ -5839,9 +5843,9 @@ pub fn __action156<
 
 #[allow(unused_variables)]
 pub fn __action157<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
     __1: (TokenLocation, Node, TokenLocation),
 ) -> Vec<Node>
@@ -5862,9 +5866,9 @@ pub fn __action157<
 
 #[allow(unused_variables)]
 pub fn __action158<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, ::std::vec::Vec<Node>, TokenLocation),
 ) -> Vec<Node>
 {
@@ -5885,9 +5889,9 @@ pub fn __action158<
 
 #[allow(unused_variables)]
 pub fn __action159<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, String, TokenLocation),
 ) -> Vec<String>
 {
@@ -5906,9 +5910,9 @@ pub fn __action159<
 
 #[allow(unused_variables)]
 pub fn __action160<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __lookbehind: &TokenLocation,
     __lookahead: &TokenLocation,
 ) -> Vec<String>
@@ -5929,9 +5933,9 @@ pub fn __action160<
 
 #[allow(unused_variables)]
 pub fn __action161<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
     __1: (TokenLocation, String, TokenLocation),
 ) -> Vec<String>
@@ -5952,9 +5956,9 @@ pub fn __action161<
 
 #[allow(unused_variables)]
 pub fn __action162<
-    'b,
+    'a,
 >(
-    file: &'b str,
+    file: &'a Rc<PathBuf>,
     __0: (TokenLocation, ::std::vec::Vec<String>, TokenLocation),
 ) -> Vec<String>
 {
@@ -5973,18 +5977,18 @@ pub fn __action162<
     )
 }
 
-pub trait __ToTriple<'b, > {
+pub trait __ToTriple<'a, > {
     type Error;
     fn to_triple(value: Self) -> Result<(TokenLocation,Tok,TokenLocation),Self::Error>;
 }
 
-impl<'b, > __ToTriple<'b, > for (TokenLocation, Tok, TokenLocation) {
+impl<'a, > __ToTriple<'a, > for (TokenLocation, Tok, TokenLocation) {
     type Error = char;
     fn to_triple(value: Self) -> Result<(TokenLocation,Tok,TokenLocation),char> {
         Ok(value)
     }
 }
-impl<'b, > __ToTriple<'b, > for Result<(TokenLocation, Tok, TokenLocation),char> {
+impl<'a, > __ToTriple<'a, > for Result<(TokenLocation, Tok, TokenLocation),char> {
     type Error = char;
     fn to_triple(value: Self) -> Result<(TokenLocation,Tok,TokenLocation),char> {
         value

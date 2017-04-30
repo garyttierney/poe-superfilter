@@ -1,6 +1,8 @@
 
 use ast;
 
+use std::rc::Rc;
+use std::path::PathBuf;
 use ast::block_statements as stm;
 use ast::{Node, AstLocation, Filter};
 use ast::block::{Block, BlockType};
@@ -11,7 +13,7 @@ use ast::var::{VarDefinition,VarReference};
 use ast::expression::{ExpressionValue, ExpressionNode, ExpressionOperation};
 
 #[LALR]
-grammar<'b>(file: &'b str);
+grammar<'a>(file: &'a Rc<PathBuf>);
 
 extern {
     type Location = TokenLocation;
@@ -53,13 +55,13 @@ pub Filter : Node = {
         nodes.extend(rest);
         Node::Filter(Filter {
             nodes: nodes,
-            location: AstLocation::new(l, r, file.to_owned())
+            location: AstLocation::new(l, r, file.clone())
         })
     },
     <l:@L> <defs:DefinitionBlock*> <r:@R> => Node::Filter(
         Filter {
             nodes: defs,
-            location: AstLocation::new(l, r, file.to_owned())
+            location: AstLocation::new(l, r, file.clone())
         }
     ),
 };
@@ -72,7 +74,7 @@ DefinitionBlock : Node = {
 ImportBlock : Node = <l:@L> "Import" <path:RawStrLiteral> <r:@R> "\n" => Node::Import(
     ImportStatement {
         path: path,
-        location: AstLocation::new(l, r, file.to_owned())
+        location: AstLocation::new(l, r, file.clone())
     }
 );
 
@@ -86,7 +88,7 @@ ContentBlock : Node = {
         Block {
             nodes: stmts,
             variant: t,
-            location: AstLocation::new(l, r, file.to_owned()),
+            location: AstLocation::new(l, r, file.clone()),
             condition: None
         }
     ),
@@ -101,7 +103,7 @@ ContentBlock : Node = {
                 name: name,
                 parameters: params,
                 statements: instructions,
-                location: AstLocation::new(l, r, file.to_owned())
+                location: AstLocation::new(l, r, file.clone())
             }
         )
     }
@@ -125,7 +127,7 @@ VarDefinition : Node  = {
         VarDefinition {
             identifier: id,
             values: Box::new(v),
-            location: AstLocation::new(l, r, file.to_owned())
+            location: AstLocation::new(l, r, file.clone())
         }
     )
 };
@@ -134,7 +136,7 @@ VarReference : Node = {
     <l:@L> <ident:VarIdentifier> <r:@R> => Node::Value(ExpressionValue::Var(
         VarReference {
             identifier: ident,
-            location: AstLocation::new(l, r, file.to_owned())
+            location: AstLocation::new(l, r, file.clone())
         }
     ))
 };
@@ -144,7 +146,7 @@ SetValueStmt : Node = {
         stm::SetValueStatement {
             name: n,
             values: Box::new(val),
-            location: AstLocation::new(l, r, file.to_owned())
+            location: AstLocation::new(l, r, file.clone())
         }
     )
 };
@@ -154,7 +156,7 @@ ConditionStmt : Node = {
         stm::ConditionStatement {
             name: n,
             condition: cond,
-            location: AstLocation::new(l, r, file.to_owned())
+            location: AstLocation::new(l, r, file.clone())
         }
     )
 };
@@ -168,7 +170,7 @@ MixinCall : Node = {
         ast::mixin::MixinCall {
             name: n,
             parameters: params.unwrap_or(vec![]),
-            location: AstLocation::new(l, r, file.to_owned())
+            location: AstLocation::new(l, r, file.clone())
         }
     )
 };
@@ -201,10 +203,10 @@ ComparisonOperator : stm::ComparisonOperator = {
 
 NumberLiteral : Node = {
     <l:@L> <num:Num> <r:@R> => Node::Expression(
-        ExpressionNode::Val(ExpressionValue::Int(num), AstLocation::new(l, r, file.to_owned()))
+        ExpressionNode::Val(ExpressionValue::Int(num), AstLocation::new(l, r, file.clone()))
     ),
     <l:@L> <num:Float> <r:@R> => Node::Expression(
-        ExpressionNode::Val(ExpressionValue::Decimal(num), AstLocation::new(l, r, file.to_owned()))
+        ExpressionNode::Val(ExpressionValue::Decimal(num), AstLocation::new(l, r, file.clone()))
     ),
 };
 
@@ -265,7 +267,7 @@ Color: Node = {
         b: Box::new(b),
         a: Box::new(Node::Expression(
             ExpressionNode::Val(ExpressionValue::Int(255),
-            AstLocation::new(left, right, file.to_owned())
+            AstLocation::new(left, right, file.clone())
         )))
     })
 };

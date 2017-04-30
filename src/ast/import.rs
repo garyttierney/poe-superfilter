@@ -26,8 +26,7 @@ impl Transform for ImportStatement {
 
         {
             let tokens = Box::new(tok::tokenize(&contents));
-            let path_str = resolved_file_path.to_str().unwrap();
-            match filter::parse_Filter(path_str, tokens.into_iter()) {
+            match filter::parse_Filter(&Rc::new(resolved_file_path), tokens.into_iter()) {
                 Ok(Node::Filter(ref filter)) => {
                     let transform_result = filter.transform_begin(ctx.scope.clone(),
                                                                   Rc::new(new_base_path));

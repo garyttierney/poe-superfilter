@@ -38,7 +38,7 @@ fn test_compile(input_file : &str, expected_output_file : &str) {
         base_path: base_path
     };
 
-    super::compile(&sf_file, input_file.to_owned(), &mut result_vec, &render_config).unwrap();
+    super::compile(&sf_file, Path::new(input_file).to_owned(), &mut result_vec, &render_config).unwrap();
 
     let result_str = String::from_utf8(result_vec).unwrap();
     assert_eq!(expected_result, result_str)

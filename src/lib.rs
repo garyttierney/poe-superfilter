@@ -13,6 +13,7 @@ extern crate regex;
 extern crate lalrpop_util;
 
 use ast::transform::{RenderContext, RenderConfig, TransformResult};
+use std::path::PathBuf;
 use ast::CompileErr;
 use std::io::Write;
 use ast::Node;
@@ -38,7 +39,7 @@ mod scope;
 const LINE_END : &'static [u8] = b"\r\n";
 
 /// Compiles a complete filter into vanilla loot filter syntax
-pub fn compile(contents: &str, file: String, out_buf: &mut Write, render_config: &RenderConfig)
+pub fn compile(contents: &str, file: PathBuf, out_buf: &mut Write, render_config: &RenderConfig)
         -> Result<(),CompileErr> {
     let tokens = Box::new(tok::tokenize(contents));
     let root_scope = Rc::new(RefCell::new(ScopeData::new(None)));
@@ -48,7 +49,7 @@ pub fn compile(contents: &str, file: String, out_buf: &mut Write, render_config:
         indent_level: 0,
     };
 
-    match filter::parse_Filter(file.as_str(), tokens.into_iter()) {
+    match filter::parse_Filter(&Rc::new(file), tokens.into_iter()) {
         Ok(Node::Filter(ref filter)) => {
             let result = filter.transform_begin(root_scope,
                                                 Rc::new(render_config.base_path.clone()))?;
