@@ -45,11 +45,11 @@ impl ScopeData {
     pub fn parent(&self) -> Option<Rc<RefCell<ScopeData>>> { self.parent.clone() }
 
     /// Adds a variable to this scope
-    pub fn push_var(&mut self, ident:String, value: ScopeValue) { self.vars.insert(ident, value); }
+    pub fn push_var(&mut self, ident: String, value: ScopeValue) { self.vars.insert(ident, value); }
 
     /// Resolves a variable that is available in this scope. Traverses up to parent scopes
     /// if necessary.
-    pub fn var(&self, ident:&String) -> Option<ScopeValue> {
+    pub fn var(&self, ident: &String) -> Option<ScopeValue> {
         // return from current scope if found
         if let Some(var) = self.vars.get(ident) {
             return Some(var.clone());
@@ -64,11 +64,11 @@ impl ScopeData {
     }
 
     /// Adds a mixin to this scope
-    pub fn push_mixin(&mut self, ident:String, value:PreparedMixin) { self.mixins.insert(ident, value); }
+    pub fn push_mixin(&mut self, ident: String, value: PreparedMixin) { self.mixins.insert(ident, value); }
 
     /// Resolves a variable that is available in this scope. Traverses up to parent scopes
     /// if necessary.
-    pub fn mixin(&self, ident:&String) -> Option<PreparedMixin> {
+    pub fn mixin(&self, ident: &String) -> Option<PreparedMixin> {
         // return from current scope if found
         if let Some(mixin) = self.mixins.get(ident) {
             return Some(mixin.clone());
@@ -83,7 +83,7 @@ impl ScopeData {
     }
 }
 
-pub trait InnerScopeValue : TransformResult + Debug + Sized {
+pub trait InnerScopeValue: TransformResult + Debug + Sized {
     fn try_add(self, _: Self) -> CompileResult<ScopeValue> {
         Err(CompileErr::UnsupportedOperation(format!("{:?}", self), "+"))
     }
@@ -134,7 +134,7 @@ pub trait InnerScopeValue : TransformResult + Debug + Sized {
 
 
 /// Holds the value of a variable that can be held in a ScopeData instance
-#[derive(Clone,Debug,InnerScopeValue,InnerTransformResult)]
+#[derive(Clone, Debug, InnerScopeValue, InnerTransformResult)]
 pub enum ScopeValue {
     Int(i64),
     Decimal(f64),

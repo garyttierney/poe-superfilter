@@ -1,16 +1,16 @@
 use super::*;
 
 impl InnerScopeValue for f64 {
-    fn try_add (self, other: Self) -> CompileResult<ScopeValue> {
+    fn try_add(self, other: Self) -> CompileResult<ScopeValue> {
         Ok(ScopeValue::Decimal(self + other))
     }
-    fn try_sub (self, other: Self) -> CompileResult<ScopeValue> {
+    fn try_sub(self, other: Self) -> CompileResult<ScopeValue> {
         Ok(ScopeValue::Decimal(self - other))
     }
-    fn try_mul (self, other: Self) -> CompileResult<ScopeValue> {
+    fn try_mul(self, other: Self) -> CompileResult<ScopeValue> {
         Ok(ScopeValue::Decimal(self * other))
     }
-    fn try_div (self, other: Self) -> CompileResult<ScopeValue> {
+    fn try_div(self, other: Self) -> CompileResult<ScopeValue> {
         Ok(ScopeValue::Decimal(self / other))
     }
 

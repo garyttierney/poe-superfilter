@@ -46,7 +46,7 @@ pub fn main() {
             .value_name("LINE_ENDING"))
         .get_matches();
 
-    let line_ending : &'static [u8] = match matches.value_of("line_endings") {
+    let line_ending: &'static [u8] = match matches.value_of("line_endings") {
         Some("crlf") => b"\r\n",
         Some("lf") => b"\n",
         None => LINE_END,

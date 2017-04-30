@@ -4,7 +4,7 @@ use std::cell::Ref;
 use std::cell::RefMut;
 use std::cell::RefCell;
 use std::io::Write;
-use ast::{CompileErr,TransformedNode,AstLocation};
+use ast::{CompileErr, TransformedNode, AstLocation};
 use std::path::PathBuf;
 
 /// This trait needs to be implemented for any abstract syntax tree structure, it contains the
@@ -14,7 +14,7 @@ pub trait Transform {
     /// Perform any transformations that need to be done before rendering this structure into
     /// plain GGG loot filter syntax
     fn transform(&self, ctx: TransformContext)
-        -> Result<Option<TransformedNode>, CompileErr>;
+                 -> Result<Option<TransformedNode>, CompileErr>;
 
     fn location(&self) -> AstLocation;
 }
@@ -65,13 +65,13 @@ impl RenderConfig {
 }
 
 /// Holds any contextual information needed to render a node
-#[derive(Clone,Copy)]
+#[derive(Clone, Copy)]
 pub struct RenderContext<'a> {
     pub config: &'a RenderConfig,
     pub indent_level: isize,
 }
 
-impl <'a> RenderContext<'a> {
+impl<'a> RenderContext<'a> {
     pub fn write_indent(&self, buf: &mut Write) -> ::std::io::Result<usize> {
         if self.config.indent() {
             let mut written = 0;

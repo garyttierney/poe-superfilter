@@ -58,7 +58,7 @@ impl Default for Location {
 }
 
 impl Location {
-    fn add(&self, lines:isize, chars:isize) -> Location {
+    fn add(&self, lines: isize, chars: isize) -> Location {
         Location {
             line: self.line.saturating_add(lines),
             pos: self.pos.saturating_add(chars)
@@ -81,8 +81,8 @@ struct Tokenizer<C: Iterator<Item=char>> {
     token_in_current_line: bool
 }
 
-impl <C: Iterator<Item=char>> Tokenizer<C> {
-    fn new(chars:C) -> Tokenizer<C> {
+impl<C: Iterator<Item=char>> Tokenizer<C> {
+    fn new(chars: C) -> Tokenizer<C> {
         Tokenizer {
             cursor: Location { line: 1, pos: 0 },
             token_in_current_line: false,
@@ -116,7 +116,7 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
         self.lookahead
     }
 
-    fn advance_cursor(&mut self, chars:isize) {
+    fn advance_cursor(&mut self, chars: isize) {
         self.cursor.pos += chars;
     }
 
@@ -146,12 +146,12 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
         }
     }
 
-    fn push(&mut self, token:Tok, length:isize) {
+    fn push(&mut self, token: Tok, length: isize) {
         self.token_in_current_line = true;
         self.tokens.push((self.cursor, token, self.cursor.add(0, length)));
     }
 
-    fn next_and_push(&mut self, token:Tok, length:isize) {
+    fn next_and_push(&mut self, token: Tok, length: isize) {
         self.token_in_current_line = true;
         self.next_char();
         self.push(token, length);
@@ -167,13 +167,13 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
                         Some('=') => self.next_and_push(Tok::Gte, 2),
                         _ => self.push(Tok::Gt, 1)
                     }
-                },
+                }
                 '<' => {
                     match self.next_char() {
                         Some('=') => self.next_and_push(Tok::Lte, 2),
                         _ => self.push(Tok::Lt, 1)
                     }
-                },
+                }
                 '=' => self.next_and_push(Tok::Eql, 1),
                 '(' => self.next_and_push(Tok::LParen, 1),
                 ')' => self.next_and_push(Tok::RParen, 1),
@@ -186,14 +186,14 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
                     let tmp = self.take_quoted_string(c);
                     let length = tmp.len() as isize;
                     self.push(Tok::StrLiteral(tmp), length);
-                },
+                }
                 '$' => {
                     self.next_char();
                     if let Some(tmp) = self.take_identifier() {
                         let length = tmp.len() as isize;
                         self.push(Tok::VarIdentifier(tmp), length);
                     }
-                },
+                }
                 '#' => self.skip_rest_of_line(),
                 _ if c.is_alphabetic() => {
                     if let Some(tmp) = self.take_identifier() {
@@ -202,7 +202,7 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
                         self.push(tok, length);
                     }
                     return;
-                },
+                }
                 _ if c.is_digit(10) => {
                     let tmp = self.take_while(c, |c| c.is_digit(10) || c == '.');
                     if tmp.contains(".") {
@@ -248,7 +248,7 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
 
     /// Consumes a quoted string (obeying escape sequences) and returns its contents.
     /// The return value does not contain the quotes themselves.
-    fn take_quoted_string(&mut self, quote:char) -> String {
+    fn take_quoted_string(&mut self, quote: char) -> String {
         let mut buf = String::new();
 
         while let Some(c) = self.next_char() {
@@ -271,7 +271,7 @@ impl <C: Iterator<Item=char>> Tokenizer<C> {
     /// Consumes characters, calling a closure each time until the closure returns false.
     /// Returns a String with all characters consumed up to that point.
     /// Taken from https://github.com/nikomatsakis/lalrpop/blob/master/lalrpop-test/src/util/tok.rs
-    fn take_while<F>(&mut self, c0:char, f: F) -> String
+    fn take_while<F>(&mut self, c0: char, f: F) -> String
         where F: Fn(char) -> bool
     {
         let mut buf = String::new();

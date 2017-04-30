@@ -1,4 +1,3 @@
-
 use std::path::Path;
 use std::io::Read;
 use std::fs::File;
@@ -8,15 +7,15 @@ use std::sync::{Once, ONCE_INIT};
 
 static START: Once = ONCE_INIT;
 
-fn load_example(path : &str) -> String {
+fn load_example(path: &str) -> String {
     let mut file = File::open(path).unwrap();
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
     contents
 }
 
-fn test_compile(input_file : &str, expected_output_file : &str) {
-    START.call_once(||{
+fn test_compile(input_file: &str, expected_output_file: &str) {
+    START.call_once(|| {
         let mut current_path = env::current_dir().unwrap();
         current_path.push("src/tests");
         env::set_current_dir(current_path).unwrap();

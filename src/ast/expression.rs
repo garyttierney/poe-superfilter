@@ -50,7 +50,7 @@ impl Transform for ExpressionValue {
                     }*/
                 }
                 Ok(Some(TransformedNode::Value(ScopeValue::List(transformed_values))))
-            },
+            }
             ref val => {
                 Ok(Some(TransformedNode::Value(
                     match *val {
@@ -87,7 +87,7 @@ impl fmt::Debug for ExpressionNode {
 
 impl ExpressionNode {
     fn transform_op(&self, ctx: TransformContext, a: &Node, op: &ExpressionOperation, b: &Node)
-                        -> Result<Option<TransformedNode>, CompileErr> {
+                    -> Result<Option<TransformedNode>, CompileErr> {
         // transform each operand
         let transformed_operands = (
             a.transform(ctx.clone())?,

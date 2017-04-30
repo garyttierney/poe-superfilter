@@ -5,9 +5,12 @@
 
 #![feature(try_from)]
 
-#[macro_use] extern crate lazy_static;
-#[macro_use] extern crate quick_error;
-#[macro_use] extern crate superfilter_macro;
+#[macro_use]
+extern crate lazy_static;
+#[macro_use]
+extern crate quick_error;
+#[macro_use]
+extern crate superfilter_macro;
 
 extern crate regex;
 extern crate lalrpop_util;
@@ -36,12 +39,14 @@ mod tests;
 #[allow(dead_code)]
 mod scope;
 
-#[cfg(windows)] pub const LINE_END: &'static [u8] = b"\r\n";
-#[cfg(not(windows))] pub const LINE_END: &'static [u8] = b"\n";
+#[cfg(windows)]
+pub const LINE_END: &'static [u8] = b"\r\n";
+#[cfg(not(windows))]
+pub const LINE_END: &'static [u8] = b"\n";
 
 /// Compiles a complete filter into vanilla loot filter syntax
 pub fn compile(contents: &str, file: PathBuf, out_buf: &mut Write, render_config: &RenderConfig)
-        -> Result<(),CompileErr> {
+               -> Result<(), CompileErr> {
     let tokens = Box::new(tok::tokenize(contents));
     let root_scope = Rc::new(RefCell::new(ScopeData::new(None)));
 
@@ -57,7 +62,7 @@ pub fn compile(contents: &str, file: PathBuf, out_buf: &mut Write, render_config
             if let Some(transformed_tree) = result {
                 transformed_tree.render(render_ctx, out_buf).unwrap();
             }
-        },
+        }
         Err(err) => return Err(CompileErr::ParseError(err)),
         _ => panic!()
     }

@@ -23,7 +23,7 @@ pub struct PreparedMixin {
 
 impl Transform for Mixin {
     fn transform(&self, ctx: TransformContext)
-        -> Result<Option<TransformedNode>, CompileErr> {
+                 -> Result<Option<TransformedNode>, CompileErr> {
         let mut t_params = Vec::new();
         for param in &self.parameters {
             if let Some(ref default_value) = param.default {
@@ -82,7 +82,7 @@ pub struct MixinCall {
     pub location: AstLocation
 }
 
-impl <'a> fmt::Debug for MixinCall {
+impl<'a> fmt::Debug for MixinCall {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "MixinCall +{}(", self.name)?;
         for param in &self.parameters {
@@ -96,7 +96,7 @@ pub type ResolvedMixin<'a> = Vec<TransformedNode>;
 
 impl Transform for MixinCall {
     fn transform(&self, ctx: TransformContext)
-        -> Result<Option<TransformedNode>, CompileErr> {
+                 -> Result<Option<TransformedNode>, CompileErr> {
         if let Some(mixin) = ctx.ref_scope().mixin(&self.name) {
             // catch parameter count mismatch
             if mixin.parameters.len() != self.parameters.len() {
@@ -108,7 +108,7 @@ impl Transform for MixinCall {
             }
 
             // transform parameters in this call
-            let mut t_params : Vec<ScopeValue> = Vec::new();
+            let mut t_params: Vec<ScopeValue> = Vec::new();
 
             for param in &self.parameters {
                 match param.transform(ctx.clone())? {

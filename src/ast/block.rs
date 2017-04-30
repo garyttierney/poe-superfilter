@@ -9,7 +9,7 @@ use std::io::Write;
 /// like Show/Hide/Mixin or single top-level statements,
 /// e.g. variable definitions and imports
 #[derive(Debug, Clone)]
-pub struct  Block {
+pub struct Block {
     pub nodes: Vec<Node>,
     pub variant: BlockType,
     pub location: AstLocation,
@@ -47,7 +47,7 @@ impl NodeList for Vec<TransformedNode> {
 
 impl Transform for Block {
     fn transform(&self, ctx: TransformContext)
-            -> Result<Option<TransformedNode>, CompileErr> {
+                 -> Result<Option<TransformedNode>, CompileErr> {
         if let Some(ref condition) = self.condition {
             let condition_result = condition
                 .transform(ctx.clone())?
@@ -68,7 +68,7 @@ impl Transform for Block {
         };
 
         // collect transformed statements from lines in this block
-        let mut t_statements : Vec<TransformedNode> = Vec::new();
+        let mut t_statements: Vec<TransformedNode> = Vec::new();
 
         for statement in &self.nodes {
             if let Some(t_statement) = statement.transform(block_ctx.clone())? {
@@ -77,7 +77,7 @@ impl Transform for Block {
                         for stmt in resolved_stmts {
                             t_statements.push_statement(stmt);
                         }
-                    },
+                    }
                     _ => {
                         t_statements.push_statement(t_statement);
                     }
@@ -105,7 +105,7 @@ impl TransformResult for PlainBlock {
                 buf.write(b"Show")?;
                 buf.write(ctx.config.line_ending)?;
                 nodes
-            },
+            }
             PlainBlock::Hide(ref nodes) => {
                 buf.write(b"Hide")?;
                 buf.write(ctx.config.line_ending)?;

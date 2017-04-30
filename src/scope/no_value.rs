@@ -1,8 +1,9 @@
 use super::*;
 
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct NoValue {}
-pub static NO_VALUE : NoValue = NoValue {};
+
+pub static NO_VALUE: NoValue = NoValue {};
 
 impl InnerScopeValue for &'static NoValue {
     fn try_cmp(&self, _: Self) -> CompileResult<Ordering> {

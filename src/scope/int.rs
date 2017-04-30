@@ -4,10 +4,10 @@ impl InnerScopeValue for i64 {
     fn try_add(self, other: Self) -> CompileResult<ScopeValue> {
         Ok(ScopeValue::Int(self + other))
     }
-    fn try_sub (self, other: Self) -> CompileResult<ScopeValue> {
+    fn try_sub(self, other: Self) -> CompileResult<ScopeValue> {
         Ok(ScopeValue::Int(self - other))
     }
-    fn try_mul (self, other: Self) -> CompileResult<ScopeValue> {
+    fn try_mul(self, other: Self) -> CompileResult<ScopeValue> {
         Ok(ScopeValue::Int(self * other))
     }
     fn try_div(self, other: Self) -> CompileResult<ScopeValue> {

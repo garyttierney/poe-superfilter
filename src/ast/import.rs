@@ -6,7 +6,7 @@ use std::io::Read;
 use std::fs;
 use std::rc::Rc;
 
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct ImportStatement {
     pub path: String,
     pub location: AstLocation

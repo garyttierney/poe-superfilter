@@ -1,4 +1,3 @@
-
 use ast::{TransformedNode, CompileErr, Node, AstLocation};
 use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
 use scope::ScopeValue;
@@ -8,12 +7,12 @@ use std::cmp::PartialEq;
 /// AST structure for a value set or other instruction statement
 #[derive(Debug, Clone)]
 pub struct SetValueStatement {
-    pub name : String,
-    pub values : Box<Node>,
+    pub name: String,
+    pub values: Box<Node>,
     pub location: AstLocation
 }
 
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct PlainSetValueStatement {
     pub name: String,
     pub values: ScopeValue,
@@ -25,10 +24,9 @@ impl PartialEq for PlainSetValueStatement {
     }
 }
 
-impl <'a> Transform for SetValueStatement {
+impl<'a> Transform for SetValueStatement {
     fn transform(&self, ctx: TransformContext)
-        -> Result<Option<TransformedNode>, CompileErr> {
-
+                 -> Result<Option<TransformedNode>, CompileErr> {
         let transformed_values = self.values.transform(ctx)?;
 
         if transformed_values.is_none() {
@@ -62,14 +60,14 @@ impl TransformResult for PlainSetValueStatement {
 /// AST structure for a condition statement
 #[derive(Debug, Clone)]
 pub struct ConditionStatement {
-    pub name : String,
-    pub condition : Condition,
+    pub name: String,
+    pub condition: Condition,
     pub location: AstLocation
 }
 
 #[derive(Debug, Clone)]
 pub struct PlainConditionStatement {
-    pub name : String,
+    pub name: String,
     pub condition: PlainCondition
 }
 
@@ -81,7 +79,7 @@ impl PartialEq for PlainConditionStatement {
 
 impl Transform for ConditionStatement {
     fn transform(&self, ctx: TransformContext)
-        -> Result<Option<TransformedNode>, CompileErr> {
+                 -> Result<Option<TransformedNode>, CompileErr> {
         if let Some(t_value) = self.condition.value.transform(ctx.clone())? {
             return Ok(Some(TransformedNode::ConditionStmt(
                 PlainConditionStatement {

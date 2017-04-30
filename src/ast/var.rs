@@ -18,7 +18,7 @@ impl fmt::Debug for VarReference {
 impl Transform for VarReference {
     #[allow(unused_variables)]
     fn transform(&self, ctx: TransformContext)
-                     -> Result<Option<TransformedNode>, CompileErr> {
+                 -> Result<Option<TransformedNode>, CompileErr> {
         // try to resolve variable reference
         match ctx.ref_scope().var(&self.identifier) {
             Some(val) => Ok(Some(
@@ -43,7 +43,7 @@ pub struct VarDefinition {
 
 impl Transform for VarDefinition {
     fn transform(&self, ctx: TransformContext)
-                     -> Result<Option<TransformedNode>, CompileErr> {
+                 -> Result<Option<TransformedNode>, CompileErr> {
         if let Some(transformed_value) = self.values.transform(ctx.clone())? {
             // export variable to parent scope
             ctx.mut_scope()
