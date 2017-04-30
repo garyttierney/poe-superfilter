@@ -173,9 +173,9 @@ quick_error! {
             description("Cannot convert value to a given type")
             display("Cannot convert {} to {}.", value, type_name)
         }
-        UnsupportedOperation(value: String, type_name: &'static str, op: &'static str) {
+        UnsupportedOperation(value: String, op: &'static str) {
             description("Operation is unsupported by this type")
-            display("{} operation cannot be performed with {} because it is not supported by {}.", op, value, type_name)
+            display("{} operation cannot be performed with {} because it is not supported.", op, value)
         }
         ImportError(node: String, location: AstLocation) {
             description("Invalid import path")

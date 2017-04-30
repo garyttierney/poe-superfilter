@@ -1,5 +1,7 @@
 //! This is a support library for poe-superfilter, it contains procedural macros needed in it.
 
+#![recursion_limit="128"]
+
 extern crate proc_macro;
 extern crate syn;
 #[macro_use] extern crate quote;
@@ -132,11 +134,24 @@ pub fn inner_scope_value(input: TokenStream) -> TokenStream {
 
 fn impl_inner_scope_value(ast: &DeriveInput) -> quote::Tokens {
     let name = &ast.ident;
-
     let add_variants = impl_match_variants(&ast, |_| {
         quote! { (v) => { v.try_add(other.try_into()?) } }
     });
-
+    let mul_variants = impl_match_variants(&ast, |_| {
+        quote! { (v) => { v.try_mul(other.try_into()?) } }
+    });
+    let sub_variants = impl_match_variants(&ast, |_| {
+        quote! { (v) => { v.try_sub(other.try_into()?) } }
+    });
+    let div_variants = impl_match_variants(&ast, |_| {
+        quote! { (v) => { v.try_div(other.try_into()?) } }
+    });
+    let cmp_variants = impl_match_variants(&ast, |_| {
+        quote! { (ref v) => { v.try_cmp(other.try_into()?) } }
+    });
+    let eq_variants = impl_match_variants(&ast, |_| {
+        quote! { (ref v) => { v.try_eq(other.try_into()?) } }
+    });
     let type_name_variants = impl_match_variants(&ast, |_| {
         quote! { (ref v) => { v.type_name() } }
     });
@@ -146,6 +161,36 @@ fn impl_inner_scope_value(ast: &DeriveInput) -> quote::Tokens {
             fn try_add(self, other: Self) -> CompileResult<Self> {
                 match self {
                     #add_variants
+                }
+            }
+
+            fn try_sub(self, other: Self) -> CompileResult<Self> {
+                match self {
+                    #sub_variants
+                }
+            }
+
+            fn try_mul(self, other: Self) -> CompileResult<Self> {
+                match self {
+                    #mul_variants
+                }
+            }
+
+            fn try_div(self, other: Self) -> CompileResult<Self> {
+                match self {
+                    #div_variants
+                }
+            }
+
+            fn try_cmp(&self, other: Self) -> CompileResult<Ordering> {
+                match *self {
+                    #cmp_variants
+                }
+            }
+
+            fn try_eq(&self, other: Self) -> CompileResult<bool> {
+                match *self {
+                    #eq_variants
                 }
             }
 

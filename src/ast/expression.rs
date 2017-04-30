@@ -108,11 +108,11 @@ impl ExpressionNode {
                     ExpressionOperation::Mul => a_val.try_mul(b_val)?,
                     ExpressionOperation::Div => a_val.try_div(b_val)?,
                     ExpressionOperation::Sub => a_val.try_sub(b_val)?,
-                    ExpressionOperation::Eql => ScopeValue::Bool(a_val.try_eq(&b_val)?),
-                    ExpressionOperation::Lt => ScopeValue::Bool(a_val.try_lt(&b_val)?),
-                    ExpressionOperation::Lte => ScopeValue::Bool(a_val.try_lte(&b_val)?),
-                    ExpressionOperation::Gt => ScopeValue::Bool(a_val.try_gt(&b_val)?),
-                    ExpressionOperation::Gte => ScopeValue::Bool(a_val.try_gte(&b_val)?)
+                    ExpressionOperation::Eql => ScopeValue::Bool(a_val.try_eq(b_val)?),
+                    ExpressionOperation::Lt => ScopeValue::Bool(a_val.try_lt(b_val)?),
+                    ExpressionOperation::Lte => ScopeValue::Bool(a_val.try_lte(b_val)?),
+                    ExpressionOperation::Gt => ScopeValue::Bool(a_val.try_gt(b_val)?),
+                    ExpressionOperation::Gte => ScopeValue::Bool(a_val.try_gte(b_val)?)
                 };
                 return Ok(Some(TransformedNode::Value(result)))
             }

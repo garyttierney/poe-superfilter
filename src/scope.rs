@@ -75,46 +75,46 @@ pub static NO_VALUE : NoValue = NoValue {};
 
 pub trait InnerScopeValue : TransformResult + Debug + Sized {
     fn try_add(self, _: Self) -> CompileResult<ScopeValue> {
-        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), self.type_name(), "+"))
+        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), "+"))
     }
 
     fn try_sub(self, _: Self) -> CompileResult<ScopeValue> {
-        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), self.type_name(), "-"))
+        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), "-"))
     }
 
     fn try_mul(self, _: Self) -> CompileResult<ScopeValue> {
-        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), self.type_name(), "*"))
+        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), "*"))
     }
 
     fn try_div(self, _: Self) -> CompileResult<ScopeValue> {
-        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), self.type_name(), "/"))
+        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), "/"))
     }
 
-    fn try_cmp(&self, _: &Self) -> CompileResult<Ordering> {
-        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), self.type_name(), "="))
+    fn try_cmp(&self, _: Self) -> CompileResult<Ordering> {
+        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), "="))
     }
 
-    fn try_eq(&self, _: &Self) -> CompileResult<bool>
+    fn try_eq(&self, _: Self) -> CompileResult<bool>
         where Self: Sized {
-        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), self.type_name(), "<=>"))
+        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), "<=>"))
     }
 
-    fn try_gt(&self, other: &Self) -> CompileResult<bool> {
+    fn try_gt(&self, other: Self) -> CompileResult<bool> {
         let cmp = self.try_cmp(other)?;
         Ok(cmp == Ordering::Greater)
     }
 
-    fn try_gte(&self, other: &Self) -> CompileResult<bool> {
+    fn try_gte(&self, other: Self) -> CompileResult<bool> {
         let cmp = self.try_cmp(other)?;
         Ok(cmp == Ordering::Greater || cmp == Ordering::Equal)
     }
 
-    fn try_lt(&self, other: &Self) -> CompileResult<bool> {
+    fn try_lt(&self, other: Self) -> CompileResult<bool> {
         let cmp = self.try_cmp(other)?;
         Ok(cmp == Ordering::Less)
     }
 
-    fn try_lte(&self, other: &Self) -> CompileResult<bool> {
+    fn try_lte(&self, other: Self) -> CompileResult<bool> {
         let cmp = self.try_cmp(other)?;
         Ok(cmp == Ordering::Less || cmp == Ordering::Equal)
     }
@@ -136,7 +136,7 @@ pub enum ScopeValue {
 
 impl PartialEq for ScopeValue {
     fn eq(&self, other: &ScopeValue) -> bool {
-        match self.try_eq(other) {
+        match self.try_eq(other.clone()) {
             Ok(result) => result,
             Err(_) => false
         }
@@ -157,11 +157,11 @@ impl InnerScopeValue for i64 {
         Ok(ScopeValue::Int(self / other))
     }
 
-    fn try_cmp(&self, other: &Self) -> CompileResult<Ordering> {
-        Ok(self.cmp(other))
+    fn try_cmp(&self, other: Self) -> CompileResult<Ordering> {
+        Ok(self.cmp(&other))
     }
-    fn try_eq(&self, other: &Self) -> CompileResult<bool> {
-        Ok(self == other)
+    fn try_eq(&self, other: Self) -> CompileResult<bool> {
+        Ok(*self == other)
     }
 
     fn type_name(&self) -> &'static str { "Int" }
@@ -204,14 +204,14 @@ impl InnerScopeValue for f64 {
         Ok(ScopeValue::Decimal(self / other))
     }
 
-    fn try_cmp(&self, other: &Self) -> CompileResult<Ordering> {
-        match self.partial_cmp(other) {
+    fn try_cmp(&self, other: Self) -> CompileResult<Ordering> {
+        match self.partial_cmp(&other) {
             Some(ordering) => Ok(ordering),
             None => panic!()
         }
     }
-    fn try_eq(&self, other: &Self) -> CompileResult<bool> {
-        Ok(self == other)
+    fn try_eq(&self, other: Self) -> CompileResult<bool> {
+        Ok(*self == other)
     }
 
     fn type_name(&self) -> &'static str { "Float" }
@@ -247,11 +247,11 @@ impl InnerScopeValue for String {
         Ok(ScopeValue::String(self + other.as_ref()))
     }
 
-    fn try_cmp(&self, other: &Self) -> CompileResult<Ordering> {
-        Ok(self.cmp(other))
+    fn try_cmp(&self, other: Self) -> CompileResult<Ordering> {
+        Ok(self.cmp(&other))
     }
-    fn try_eq(&self, other: &Self) -> CompileResult<bool> {
-        Ok(self == other)
+    fn try_eq(&self, other: Self) -> CompileResult<bool> {
+        Ok(*self == other)
     }
 
     fn type_name(&self) -> &'static str { "String" }
@@ -302,10 +302,10 @@ impl TryFrom<ScopeValue> for Vec<ScopeValue> {
 }
 
 impl InnerScopeValue for &'static NoValue {
-    fn try_cmp(&self, _: &Self) -> CompileResult<Ordering> {
+    fn try_cmp(&self, _: Self) -> CompileResult<Ordering> {
         Ok(Ordering::Equal)
     }
-    fn try_eq(&self, _: &Self) -> CompileResult<bool> {
+    fn try_eq(&self, _: Self) -> CompileResult<bool> {
         Ok(true)
     }
 
