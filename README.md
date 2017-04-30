@@ -112,6 +112,34 @@ there will also be available in the including file.
 Import "some_file.sf"
 ```
 
+## Conditional Blocks
+
+You can include or exclude blocks based on conditions. To express conditions, you can use simple equality and comparison
+checks or boolean values.
+
+```
+$yes = True
+$no = 1 > 2
+
+Show if True # This block will be included
+    SetStatement 123
+
+Show if False # this won't
+    SetStatement 234
+
+Show if 2 > 3
+    SetStatement 345
+
+Show if 3 > 2
+    SetStatement 456
+
+Show if $yes
+    SetStatement 567
+
+Show if $no
+    SetStatement 678
+```
+
 # Command Line Usage
 
 ```
@@ -145,7 +173,5 @@ execute it to recompile your filter.
 
 Things to come, in no particular order:
 
-* full test suite, to make it easier for collaborators to contribute
-* conditionals: conditional blocks and statements
 * comment handling and Filtration support: instead of discarding all comments during parsing, add support for passing them
   through and/or add specific support for filtration segments
