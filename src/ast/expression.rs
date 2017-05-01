@@ -1,4 +1,4 @@
-use ast::{Node, TransformedNode, CompileErr, AstLocation};
+use ast::{Node, TransformedNode, AstLocation};
 use ast::var::VarReference;
 use scope::ScopeValue;
 use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
@@ -6,6 +6,7 @@ use ast::block_statements::ComparisonOperator;
 use std::io::Write;
 use std::fmt;
 use scope::InnerScopeValue;
+use errors::*;
 
 #[derive(Clone)]
 pub enum ExpressionValue {
@@ -37,7 +38,7 @@ impl fmt::Debug for ExpressionValue {
 
 impl Transform for ExpressionValue {
     fn transform(&self, ctx: TransformContext)
-                 -> Result<Option<TransformedNode>, CompileErr> {
+                 -> Result<Option<TransformedNode>> {
         match *self {
             ExpressionValue::Var(ref node) => node.transform(ctx),
             ExpressionValue::List(ref list) => {
@@ -87,7 +88,7 @@ impl fmt::Debug for ExpressionNode {
 
 impl ExpressionNode {
     fn transform_op(&self, ctx: TransformContext, a: &Node, op: &ExpressionOperation, b: &Node)
-                    -> Result<Option<TransformedNode>, CompileErr> {
+                    -> Result<Option<TransformedNode>> {
         // transform each operand
         let transformed_operands = (
             a.transform(ctx.clone())?,
@@ -96,8 +97,8 @@ impl ExpressionNode {
 
         match transformed_operands {
             // abort if one of the nodes returned nothing
-            (None, _) => return Err(CompileErr::MissingValue(format!("{:?}", a), a.location())),
-            (_, None) => return Err(CompileErr::MissingValue(format!("{:?}", b), b.location())),
+            (None, _) => return Err(ErrorKind::MissingValue(format!("{:?}", a), a.location()).into()),
+            (_, None) => return Err(ErrorKind::MissingValue(format!("{:?}", b), b.location()).into()),
             (Some(a_trans), Some(b_trans)) => {
                 // get return values from transformed nodes
                 let a_val = a_trans.return_value();
@@ -123,7 +124,7 @@ impl ExpressionNode {
 
 impl Transform for ExpressionNode {
     fn transform(&self, ctx: TransformContext)
-                 -> Result<Option<TransformedNode>, CompileErr> {
+                 -> Result<Option<TransformedNode>> {
         match *self {
             ExpressionNode::Val(ref value, _) => value.transform(ctx),
             ExpressionNode::Op(ref a, ref op, ref b) => self.transform_op(ctx, a, op, b)
@@ -177,7 +178,7 @@ impl TransformResult for String {
     }
 
     #[allow(unused_variables)]
-    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
+    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
         let quotes_needed = self.contains(" ");
 
         if quotes_needed { buf.write(b"\"")?; };

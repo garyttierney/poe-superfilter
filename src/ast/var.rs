@@ -1,6 +1,7 @@
-use ast::{TransformedNode, CompileErr, Node, AstLocation};
+use ast::{TransformedNode, Node, AstLocation};
 use ast::transform::{Transform, TransformContext, TransformResult};
 use std::fmt;
+use errors::*;
 
 /// AST Structure that represents a reference to a variable
 #[derive(Clone)]
@@ -18,13 +19,13 @@ impl fmt::Debug for VarReference {
 impl Transform for VarReference {
     #[allow(unused_variables)]
     fn transform(&self, ctx: TransformContext)
-                 -> Result<Option<TransformedNode>, CompileErr> {
+                 -> Result<Option<TransformedNode>> {
         // try to resolve variable reference
         match ctx.ref_scope().var(&self.identifier) {
             Some(val) => Ok(Some(
                 TransformedNode::Value(val)
             )),
-            None => Err(CompileErr::MissingVarRef(format!("{:?}", self), self.location()))
+            None => Err(ErrorKind::MissingVarRef(format!("{:?}", self), self.location()).into())
         }
     }
 
@@ -43,7 +44,7 @@ pub struct VarDefinition {
 
 impl Transform for VarDefinition {
     fn transform(&self, ctx: TransformContext)
-                 -> Result<Option<TransformedNode>, CompileErr> {
+                 -> Result<Option<TransformedNode>> {
         if let Some(transformed_value) = self.values.transform(ctx.clone())? {
             // export variable to parent scope
             ctx.mut_scope()

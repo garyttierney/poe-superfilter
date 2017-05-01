@@ -1,6 +1,7 @@
-use ast::{CompileErr, TransformedNode, AstLocation};
+use ast::{TransformedNode, AstLocation};
 use ast::transform::{Transform, TransformContext};
 use ast::Node;
+use errors::*;
 
 #[derive(Debug, Clone)]
 pub struct Color {
@@ -22,7 +23,7 @@ pub struct PlainColor {
 impl Transform for Color {
     #[allow(unused_variables)]
     fn transform(&self, ctx: TransformContext)
-                 -> Result<Option<TransformedNode>, CompileErr> {
+                 -> Result<Option<TransformedNode>> {
         unimplemented!();
     }
     fn location(&self) -> AstLocation {

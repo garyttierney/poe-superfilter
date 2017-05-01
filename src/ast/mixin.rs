@@ -1,9 +1,10 @@
-use ast::{Node, TransformedNode, CompileErr, AstLocation};
+use ast::{Node, TransformedNode, AstLocation};
 use ast::transform::{Transform, TransformContext, TransformResult};
 use scope::{ScopeData, ScopeValue};
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::fmt;
+use errors::*;
 
 /// Name and parameter specs for a mixin
 #[derive(Debug, Clone)]
@@ -23,7 +24,7 @@ pub struct PreparedMixin {
 
 impl Transform for Mixin {
     fn transform(&self, ctx: TransformContext)
-                 -> Result<Option<TransformedNode>, CompileErr> {
+                 -> Result<Option<TransformedNode>> {
         let mut t_params = Vec::new();
         for param in &self.parameters {
             if let Some(ref default_value) = param.default {
@@ -33,7 +34,7 @@ impl Transform for Mixin {
                         default: Some(t_value.clone()),
                     })
                 } else {
-                    return Err(CompileErr::MissingValue(format!("{:?}", self), self.location.clone()))
+                    return Err(ErrorKind::MissingValue(format!("{:?}", self), self.location.clone()).into())
                 }
             } else {
                 t_params.push(PlainParam {
@@ -96,15 +97,15 @@ pub type ResolvedMixin<'a> = Vec<TransformedNode>;
 
 impl Transform for MixinCall {
     fn transform(&self, ctx: TransformContext)
-                 -> Result<Option<TransformedNode>, CompileErr> {
+                 -> Result<Option<TransformedNode>> {
         if let Some(mixin) = ctx.ref_scope().mixin(&self.name) {
             // catch parameter count mismatch
             if mixin.parameters.len() != self.parameters.len() {
-                return Err(CompileErr::WrongParameterCount(format!("{:?}", self),
+                return Err(ErrorKind::WrongParameterCount(format!("{:?}", self),
                                                            mixin.parameters.len(),
                                                            self.parameters.len(),
                                                            self.location.clone()
-                ));
+                ).into());
             }
 
             // transform parameters in this call
@@ -113,7 +114,9 @@ impl Transform for MixinCall {
             for param in &self.parameters {
                 match param.transform(ctx.clone())? {
                     Some(transformed_param) => t_params.push(transformed_param.return_value()),
-                    None => return Err(CompileErr::MissingValue(format!("{:?}", param), param.location().clone()))
+                    None => return Err(
+                        ErrorKind::MissingValue(format!("{:?}", param), param.location().clone()).into()
+                    )
                 }
             }
 
@@ -139,7 +142,9 @@ impl Transform for MixinCall {
                 TransformedNode::ExpandedNodes(t_statements)
             ))
         } else {
-            Err(CompileErr::MissingVarRef(self.name.clone(), self.location.clone()))
+            Err(
+                ErrorKind::MissingVarRef(self.name.clone(), self.location.clone()).into()
+            )
         }
     }
 

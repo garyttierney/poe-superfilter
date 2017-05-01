@@ -1,7 +1,7 @@
 
 use ast;
 
-use std::rc::Rc;
+use std::sync::Arc;
 use std::path::PathBuf;
 use ast::block_statements as stm;
 use ast::{Node, AstLocation, Filter};
@@ -13,7 +13,7 @@ use ast::var::{VarDefinition,VarReference};
 use ast::expression::{ExpressionValue, ExpressionNode, ExpressionOperation};
 
 #[LALR]
-grammar<'a>(file: &'a Rc<PathBuf>);
+grammar<'a>(file: &'a Arc<PathBuf>);
 
 extern {
     type Location = TokenLocation;

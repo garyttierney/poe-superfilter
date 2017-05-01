@@ -29,7 +29,7 @@ fn impl_match_variants<F>(ast: &DeriveInput, gen_code: F) -> quote::Tokens
 }
 
 /// Macro for custom derive of the Transform Trait
-#[proc_macro_derive(InnerTransform)]
+#[proc_macro_derive(Transform)]
 pub fn inner_transform(input: TokenStream) -> TokenStream {
     // Construct a string representation of the type definition
     let s = input.to_string();
@@ -57,7 +57,7 @@ fn impl_transform(ast: &DeriveInput) -> quote::Tokens {
     quote! {
         impl Transform for #name {
             fn transform(&self, ctx: TransformContext)
-                -> Result<Option<TransformedNode>, CompileErr> {
+                -> Result<Option<TransformedNode>> {
                 match *self {
                     #transform_variants
                 }
@@ -73,7 +73,7 @@ fn impl_transform(ast: &DeriveInput) -> quote::Tokens {
 }
 
 /// Macro for custom derive of the TransformResult Trait
-#[proc_macro_derive(InnerTransformResult)]
+#[proc_macro_derive(TransformResult)]
 pub fn inner_transform_result(input: TokenStream) -> TokenStream {
     // Construct a string representation of the type definition
     let s = input.to_string();
@@ -107,7 +107,7 @@ fn impl_transform_result(ast: &DeriveInput) -> quote::Tokens {
             }
 
             /// Renders the output for this node into a writable stream.
-            fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
+            fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
                 match *self {
                     #render_variants
                 }
@@ -158,37 +158,37 @@ fn impl_inner_scope_value(ast: &DeriveInput) -> quote::Tokens {
 
     quote! {
         impl InnerScopeValue for #name {
-            fn try_add(self, other: Self) -> CompileResult<Self> {
+            fn try_add(self, other: Self) -> Result<Self> {
                 match self {
                     #add_variants
                 }
             }
 
-            fn try_sub(self, other: Self) -> CompileResult<Self> {
+            fn try_sub(self, other: Self) -> Result<Self> {
                 match self {
                     #sub_variants
                 }
             }
 
-            fn try_mul(self, other: Self) -> CompileResult<Self> {
+            fn try_mul(self, other: Self) -> Result<Self> {
                 match self {
                     #mul_variants
                 }
             }
 
-            fn try_div(self, other: Self) -> CompileResult<Self> {
+            fn try_div(self, other: Self) -> Result<Self> {
                 match self {
                     #div_variants
                 }
             }
 
-            fn try_cmp(&self, other: Self) -> CompileResult<Ordering> {
+            fn try_cmp(&self, other: Self) -> Result<Ordering> {
                 match *self {
                     #cmp_variants
                 }
             }
 
-            fn try_eq(&self, other: Self) -> CompileResult<bool> {
+            fn try_eq(&self, other: Self) -> Result<bool> {
                 match *self {
                     #eq_variants
                 }

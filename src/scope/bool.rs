@@ -5,7 +5,7 @@ impl TransformResult for bool {
         ScopeValue::Bool(*self)
     }
 
-    fn render(&self, _: RenderContext, _: &mut Write) -> CompileResult<()> {
+    fn render(&self, _: RenderContext, _: &mut Write) -> Result<()> {
         unimplemented!()
     }
 }
@@ -15,12 +15,12 @@ impl InnerScopeValue for bool {
 }
 
 impl TryFrom<ScopeValue> for bool {
-    type Error = CompileErr;
+    type Error = Error;
 
-    fn try_from(value: ScopeValue) -> Result<Self, Self::Error> {
+    fn try_from(value: ScopeValue) -> Result<Self> {
         match value {
             ScopeValue::Bool(v) => Ok(v),
-            _ => Err(CompileErr::IncompatibleTypes(format!("{:?}", value), "Bool"))
+            _ => Err(ErrorKind::IncompatibleTypes(format!("{:?}", value), "Bool").into())
         }
     }
 }

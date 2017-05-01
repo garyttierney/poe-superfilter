@@ -9,7 +9,7 @@ impl TransformResult for Vec<ScopeValue> {
         ScopeValue::List(self.clone())
     }
 
-    fn render(&self, ctx: RenderContext, buf: &mut Write) -> CompileResult<()> {
+    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
         for i in 0..(self.len() - 1) {
             self[i].render(ctx, buf)?;
             buf.write(b" ")?;
@@ -19,12 +19,12 @@ impl TransformResult for Vec<ScopeValue> {
 }
 
 impl TryFrom<ScopeValue> for Vec<ScopeValue> {
-    type Error = CompileErr;
+    type Error = Error;
 
-    fn try_from(value: ScopeValue) -> Result<Self, Self::Error> {
+    fn try_from(value: ScopeValue) -> Result<Self> {
         match value {
             ScopeValue::List(list) => Ok(list),
-            _ => Err(CompileErr::IncompatibleTypes(format!("{:?}", value), "List"))
+            _ => Err(ErrorKind::IncompatibleTypes(format!("{:?}", value), "List").into())
         }
     }
 }

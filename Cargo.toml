@@ -12,15 +12,15 @@ exclude = [
 ]
 
 [dependencies]
-lalrpop-util = "^0.12"
+lalrpop-util = "^0.13"
 regex = "^0.2"
 lazy_static = "^0.2"
-quick-error= "^1.1"
 clap = "^2.23"
-poe-superfilter-support = { path = "support", version = "0.1.1" }
+poe-superfilter-support = { path = "support", version = "0.1.2" }
+error-chain = "^0.10"
 
 [build-dependencies]
-lalrpop = "^0.12"
+lalrpop = "^0.13"
 
 [lib]
 name = "superfilter"

@@ -17,20 +17,18 @@ use ast::import::ImportStatement;
 use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
 use scope::{ScopeData, ScopeValue};
 use ast::expression::{ExpressionNode, ExpressionValue};
+use errors::*;
 
 use std::fmt::Debug;
 use std::rc::Rc;
+use std::sync::Arc;
 use std::cell::RefCell;
 use std::io::Write;
-use std::io::Error as IoError;
-use std::convert::From;
 
 use std::fmt;
 use std::fmt::Formatter;
 use std::fmt::Error as FmtError;
 
-use lalrpop_util::ParseError;
-use tok::Tok;
 use tok::Location as TokenLocation;
 use std::path::PathBuf;
 
@@ -41,7 +39,7 @@ pub struct Filter {
 }
 
 impl Debug for Filter {
-    fn fmt(&self, f: &mut Formatter) -> Result<(), FmtError> {
+    fn fmt(&self, f: &mut Formatter) -> ::std::result::Result<(), FmtError> {
         self.nodes.fmt(f)?;
         Ok(())
     }
@@ -51,7 +49,7 @@ impl Filter {
     pub fn transform_begin(&self,
                            root_scope: Rc<RefCell<ScopeData>>,
                            base_path: Rc<PathBuf>)
-                           -> Result<Option<TransformedNode>, CompileErr> {
+                           -> Result<Option<TransformedNode>> {
         let root_ctx = TransformContext {
             scope: root_scope,
             path: base_path
@@ -63,7 +61,7 @@ impl Filter {
 
 impl Transform for Filter {
     fn transform(&self, ctx: TransformContext)
-                 -> Result<Option<TransformedNode>, CompileErr> {
+                 -> Result<Option<TransformedNode>> {
         let mut transformed_nodes: Vec<TransformedNode> = Vec::with_capacity(self.nodes.len());
 
         for node in &self.nodes {
@@ -84,7 +82,7 @@ impl Transform for Filter {
 /// Data structure to holds all node types that can occur in the acstract syntax tree.
 /// The InnerTransform derivation implements the Deref trait for this enum so the transform
 /// method can be called directly on the node and the inner value will receive the method call.
-#[derive(Debug, InnerTransform, Clone)]
+#[derive(Debug, Transform, Clone)]
 pub enum Node {
     Filter(Filter),
     Import(ImportStatement),
@@ -105,7 +103,7 @@ pub enum Node {
 /// Holds fully transformed nodes that can be rendered.
 /// Calls to methods of the TransformResult trait on the inner values can be performed with no
 /// explicit conversion because this struct implements Deref into &TransformResult.
-#[derive(Debug, Clone, PartialEq, InnerTransformResult)]
+#[derive(Debug, Clone, PartialEq, TransformResult)]
 pub enum TransformedNode {
     Root(Vec<TransformedNode>),
     Block(block::PlainBlock),
@@ -117,7 +115,7 @@ pub enum TransformedNode {
 
 /// Implements rendering for lists of nodes by rendering each item in the list
 impl TransformResult for Vec<TransformedNode> {
-    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
+    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
         for node in self {
             node.render(ctx, buf)?;
         }
@@ -129,11 +127,11 @@ impl TransformResult for Vec<TransformedNode> {
 pub struct AstLocation {
     pub begin: TokenLocation,
     pub end: TokenLocation,
-    pub file: Rc<PathBuf>
+    pub file: Arc<PathBuf>
 }
 
 impl AstLocation {
-    pub fn new(begin: TokenLocation, end: TokenLocation, file: Rc<PathBuf>)
+    pub fn new(begin: TokenLocation, end: TokenLocation, file: Arc<PathBuf>)
                -> AstLocation {
         AstLocation { begin, end, file: file.clone() }
     }
@@ -142,66 +140,5 @@ impl AstLocation {
 impl fmt::Display for AstLocation {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         write!(f, "{:?}: {}:{} - {}:{}", self.file, self.begin.line, self.begin.pos, self.end.line, self.end.pos)
-    }
-}
-
-pub type CompileResult<T> = Result<T, CompileErr>;
-
-quick_error! {
-    #[derive(Debug)]
-    pub enum CompileErr {
-        Unknown {
-            description("Unknown error")
-        }
-        TypeMismatch(expected: &'static str, actual: &'static str, identifier: String, location: AstLocation) {
-            description("Type mismatch")
-            display("Type mismatch: Expected {} to be {}, but got {} at {}", identifier, expected, actual, location)
-        }
-        MissingVarRef(identifier: String, location: AstLocation) {
-            description("Missing variable reference")
-            display("Unresolved variable reference: {} at {}", identifier, location)
-        }
-        MissingValue(node: String, location: AstLocation) {
-            description("Expected expression to return value, none found")
-            display("Expected Expression to return a value: {:?} at {}", node, location)
-        }
-        WrongParameterCount(node: String, expected: usize, actual: usize, location: AstLocation) {
-            description("Wrong mixin call parameter count")
-            display("Wrong mixin call parameter count in {}: expected {}, got {} at {}", node, expected, actual, location)
-        }
-        IncompatibleTypes(value: String, type_name: &'static str) {
-            description("Cannot convert value to a given type")
-            display("Cannot convert {} to {}.", value, type_name)
-        }
-        UnsupportedOperation(value: String, op: &'static str) {
-            description("Operation is unsupported by this type")
-            display("{} operation cannot be performed with {} because it is not supported.", op, value)
-        }
-        ImportError(node: String, location: AstLocation) {
-            description("Invalid import path")
-            display("Invalid import expression: {:?} at {}", node, location)
-        }
-        Io(inner: IoError) {
-            description("IO Error")
-            display("IO Error: {}", inner)
-            cause(inner)
-        }
-        ParseError(inner: ParseError<TokenLocation, Tok, char>) {
-            description("Parse Error")
-            display("Parse Error: {}", inner)
-            cause(inner)
-        }
-    }
-}
-
-impl From<IoError> for CompileErr {
-    fn from(io_err: IoError) -> CompileErr {
-        CompileErr::Io(io_err)
-    }
-}
-
-impl From<ParseError<TokenLocation, Tok, char>> for CompileErr {
-    fn from(err: ParseError<TokenLocation, Tok, char>) -> CompileErr {
-        CompileErr::ParseError(err)
     }
 }

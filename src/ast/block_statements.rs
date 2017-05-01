@@ -1,8 +1,9 @@
-use ast::{TransformedNode, CompileErr, Node, AstLocation};
+use ast::{TransformedNode, Node, AstLocation};
 use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
 use scope::ScopeValue;
 use std::io::Write;
 use std::cmp::PartialEq;
+use errors::*;
 
 /// AST structure for a value set or other instruction statement
 #[derive(Debug, Clone)]
@@ -26,11 +27,13 @@ impl PartialEq for PlainSetValueStatement {
 
 impl<'a> Transform for SetValueStatement {
     fn transform(&self, ctx: TransformContext)
-                 -> Result<Option<TransformedNode>, CompileErr> {
+                 -> Result<Option<TransformedNode>> {
         let transformed_values = self.values.transform(ctx)?;
 
         if transformed_values.is_none() {
-            return Err(CompileErr::MissingValue(format!("{:?}", self.values), self.values.location().clone()));
+            return Err(
+                ErrorKind::MissingValue(format!("{:?}", self.values), self.values.location().clone()).into()
+            );
         }
 
         Ok(Some(TransformedNode::SetValueStmt(
@@ -47,7 +50,7 @@ impl<'a> Transform for SetValueStatement {
 }
 
 impl TransformResult for PlainSetValueStatement {
-    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
+    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
         ctx.write_indent(buf)?;
         buf.write(self.name.as_ref())?;
         buf.write(b" ")?;
@@ -79,7 +82,7 @@ impl PartialEq for PlainConditionStatement {
 
 impl Transform for ConditionStatement {
     fn transform(&self, ctx: TransformContext)
-                 -> Result<Option<TransformedNode>, CompileErr> {
+                 -> Result<Option<TransformedNode>> {
         if let Some(t_value) = self.condition.value.transform(ctx.clone())? {
             return Ok(Some(TransformedNode::ConditionStmt(
                 PlainConditionStatement {
@@ -88,7 +91,7 @@ impl Transform for ConditionStatement {
                 }
             )));
         }
-        return Err(CompileErr::Unknown);
+        return Err("condition statement with no condition".into());
     }
 
     fn location(&self) -> AstLocation {
@@ -97,7 +100,7 @@ impl Transform for ConditionStatement {
 }
 
 impl TransformResult for PlainConditionStatement {
-    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
+    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
         ctx.write_indent(buf)?;
         buf.write(self.name.as_ref())?;
         buf.write(b" ")?;
@@ -135,7 +138,7 @@ pub enum ComparisonOperator {
 
 impl TransformResult for ComparisonOperator {
     #[allow(unused_variables)]
-    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
+    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
         buf.write(match *self {
             ComparisonOperator::Eql => "=",
             ComparisonOperator::Gt => ">",

@@ -1,20 +1,20 @@
 use scope::{ScopeData, ScopeValue, NO_VALUE};
 use std::rc::Rc;
-use std::cell::Ref;
-use std::cell::RefMut;
-use std::cell::RefCell;
+use std::cell::{Ref, RefMut, RefCell};
 use std::io::Write;
-use ast::{CompileErr, TransformedNode, AstLocation};
+use ast::{TransformedNode, AstLocation};
 use std::path::PathBuf;
+use std::fmt::Debug;
+use errors::*;
 
 /// This trait needs to be implemented for any abstract syntax tree structure, it contains the
 /// functions to transform the structure's representation into the final structure before it gets
 /// rendered into plain GGG syntax tree output
-pub trait Transform {
+pub trait Transform: Debug {
     /// Perform any transformations that need to be done before rendering this structure into
     /// plain GGG loot filter syntax
     fn transform(&self, ctx: TransformContext)
-                 -> Result<Option<TransformedNode>, CompileErr>;
+                 -> Result<Option<TransformedNode>>;
 
     fn location(&self) -> AstLocation;
 }
@@ -46,7 +46,7 @@ pub trait TransformResult {
     }
 
     /// Renders the output for this node into a writable stream.
-    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr>;
+    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()>;
 }
 
 /// Holds configuration values for the render output

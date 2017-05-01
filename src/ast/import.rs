@@ -1,10 +1,12 @@
-use ast::{AstLocation, TransformedNode, Node, CompileErr};
+use ast::{AstLocation, TransformedNode, Node};
 use ast::transform::{Transform, TransformContext};
 use filter;
 use tok;
 use std::io::Read;
 use std::fs;
 use std::rc::Rc;
+use std::sync::Arc;
+use errors::*;
 
 #[derive(Debug, Clone)]
 pub struct ImportStatement {
@@ -13,11 +15,11 @@ pub struct ImportStatement {
 }
 
 impl Transform for ImportStatement {
-    fn transform(&self, ctx: TransformContext) -> Result<Option<TransformedNode>, CompileErr> {
+    fn transform(&self, ctx: TransformContext) -> Result<Option<TransformedNode>> {
         let resolved_file_path = ctx.path.clone().join(self.path.clone());
         let new_base_path = resolved_file_path
             .parent()
-            .ok_or(CompileErr::ImportError(format!("{:?}", self), self.location()))?
+            .ok_or(Error::from(ErrorKind::ImportError(format!("{:?}", self), self.location())))?
             .to_owned();
 
         let mut file = fs::File::open(resolved_file_path.clone())?;
@@ -26,7 +28,7 @@ impl Transform for ImportStatement {
 
         {
             let tokens = Box::new(tok::tokenize(&contents));
-            match filter::parse_Filter(&Rc::new(resolved_file_path), tokens.into_iter()) {
+            match filter::parse_Filter(&Arc::new(resolved_file_path), tokens.into_iter()) {
                 Ok(Node::Filter(ref filter)) => {
                     let transform_result = filter.transform_begin(ctx.scope.clone(),
                                                                   Rc::new(new_base_path));
@@ -41,7 +43,8 @@ impl Transform for ImportStatement {
                         return Ok(None);
                     }
                 }
-                _ => return Err(CompileErr::Unknown)
+                Err(e) => Err(e).chain_err(|| "Imported filter failed to parse"),
+                _ => bail!("Imported file returned an unexpected node")
             }
         }
     }

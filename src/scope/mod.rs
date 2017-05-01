@@ -4,10 +4,10 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use ast::transform::{TransformResult, RenderContext};
 use std::io::Write;
-use ast::{CompileErr, CompileResult};
 use std::cmp::{Ordering, PartialEq};
 use std::convert::{TryFrom, TryInto};
 use std::fmt::Debug;
+use errors::*;
 
 mod int;
 mod float;
@@ -84,47 +84,47 @@ impl ScopeData {
 }
 
 pub trait InnerScopeValue: TransformResult + Debug + Sized {
-    fn try_add(self, _: Self) -> CompileResult<ScopeValue> {
-        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), "+"))
+    fn try_add(self, _: Self) -> Result<ScopeValue> {
+        Err(ErrorKind::UnsupportedOperation(format!("{:?}", self), "+").into())
     }
 
-    fn try_sub(self, _: Self) -> CompileResult<ScopeValue> {
-        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), "-"))
+    fn try_sub(self, _: Self) -> Result<ScopeValue> {
+        Err(ErrorKind::UnsupportedOperation(format!("{:?}", self), "-").into())
     }
 
-    fn try_mul(self, _: Self) -> CompileResult<ScopeValue> {
-        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), "*"))
+    fn try_mul(self, _: Self) -> Result<ScopeValue> {
+        Err(ErrorKind::UnsupportedOperation(format!("{:?}", self), "*").into())
     }
 
-    fn try_div(self, _: Self) -> CompileResult<ScopeValue> {
-        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), "/"))
+    fn try_div(self, _: Self) -> Result<ScopeValue> {
+        Err(ErrorKind::UnsupportedOperation(format!("{:?}", self), "/").into())
     }
 
-    fn try_cmp(&self, _: Self) -> CompileResult<Ordering> {
-        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), "="))
+    fn try_cmp(&self, _: Self) -> Result<Ordering> {
+        Err(ErrorKind::UnsupportedOperation(format!("{:?}", self), "=").into())
     }
 
-    fn try_eq(&self, _: Self) -> CompileResult<bool>
+    fn try_eq(&self, _: Self) -> Result<bool>
         where Self: Sized {
-        Err(CompileErr::UnsupportedOperation(format!("{:?}", self), "<=>"))
+        Err(ErrorKind::UnsupportedOperation(format!("{:?}", self), "<=>").into())
     }
 
-    fn try_gt(&self, other: Self) -> CompileResult<bool> {
+    fn try_gt(&self, other: Self) -> Result<bool> {
         let cmp = self.try_cmp(other)?;
         Ok(cmp == Ordering::Greater)
     }
 
-    fn try_gte(&self, other: Self) -> CompileResult<bool> {
+    fn try_gte(&self, other: Self) -> Result<bool> {
         let cmp = self.try_cmp(other)?;
         Ok(cmp == Ordering::Greater || cmp == Ordering::Equal)
     }
 
-    fn try_lt(&self, other: Self) -> CompileResult<bool> {
+    fn try_lt(&self, other: Self) -> Result<bool> {
         let cmp = self.try_cmp(other)?;
         Ok(cmp == Ordering::Less)
     }
 
-    fn try_lte(&self, other: Self) -> CompileResult<bool> {
+    fn try_lte(&self, other: Self) -> Result<bool> {
         let cmp = self.try_cmp(other)?;
         Ok(cmp == Ordering::Less || cmp == Ordering::Equal)
     }
@@ -134,7 +134,7 @@ pub trait InnerScopeValue: TransformResult + Debug + Sized {
 
 
 /// Holds the value of a variable that can be held in a ScopeData instance
-#[derive(Clone, Debug, InnerScopeValue, InnerTransformResult)]
+#[derive(Clone, Debug, InnerScopeValue, TransformResult)]
 pub enum ScopeValue {
     Int(i64),
     Decimal(f64),

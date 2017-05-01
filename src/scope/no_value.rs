@@ -6,10 +6,10 @@ pub struct NoValue {}
 pub static NO_VALUE: NoValue = NoValue {};
 
 impl InnerScopeValue for &'static NoValue {
-    fn try_cmp(&self, _: Self) -> CompileResult<Ordering> {
+    fn try_cmp(&self, _: Self) -> Result<Ordering> {
         Ok(Ordering::Equal)
     }
-    fn try_eq(&self, _: Self) -> CompileResult<bool> {
+    fn try_eq(&self, _: Self) -> Result<bool> {
         Ok(true)
     }
 
@@ -17,18 +17,18 @@ impl InnerScopeValue for &'static NoValue {
 }
 
 impl TransformResult for &'static NoValue {
-    fn render(&self, _: RenderContext, _: &mut Write) -> CompileResult<()> {
+    fn render(&self, _: RenderContext, _: &mut Write) -> Result<()> {
         Ok(())
     }
 }
 
 impl TryFrom<ScopeValue> for &'static NoValue {
-    type Error = CompileErr;
+    type Error = Error;
 
-    fn try_from(value: ScopeValue) -> Result<Self, Self::Error> {
+    fn try_from(value: ScopeValue) -> Result<Self> {
         match value {
             ScopeValue::None(v) => Ok(v),
-            _ => Err(CompileErr::IncompatibleTypes(format!("{:?}", value), "None"))
+            _ => Err(ErrorKind::IncompatibleTypes(format!("{:?}", value), "None").into())
         }
     }
 }

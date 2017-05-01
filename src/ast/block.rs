@@ -1,9 +1,10 @@
-use ast::{Node, TransformedNode, CompileErr, AstLocation};
+use ast::{Node, TransformedNode, AstLocation};
 use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
 use scope::{ScopeData, ScopeValue};
 use std::rc::Rc;
 use std::cell::RefCell;
 use std::io::Write;
+use errors::*;
 
 /// Top level statements, can be Blocks of instructions
 /// like Show/Hide/Mixin or single top-level statements,
@@ -47,7 +48,7 @@ impl NodeList for Vec<TransformedNode> {
 
 impl Transform for Block {
     fn transform(&self, ctx: TransformContext)
-                 -> Result<Option<TransformedNode>, CompileErr> {
+                 -> Result<Option<TransformedNode>> {
         if let Some(ref condition) = self.condition {
             let condition_result = condition
                 .transform(ctx.clone())?
@@ -55,6 +56,7 @@ impl Transform for Block {
 
             if let Some(ScopeValue::Bool(b)) = condition_result {
                 if !b {
+                    // Block condition returned false, return nothing
                     return Ok(None)
                 }
             }
@@ -99,7 +101,7 @@ impl Transform for Block {
 }
 
 impl TransformResult for PlainBlock {
-    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<(), CompileErr> {
+    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
         let nodes = match *self {
             PlainBlock::Show(ref nodes) => {
                 buf.write(b"Show")?;
