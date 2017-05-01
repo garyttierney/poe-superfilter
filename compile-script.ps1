@@ -1,4 +1,4 @@
-﻿$requiredVersion = "v0.1"
+﻿$requiredVersion = "v0.2"
 $inputFile = "examples\full_filter.sf"
 $outputFile = "examples\full_filter.filter"
 
@@ -20,7 +20,7 @@ if ($requiredVersion -gt $availableVersion) {
     Write-Host "Please visit https://github.com/skaufhold/poe-superfilter/releases and download a more current release."
 } else {
     $sfBin = $sfBaseDir + "\" + $availableVersion + "\superfilter.exe"
-    & $sfBin $inputFile --output="$outputFile" --pretty
+    & $sfBin $inputFile --output "$outputFile" --pretty
 }
 
 Write-Host "Press any key to exit"
