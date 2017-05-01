@@ -143,16 +143,27 @@ Show if $no
 # Command Line Usage
 
 ```
-Usage:
-  superfilter <path> [--output=<file>] [-p]
-  superfilter (-h | --help)
-  superfilter --version
+PoE Superfilter Compiler 0.2.0
+Stefan Kaufhold <cere@fastmail.fm>
 
-Options:
-  -h --help        Show this screen.
-  --version, -v    Show version.
-  --pretty, -p     Include indentation and other formatting in the output
-  --output=<file>  Output file. If this option is omitted, the output will be printed to the console.
+USAGE:
+    superfilter [FLAGS] [OPTIONS] <PATH>
+
+FLAGS:
+    -h, --help       Prints help information
+    -p, --pretty     Include indentation and other formatting in the output
+    -V, --version    Prints version information
+
+OPTIONS:
+    -l, --line-endings <LINE_ENDING>
+            Type of line ending used (LF OR CRLF) defaults to the platform line
+            ending [values: lf, crlf]
+    -o, --output <FILE>
+            Output file. If this option is omitted, the output will be printed
+            to the console.
+
+ARGS:
+    <PATH>    Path of the input file
 ```
 
 # Notes for script creators
