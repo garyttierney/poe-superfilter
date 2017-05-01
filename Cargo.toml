@@ -1,7 +1,7 @@
 [package]
 name = "poe-superfilter"
 description = "Extended syntax compiler for Path of Exile loot filters"
-version = "0.1.2"
+version = "0.2.0"
 authors = ["Stefan Kaufhold <cere@fastmail.fm>"]
 license = "MIT"
 build = "build.rs" # LALRPOP preprocessing
@@ -16,7 +16,7 @@ lalrpop-util = "^0.13"
 regex = "^0.2"
 lazy_static = "^0.2"
 clap = "^2.23"
-poe-superfilter-support = { path = "support", version = "0.1.2" }
+poe-superfilter-support = { path = "support", version = "0.2.0" }
 error-chain = "^0.10"
 
 [build-dependencies]
