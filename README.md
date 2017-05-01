@@ -143,9 +143,6 @@ Show if $no
 # Command Line Usage
 
 ```
-PoE Superfilter Compiler 0.2.0
-Stefan Kaufhold <cere@fastmail.fm>
-
 USAGE:
     superfilter [FLAGS] [OPTIONS] <PATH>
 
