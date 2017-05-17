@@ -7,7 +7,7 @@ use std::io::Write;
 use std::cmp::{Ordering, PartialEq};
 use std::convert::{TryFrom, TryInto};
 use std::fmt::Debug;
-use errors::*;
+use errors::{Result, ErrorKind, Error};
 
 mod int;
 mod float;

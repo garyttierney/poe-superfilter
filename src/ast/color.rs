@@ -1,7 +1,7 @@
 use ast::{TransformedNode, AstLocation};
 use ast::transform::{Transform, TransformContext};
 use ast::Node;
-use errors::*;
+use errors::Result;
 
 #[derive(Debug, Clone)]
 pub struct Color {

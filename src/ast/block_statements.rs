@@ -3,7 +3,7 @@ use ast::transform::{Transform, TransformResult, TransformContext, RenderContext
 use scope::ScopeValue;
 use std::io::Write;
 use std::cmp::PartialEq;
-use errors::*;
+use errors::{Result, ErrorKind};
 
 /// AST structure for a value set or other instruction statement
 #[derive(Debug, Clone)]

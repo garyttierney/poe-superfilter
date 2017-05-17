@@ -4,7 +4,7 @@ use scope::{ScopeData, ScopeValue};
 use std::rc::Rc;
 use std::cell::RefCell;
 use std::io::Write;
-use errors::*;
+use errors::Result;
 
 /// Top level statements, can be Blocks of instructions
 /// like Show/Hide/Mixin or single top-level statements,

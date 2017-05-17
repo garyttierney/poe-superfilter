@@ -17,7 +17,7 @@ use ast::import::ImportStatement;
 use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
 use scope::{ScopeData, ScopeValue};
 use ast::expression::{ExpressionNode, ExpressionValue};
-use errors::*;
+use errors::Result;
 
 use std::fmt::Debug;
 use std::rc::Rc;

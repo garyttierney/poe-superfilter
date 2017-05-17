@@ -4,7 +4,7 @@ use scope::{ScopeData, ScopeValue};
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::fmt;
-use errors::*;
+use errors::{Result, ErrorKind};
 
 /// Name and parameter specs for a mixin
 #[derive(Debug, Clone)]

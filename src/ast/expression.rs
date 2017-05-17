@@ -6,7 +6,7 @@ use ast::block_statements::ComparisonOperator;
 use std::io::Write;
 use std::fmt;
 use scope::InnerScopeValue;
-use errors::*;
+use errors::{Result, ErrorKind};
 
 #[derive(Clone)]
 pub enum ExpressionValue {

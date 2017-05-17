@@ -43,7 +43,7 @@ mod scope;
 #[allow(dead_code)]
 mod errors;
 
-use errors::*;
+use errors::{Result, ResultExt};
 
 #[cfg(windows)]
 pub const LINE_END: &'static [u8] = b"\r\n";

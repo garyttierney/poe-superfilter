@@ -5,7 +5,7 @@ use std::io::Write;
 use ast::{TransformedNode, AstLocation};
 use std::path::PathBuf;
 use std::fmt::Debug;
-use errors::*;
+use errors::Result;
 
 /// This trait needs to be implemented for any abstract syntax tree structure, it contains the
 /// functions to transform the structure's representation into the final structure before it gets

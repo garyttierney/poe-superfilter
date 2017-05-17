@@ -1,7 +1,7 @@
 use ast::{TransformedNode, Node, AstLocation};
 use ast::transform::{Transform, TransformContext, TransformResult};
 use std::fmt;
-use errors::*;
+use errors::{Result, ErrorKind};
 
 /// AST Structure that represents a reference to a variable
 #[derive(Clone)]

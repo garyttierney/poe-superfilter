@@ -6,7 +6,7 @@ use std::io::Read;
 use std::fs;
 use std::rc::Rc;
 use std::sync::Arc;
-use errors::*;
+use errors::{Result, ResultExt, ErrorKind, Error};
 
 #[derive(Debug, Clone)]
 pub struct ImportStatement {
