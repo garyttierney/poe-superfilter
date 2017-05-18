@@ -1,4 +1,4 @@
-use ast::{Node, TransformedNode, AstLocation};
+use ast::{TransformedNode, AstLocation};
 use ast::var::VarReference;
 use scope::ScopeValue;
 use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
@@ -15,7 +15,7 @@ pub enum ExpressionValue {
     Decimal(f64),
     Bool(bool),
     Var(VarReference),
-    List(Vec<Node>)
+    List(Vec<ExpressionNode>)
 }
 
 impl fmt::Debug for ExpressionValue {
@@ -74,7 +74,7 @@ impl Transform for ExpressionValue {
 #[derive(Clone)]
 pub enum ExpressionNode {
     Val(ExpressionValue, AstLocation),
-    Op(Box<Node>, ExpressionOperation, Box<Node>)
+    Op(Box<ExpressionNode>, ExpressionOperation, Box<ExpressionNode>)
 }
 
 impl fmt::Debug for ExpressionNode {
@@ -87,7 +87,7 @@ impl fmt::Debug for ExpressionNode {
 }
 
 impl ExpressionNode {
-    fn transform_op(&self, ctx: TransformContext, a: &Node, op: &ExpressionOperation, b: &Node)
+    fn transform_op(&self, ctx: TransformContext, a: &ExpressionNode, op: &ExpressionOperation, b: &ExpressionNode)
                     -> Result<Option<TransformedNode>> {
         // transform each operand
         let transformed_operands = (

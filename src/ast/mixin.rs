@@ -1,5 +1,7 @@
-use ast::{Node, TransformedNode, AstLocation};
+use ast::{TransformedNode, AstLocation};
 use ast::transform::{Transform, TransformContext, TransformResult};
+use ast::block_statements::*;
+use ast::expression::*;
 use scope::{ScopeData, ScopeValue};
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -11,7 +13,7 @@ use errors::{Result, ErrorKind};
 pub struct Mixin {
     pub name: String,
     pub parameters: Vec<Param>,
-    pub statements: Vec<Node>,
+    pub statements: Vec<BlockStatement>,
     pub location: AstLocation
 }
 
@@ -19,7 +21,7 @@ pub struct Mixin {
 pub struct PreparedMixin {
     pub name: String,
     pub parameters: Vec<PlainParam>,
-    pub statements: Vec<Node>
+    pub statements: Vec<BlockStatement>
 }
 
 impl Transform for Mixin {
@@ -65,7 +67,7 @@ impl Transform for Mixin {
 #[derive(Debug, Clone)]
 pub struct Param {
     pub name: String,
-    pub default: Option<Node>
+    pub default: Option<ExpressionNode>
 }
 
 /// (Mixin) Parameter name and default values
@@ -79,7 +81,7 @@ pub struct PlainParam {
 #[derive(Clone)]
 pub struct MixinCall {
     pub name: String,
-    pub parameters: Vec<Node>,
+    pub parameters: Vec<ExpressionNode>,
     pub location: AstLocation
 }
 

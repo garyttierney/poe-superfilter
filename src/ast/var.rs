@@ -1,5 +1,6 @@
-use ast::{TransformedNode, Node, AstLocation};
+use ast::{TransformedNode, AstLocation};
 use ast::transform::{Transform, TransformContext, TransformResult};
+use ast::expression::*;
 use std::fmt;
 use errors::{Result, ErrorKind};
 
@@ -38,7 +39,7 @@ impl Transform for VarReference {
 #[derive(Debug, Clone)]
 pub struct VarDefinition {
     pub identifier: String,
-    pub values: Box<Node>,
+    pub values: Box<ExpressionNode>,
     pub location: AstLocation
 }
 

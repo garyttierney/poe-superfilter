@@ -13,10 +13,10 @@ pub mod expression;
 use ast::block_statements::*;
 use ast::mixin::*;
 use ast::var::*;
-use ast::import::ImportStatement;
-use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
-use scope::{ScopeData, ScopeValue};
-use ast::expression::{ExpressionNode, ExpressionValue};
+use ast::import::*;
+use ast::transform::*;
+use ast::block::*;
+use scope::*;
 use errors::Result;
 
 use std::fmt::Debug;
@@ -34,8 +34,16 @@ use std::path::PathBuf;
 
 #[derive(Clone)]
 pub struct Filter {
-    pub nodes: Vec<Node>,
+    pub nodes: Vec<BlockLevelNode>,
     pub location: AstLocation
+}
+
+#[derive(Debug, Clone, Transform)]
+pub enum BlockLevelNode {
+    Block(Block),
+    Import(ImportStatement),
+    VarDef(VarDefinition),
+    Mixin(Mixin),
 }
 
 impl Debug for Filter {
@@ -79,34 +87,13 @@ impl Transform for Filter {
     }
 }
 
-/// Data structure to holds all node types that can occur in the acstract syntax tree.
-/// The InnerTransform derivation implements the Deref trait for this enum so the transform
-/// method can be called directly on the node and the inner value will receive the method call.
-#[derive(Debug, Transform, Clone)]
-pub enum Node {
-    Filter(Filter),
-    Import(ImportStatement),
-    Block(block::Block),
-    SetValueStmt(SetValueStatement),
-    ConditionStmt(ConditionStatement),
-
-    Expression(ExpressionNode),
-    Value(ExpressionValue),
-
-    VarRef(VarReference),
-    VarDefinition(VarDefinition),
-    Mixin(Mixin),
-    MixinCall(MixinCall),
-    Color(color::Color)
-}
-
 /// Holds fully transformed nodes that can be rendered.
 /// Calls to methods of the TransformResult trait on the inner values can be performed with no
 /// explicit conversion because this struct implements Deref into &TransformResult.
 #[derive(Debug, Clone, PartialEq, TransformResult)]
 pub enum TransformedNode {
     Root(Vec<TransformedNode>),
-    Block(block::PlainBlock),
+    Block(PlainBlock),
     SetValueStmt(PlainSetValueStatement),
     ConditionStmt(PlainConditionStatement),
     Value(ScopeValue),

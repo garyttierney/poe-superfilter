@@ -1,4 +1,4 @@
-use ast::{AstLocation, TransformedNode, Node};
+use ast::{AstLocation, TransformedNode};
 use ast::transform::{Transform, TransformContext};
 use filter;
 use tok;
@@ -29,7 +29,7 @@ impl Transform for ImportStatement {
         {
             let tokens = Box::new(tok::tokenize(&contents));
             match filter::parse_Filter(&Arc::new(resolved_file_path), tokens.into_iter()) {
-                Ok(Node::Filter(ref filter)) => {
+                Ok(ref filter) => {
                     let transform_result = filter.transform_begin(ctx.scope.clone(),
                                                                   Rc::new(new_base_path));
 
@@ -44,7 +44,6 @@ impl Transform for ImportStatement {
                     }
                 }
                 Err(e) => Err(e).chain_err(|| "Imported filter failed to parse"),
-                _ => bail!("Imported file returned an unexpected node")
             }
         }
     }

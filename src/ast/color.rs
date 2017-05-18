@@ -1,14 +1,14 @@
 use ast::{TransformedNode, AstLocation};
 use ast::transform::{Transform, TransformContext};
-use ast::Node;
+use ast::expression::*;
 use errors::Result;
 
 #[derive(Debug, Clone)]
 pub struct Color {
-    pub r: Box<Node>,
-    pub g: Box<Node>,
-    pub b: Box<Node>,
-    pub a: Box<Node>
+    pub r: Box<ExpressionNode>,
+    pub g: Box<ExpressionNode>,
+    pub b: Box<ExpressionNode>,
+    pub a: Box<ExpressionNode>
 }
 
 impl<'a> Color {}

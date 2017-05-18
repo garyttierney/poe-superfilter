@@ -1,5 +1,7 @@
-use ast::{Node, TransformedNode, AstLocation};
+use ast::{TransformedNode, AstLocation};
 use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
+use ast::block_statements::*;
+use ast::expression::*;
 use scope::{ScopeData, ScopeValue};
 use std::rc::Rc;
 use std::cell::RefCell;
@@ -11,10 +13,10 @@ use errors::Result;
 /// e.g. variable definitions and imports
 #[derive(Debug, Clone)]
 pub struct Block {
-    pub nodes: Vec<Node>,
+    pub nodes: Vec<BlockStatement>,
     pub variant: BlockType,
     pub location: AstLocation,
-    pub condition: Option<Box<Node>>
+    pub condition: Option<Box<ExpressionNode>>
 }
 
 #[derive(Debug, Clone)]

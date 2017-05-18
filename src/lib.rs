@@ -19,7 +19,6 @@ extern crate lalrpop_util;
 use ast::transform::{RenderContext, RenderConfig, TransformResult};
 use std::path::PathBuf;
 use std::io::Write;
-use ast::Node;
 use std::rc::Rc;
 use std::sync::Arc;
 use std::cell::RefCell;
@@ -62,13 +61,12 @@ pub fn compile(contents: &str, file: PathBuf, out_buf: &mut Write, render_config
     };
 
     match filter::parse_Filter(&Arc::new(file), tokens.into_iter()) {
-        Ok(Node::Filter(ref filter)) => {
+        Ok(ref filter) => {
             let transformed_tree = filter.transform_begin(root_scope,
                                    Rc::new(render_config.base_path.clone()))?
                                    .expect("Expected a transform result");
             transformed_tree.render(render_ctx, out_buf)
         }
         Err(err) => Err(err).chain_err(|| "Parse Error"),
-        _ => panic!()
     }
 }

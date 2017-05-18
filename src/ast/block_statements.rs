@@ -1,15 +1,26 @@
-use ast::{TransformedNode, Node, AstLocation};
-use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
+use ast::{TransformedNode, AstLocation};
+use ast::transform::*;
+use ast::var::*;
+use ast::expression::*;
+use ast::mixin::*;
 use scope::ScopeValue;
 use std::io::Write;
 use std::cmp::PartialEq;
 use errors::{Result, ErrorKind};
 
+#[derive(Debug, Clone, Transform)]
+pub enum BlockStatement {
+    SetValue(SetValueStatement),
+    Condition(ConditionStatement),
+    MixinCall(MixinCall),
+    VarDef(VarDefinition),
+}
+
 /// AST structure for a value set or other instruction statement
 #[derive(Debug, Clone)]
 pub struct SetValueStatement {
     pub name: String,
-    pub values: Box<Node>,
+    pub values: Box<ExpressionNode>,
     pub location: AstLocation
 }
 
@@ -116,7 +127,7 @@ impl TransformResult for PlainConditionStatement {
 /// corresponding variant for it in the ast::Node enum
 #[derive(Debug, Clone)]
 pub struct Condition {
-    pub value: Box<Node>,
+    pub value: Box<ExpressionNode>,
     pub operator: ComparisonOperator,
 }
 
