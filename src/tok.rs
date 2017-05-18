@@ -11,6 +11,7 @@ pub enum Tok {
     VarIdentifier(String),
     Num(i64),
     Float(f64),
+    Comment(String),
     LParen,
     RParen,
     Minus,
@@ -41,8 +42,8 @@ impl Display for Tok {
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct Location {
-    pub line: isize,
-    pub pos: isize
+    pub line: usize,
+    pub pos: usize
 }
 
 impl Display for Location {
@@ -58,7 +59,7 @@ impl Default for Location {
 }
 
 impl Location {
-    fn add(&self, lines: isize, chars: isize) -> Location {
+    fn add(&self, lines: usize, chars: usize) -> Location {
         Location {
             line: self.line.saturating_add(lines),
             pos: self.pos.saturating_add(chars)
@@ -116,7 +117,7 @@ impl<C: Iterator<Item=char>> Tokenizer<C> {
         self.lookahead
     }
 
-    fn advance_cursor(&mut self, chars: isize) {
+    fn advance_cursor(&mut self, chars: usize) {
         self.cursor.pos += chars;
     }
 
@@ -130,28 +131,12 @@ impl<C: Iterator<Item=char>> Tokenizer<C> {
         self.next_char();
     }
 
-    fn skip_rest_of_line(&mut self) {
-        if self.token_in_current_line {
-            self.push(Tok::NewLine, 1);
-        }
-        self.cursor.line += 1;
-        self.cursor.pos = 0;
-        self.token_in_current_line = false;
-
-        while let Some(c) = self.next_char() {
-            if c == '\n' {
-                self.next_char();
-                break;
-            }
-        }
-    }
-
-    fn push(&mut self, token: Tok, length: isize) {
+    fn push(&mut self, token: Tok, length: usize) {
         self.token_in_current_line = true;
         self.tokens.push((self.cursor, token, self.cursor.add(0, length)));
     }
 
-    fn next_and_push(&mut self, token: Tok, length: isize) {
+    fn next_and_push(&mut self, token: Tok, length: usize) {
         self.token_in_current_line = true;
         self.next_char();
         self.push(token, length);
@@ -184,31 +169,38 @@ impl<C: Iterator<Item=char>> Tokenizer<C> {
                 '/' => self.next_and_push(Tok::Div, 1),
                 '"' => {
                     let tmp = self.take_quoted_string(c);
-                    let length = tmp.len() as isize;
+                    let length = tmp.len();
                     self.push(Tok::StrLiteral(tmp), length);
                 }
                 '$' => {
                     self.next_char();
                     if let Some(tmp) = self.take_identifier() {
-                        let length = tmp.len() as isize;
+                        let length = tmp.len();
                         self.push(Tok::VarIdentifier(tmp), length);
                     }
                 }
-                '#' => self.skip_rest_of_line(),
+                '#' => {
+                    let comment = self.take_while(None, |c| c != '\n');
+                    self.cursor.line += 1;
+                    self.cursor.pos = 0;
+                    self.token_in_current_line = false;
+                    let length = comment.len();
+                    self.push(Tok::Comment(comment), length)
+                },
                 _ if c.is_alphabetic() => {
                     if let Some(tmp) = self.take_identifier() {
-                        let length = tmp.len() as isize;
+                        let length = tmp.len();
                         let tok = Tokenizer::<C>::match_keyword(tmp);
                         self.push(tok, length);
                     }
                     return;
                 }
                 _ if c.is_digit(10) => {
-                    let tmp = self.take_while(c, |c| c.is_digit(10) || c == '.');
+                    let tmp = self.take_while(Some(c), |c| c.is_digit(10) || c == '.');
                     if tmp.contains(".") {
-                        self.push(Tok::Float(f64::from_str(&tmp).unwrap()), tmp.len() as isize);
+                        self.push(Tok::Float(f64::from_str(&tmp).unwrap()), tmp.len());
                     } else {
-                        self.push(Tok::Num(i64::from_str(&tmp).unwrap()), tmp.len() as isize);
+                        self.push(Tok::Num(i64::from_str(&tmp).unwrap()), tmp.len());
                     }
                     return;
                 }
@@ -241,7 +233,7 @@ impl<C: Iterator<Item=char>> Tokenizer<C> {
             if !IDENT_CHAR_RX.is_match(&c0.to_string()) {
                 return None;
             }
-            return Some(self.take_while(c0, |c| IDENT_CHAR_RX.is_match(&c.to_string())));
+            return Some(self.take_while(Some(c0), |c| IDENT_CHAR_RX.is_match(&c.to_string())));
         }
         None
     }
@@ -271,11 +263,11 @@ impl<C: Iterator<Item=char>> Tokenizer<C> {
     /// Consumes characters, calling a closure each time until the closure returns false.
     /// Returns a String with all characters consumed up to that point.
     /// Taken from https://github.com/nikomatsakis/lalrpop/blob/master/lalrpop-test/src/util/tok.rs
-    fn take_while<F>(&mut self, c0: char, f: F) -> String
+    fn take_while<F>(&mut self, c0: Option<char>, f: F) -> String
         where F: Fn(char) -> bool
     {
         let mut buf = String::new();
-        buf.push(c0);
+        if let Some(c) = c0 { buf.push(c) }
 
         while let Some(c) = self.next_char() {
             if !f(c) {

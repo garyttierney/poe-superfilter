@@ -41,9 +41,9 @@ pub struct Filter {
 #[derive(Debug, Clone, Transform)]
 pub enum BlockLevelNode {
     Block(Block),
+    Mixin(Mixin),
     Import(ImportStatement),
     VarDef(VarDefinition),
-    Mixin(Mixin),
 }
 
 impl Debug for Filter {
@@ -97,7 +97,42 @@ pub enum TransformedNode {
     SetValueStmt(PlainSetValueStatement),
     ConditionStmt(PlainConditionStatement),
     Value(ScopeValue),
-    ExpandedNodes(Vec<TransformedNode>)
+    ExpandedNodes(Vec<TransformedNode>),
+    Comment(Comment)
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Comment(pub String);
+
+impl TransformResult for Comment {
+    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
+        if ctx.config.comments {
+            buf.write(b"#")?;
+            buf.write(self.0.as_ref())?;
+        }
+        buf.write(ctx.config.line_ending)?;
+        Ok(())
+    }
+}
+
+impl TransformResult for Option<Comment> {
+    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
+        match *self {
+            Some(ref comment) => {
+                if ctx.config.comments {
+                    buf.write(b" ")?;
+                    comment.render(ctx, buf)
+                } else {
+                    buf.write(ctx.config.line_ending)?;
+                    Ok(())
+                }
+            },
+            None => {
+                buf.write(ctx.config.line_ending)?;
+                Ok(())
+            }
+        }
+    }
 }
 
 /// Implements rendering for lists of nodes by rendering each item in the list

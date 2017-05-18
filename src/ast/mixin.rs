@@ -1,4 +1,4 @@
-use ast::{TransformedNode, AstLocation};
+use ast::{TransformedNode, AstLocation, Comment};
 use ast::transform::{Transform, TransformContext, TransformResult};
 use ast::block_statements::*;
 use ast::expression::*;
@@ -14,14 +14,16 @@ pub struct Mixin {
     pub name: String,
     pub parameters: Vec<Param>,
     pub statements: Vec<BlockStatement>,
-    pub location: AstLocation
+    pub location: AstLocation,
+    pub block_comments: Vec<Comment>,
+    pub inline_comment: Option<Comment>,
 }
 
 #[derive(Debug, Clone)]
 pub struct PreparedMixin {
     pub name: String,
     pub parameters: Vec<PlainParam>,
-    pub statements: Vec<BlockStatement>
+    pub statements: Vec<BlockStatement>,
 }
 
 impl Transform for Mixin {
@@ -82,7 +84,8 @@ pub struct PlainParam {
 pub struct MixinCall {
     pub name: String,
     pub parameters: Vec<ExpressionNode>,
-    pub location: AstLocation
+    pub location: AstLocation,
+    pub comment: Option<Comment>,
 }
 
 impl<'a> fmt::Debug for MixinCall {

@@ -14,7 +14,7 @@ fn load_example(path: &str) -> String {
     contents
 }
 
-fn test_compile(input_file: &str, expected_output_file: &str) {
+fn test_compile(input_file: &str, expected_output_file: &str, comments: bool) {
     START.call_once(|| {
         let mut current_path = env::current_dir().unwrap();
         current_path.push("src/tests");
@@ -35,7 +35,8 @@ fn test_compile(input_file: &str, expected_output_file: &str) {
         pretty: false,
         indent_str: "    ",
         base_path: base_path,
-        line_ending: b"\n"
+        line_ending: b"\n",
+        comments: comments
     };
 
     super::compile(&sf_file, Path::new(input_file).to_owned(), &mut result_vec, &render_config).unwrap();
@@ -46,30 +47,35 @@ fn test_compile(input_file: &str, expected_output_file: &str) {
 
 #[test]
 fn vars() {
-    test_compile("vars.sf", "vars.filter")
+    test_compile("vars.sf", "vars.filter", false)
 }
 
 #[test]
 fn mixins() {
-    test_compile("mixins.sf", "mixins.filter")
+    test_compile("mixins.sf", "mixins.filter", false)
 }
 
 #[test]
 fn simple_expressions() {
-    test_compile("simple_expr.sf", "simple_expr.filter")
+    test_compile("simple_expr.sf", "simple_expr.filter", false)
 }
 
 #[test]
 fn import() {
-    test_compile("import.sf", "import.filter")
+    test_compile("import.sf", "import.filter", false)
 }
 
 #[test]
 fn statement_override() {
-    test_compile("statement_override.sf", "statement_override.filter")
+    test_compile("statement_override.sf", "statement_override.filter", false)
 }
 
 #[test]
 fn conditional_blocks() {
-    test_compile("conditional_blocks.sf", "conditional_blocks.filter")
+    test_compile("conditional_blocks.sf", "conditional_blocks.filter", false)
+}
+
+#[test]
+fn comments() {
+    test_compile("comments.sf", "comments.filter", true)
 }

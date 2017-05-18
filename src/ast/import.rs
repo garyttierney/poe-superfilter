@@ -1,4 +1,4 @@
-use ast::{AstLocation, TransformedNode};
+use ast::{AstLocation, TransformedNode, Comment};
 use ast::transform::{Transform, TransformContext};
 use filter;
 use tok;
@@ -11,7 +11,8 @@ use errors::{Result, ResultExt, ErrorKind, Error};
 #[derive(Debug, Clone)]
 pub struct ImportStatement {
     pub path: String,
-    pub location: AstLocation
+    pub location: AstLocation,
+    pub comment: Option<Comment>,
 }
 
 impl Transform for ImportStatement {

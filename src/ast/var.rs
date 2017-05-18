@@ -1,4 +1,4 @@
-use ast::{TransformedNode, AstLocation};
+use ast::{TransformedNode, AstLocation, Comment};
 use ast::transform::{Transform, TransformContext, TransformResult};
 use ast::expression::*;
 use std::fmt;
@@ -8,7 +8,7 @@ use errors::{Result, ErrorKind};
 #[derive(Clone)]
 pub struct VarReference {
     pub identifier: String,
-    pub location: AstLocation
+    pub location: AstLocation,
 }
 
 impl fmt::Debug for VarReference {
@@ -40,7 +40,8 @@ impl Transform for VarReference {
 pub struct VarDefinition {
     pub identifier: String,
     pub values: Box<ExpressionNode>,
-    pub location: AstLocation
+    pub location: AstLocation,
+    pub comment: Option<Comment>,
 }
 
 impl Transform for VarDefinition {

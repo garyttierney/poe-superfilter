@@ -69,6 +69,7 @@ pub fn main() {
         indent_str: "    ",
         base_path,
         line_ending,
+        comments: false
     };
 
     let result = match matches.value_of("output") {

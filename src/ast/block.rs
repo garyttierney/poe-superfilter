@@ -1,4 +1,4 @@
-use ast::{TransformedNode, AstLocation};
+use ast::{TransformedNode, AstLocation, Comment};
 use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
 use ast::block_statements::*;
 use ast::expression::*;
@@ -16,19 +16,23 @@ pub struct Block {
     pub nodes: Vec<BlockStatement>,
     pub variant: BlockType,
     pub location: AstLocation,
-    pub condition: Option<Box<ExpressionNode>>
+    pub condition: Option<Box<ExpressionNode>>,
+    pub block_comments: Vec<Comment>,
+    pub inline_comment: Option<Comment>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Copy)]
 pub enum BlockType {
     Show,
     Hide,
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum PlainBlock {
-    Show(Vec<TransformedNode>),
-    Hide(Vec<TransformedNode>),
+pub struct PlainBlock {
+    pub variant: BlockType,
+    pub nodes: Vec<TransformedNode>,
+    pub block_comments: Vec<Comment>,
+    pub inline_comment: Option<Comment>,
 }
 
 trait NodeList {
@@ -90,9 +94,11 @@ impl Transform for Block {
         }
 
         Ok(Some(TransformedNode::Block(
-            match self.variant {
-                BlockType::Show => PlainBlock::Show(t_statements),
-                BlockType::Hide => PlainBlock::Hide(t_statements)
+            PlainBlock {
+                nodes: t_statements,
+                variant: self.variant,
+                block_comments: self.block_comments.clone(),
+                inline_comment: self.inline_comment.clone()
             }
         )))
     }
@@ -104,21 +110,23 @@ impl Transform for Block {
 
 impl TransformResult for PlainBlock {
     fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
-        let nodes = match *self {
-            PlainBlock::Show(ref nodes) => {
-                buf.write(b"Show")?;
-                buf.write(ctx.config.line_ending)?;
-                nodes
-            }
-            PlainBlock::Hide(ref nodes) => {
-                buf.write(b"Hide")?;
-                buf.write(ctx.config.line_ending)?;
-                nodes
-            }
-        };
-        for n in nodes {
-            n.render(ctx.increase_indent(), buf)?;
+        for comment in &self.block_comments {
+            comment.render(ctx, buf)?;
         }
+
+        let variant = match self.variant {
+            BlockType::Show => b"Show",
+            BlockType::Hide => b"Hide"
+        };
+
+        buf.write(variant)?;
+
+        self.inline_comment.render(ctx, buf)?;
+
+        for n in &self.nodes {
+            &n.render(ctx.increase_indent(), buf)?;
+        }
+
         Ok(())
     }
 }

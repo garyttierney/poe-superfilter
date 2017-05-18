@@ -1,0 +1,5 @@
+# block comment 1
+# block comment 2
+Show # block inline comment
+SetFontSize 38 # block statement comment
+ItemLevel <= 8

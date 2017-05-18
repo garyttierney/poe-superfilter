@@ -1,4 +1,4 @@
-use ast::{TransformedNode, AstLocation};
+use ast::{TransformedNode, AstLocation, Comment};
 use ast::transform::*;
 use ast::var::*;
 use ast::expression::*;
@@ -21,13 +21,15 @@ pub enum BlockStatement {
 pub struct SetValueStatement {
     pub name: String,
     pub values: Box<ExpressionNode>,
-    pub location: AstLocation
+    pub location: AstLocation,
+    pub comment: Option<Comment>,
 }
 
 #[derive(Debug, Clone)]
 pub struct PlainSetValueStatement {
     pub name: String,
     pub values: ScopeValue,
+    pub comment: Option<Comment>,
 }
 
 impl PartialEq for PlainSetValueStatement {
@@ -50,7 +52,8 @@ impl<'a> Transform for SetValueStatement {
         Ok(Some(TransformedNode::SetValueStmt(
             PlainSetValueStatement {
                 name: self.name.clone(),
-                values: transformed_values.unwrap().return_value()
+                values: transformed_values.unwrap().return_value(),
+                comment: self.comment.clone()
             }
         )))
     }
@@ -66,7 +69,8 @@ impl TransformResult for PlainSetValueStatement {
         buf.write(self.name.as_ref())?;
         buf.write(b" ")?;
         self.values.render(ctx, buf)?;
-        buf.write(ctx.config.line_ending)?;
+
+        self.comment.render(ctx, buf)?;
         Ok(())
     }
 }
@@ -76,13 +80,15 @@ impl TransformResult for PlainSetValueStatement {
 pub struct ConditionStatement {
     pub name: String,
     pub condition: Condition,
-    pub location: AstLocation
+    pub location: AstLocation,
+    pub comment: Option<Comment>,
 }
 
 #[derive(Debug, Clone)]
 pub struct PlainConditionStatement {
     pub name: String,
-    pub condition: PlainCondition
+    pub condition: PlainCondition,
+    pub comment: Option<Comment>,
 }
 
 impl PartialEq for PlainConditionStatement {
@@ -99,6 +105,7 @@ impl Transform for ConditionStatement {
                 PlainConditionStatement {
                     name: self.name.clone(),
                     condition: PlainCondition { value: t_value.return_value(), operator: self.condition.operator },
+                    comment: self.comment.clone(),
                 }
             )));
         }
@@ -118,7 +125,8 @@ impl TransformResult for PlainConditionStatement {
         self.condition.operator.render(ctx, buf)?;
         buf.write(b" ")?;
         self.condition.value.render(ctx, buf)?;
-        buf.write(ctx.config.line_ending)?;
+
+        self.comment.render(ctx, buf)?;
         Ok(())
     }
 }

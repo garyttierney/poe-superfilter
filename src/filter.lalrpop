@@ -5,7 +5,7 @@ use std::sync::Arc;
 use std::path::PathBuf;
 use ast::BlockLevelNode;
 use ast::block_statements as stm;
-use ast::{AstLocation, Filter};
+use ast::{Filter, Comment, AstLocation};
 use ast::block::{Block, BlockType};
 use ast::mixin::*;
 use tok::Location as TokenLocation;
@@ -42,6 +42,7 @@ extern {
         "if" => Tok::If,
         "True" => Tok::True,
         "False" => Tok::False,
+        Comment => Tok::Comment(<String>),
         Num => Tok::Num(<i64>),
         Float => Tok::Float(<f64>),
         QuotedStrLiteral => Tok::StrLiteral(<String>),
@@ -67,16 +68,27 @@ pub Filter : Filter = {
         },
 };
 
+LineEndOrComment : Option<Comment> = {
+    <s_option:Comment?> "\n" => {
+        s_option.and_then(|comment_str| Some(Comment(comment_str)))
+    }
+};
+
+CommentLine : Comment = {
+    <Comment> "\n" => Comment(<>)
+};
+
 DefinitionBlock : BlockLevelNode = {
     <VarDefinition> => BlockLevelNode::VarDef(<>),
     ImportBlock
 };
 
 ImportStmt : ImportStatement = {
-    <l:@L> "Import" <path:RawStrLiteral> <r:@R> "\n" =>
+    <l:@L> "Import" <path:RawStrLiteral> <r:@R> <comment:LineEndOrComment> =>
         ImportStatement {
             path: path,
-            location: AstLocation::new(l, r, file.clone())
+            location: AstLocation::new(l, r, file.clone()),
+            comment
         }
 };
 
@@ -88,26 +100,30 @@ BlockType : BlockType = {
 };
 
 ContentBlock : BlockLevelNode = {
-    <l:@L> <t:BlockType> <condition:("if" <ValueExpression>)?> "\n" <stmts:Statement*> <r:@R> => BlockLevelNode::Block(
+    <block_comments:CommentLine*> <l:@L> <t:BlockType> <condition:("if" <ValueExpression>)?> <inline_comment:LineEndOrComment> <stmts:Statement*> <r:@R> => BlockLevelNode::Block(
         Block {
             nodes: stmts,
             variant: t,
             location: AstLocation::new(l, r, file.clone()),
-            condition: condition.and_then(|inner| Some(Box::new(inner)))
+            condition: condition.and_then( | inner | Some(Box::new(inner))),
+            block_comments,
+            inline_comment
         }
     ),
-    <l:@L> "Mixin" <name:Constant> <args:("(" <Comma<VarIdentifier>> ")")?> "\n" <instructions:Statement*> <r:@R> => {
+    <block_comments:CommentLine*> <l:@L> "Mixin" <name:Constant> <args:("(" <Comma<VarIdentifier>> ")")?> <inline_comment:LineEndOrComment> <instructions:Statement*> <r:@R> => {
         let params = args
             .unwrap_or(vec![])
             .iter()
             .map(|param_name| ast::mixin::Param { name: param_name.clone(), default: None })
             .collect();
         BlockLevelNode::Mixin(
-            ast::mixin::Mixin{
+            ast::mixin::Mixin {
                 name: name,
                 parameters: params,
                 statements: instructions,
-                location: AstLocation::new(l, r, file.clone())
+                location: AstLocation::new(l, r, file.clone()),
+                block_comments,
+                inline_comment
             }
         )
     }
@@ -130,11 +146,12 @@ Comma<T>: Vec<T> = {
 };
 
 VarDefinition : VarDefinition  = {
-    <l:@L> <id:VarIdentifier> "=" <v:Value> <r:@R> "\n" =>
+    <l:@L> <id:VarIdentifier> "=" <v:Value> <r:@R> <comment:LineEndOrComment> =>
         VarDefinition {
             identifier: id,
             values: Box::new(v),
-            location: AstLocation::new(l, r, file.clone())
+            location: AstLocation::new(l, r, file.clone()),
+            comment
         }
 };
 
@@ -148,20 +165,22 @@ VarReference : ExpressionValue = {
 };
 
 SetValueStmt : stm::SetValueStatement = {
-    <l:@L> <n:Constant> <val:Value> <r:@R> "\n" =>
+    <l:@L> <n:Constant> <val:Value> <r:@R> <comment:LineEndOrComment> =>
         stm::SetValueStatement {
             name: n,
             values: Box::new(val),
-            location: AstLocation::new(l, r, file.clone())
+            location: AstLocation::new(l, r, file.clone()),
+            comment
         }
 };
 
 ConditionStmt : stm::ConditionStatement = {
-    <l:@L> <n: Constant> <cond: StmCondition> <r:@R> "\n" =>
+    <l:@L> <n: Constant> <cond: StmCondition> <r:@R> <comment:LineEndOrComment> =>
         stm::ConditionStatement {
             name: n,
             condition: cond,
-            location: AstLocation::new(l, r, file.clone())
+            location: AstLocation::new(l, r, file.clone()),
+            comment
         }
 };
 
@@ -170,11 +189,12 @@ StmCondition : stm::Condition = {
 };
 
 MixinCall : MixinCall = {
-    <l:@L> "+" <n:Constant> <params:("(" <Comma<Value>> ")")?> <r:@R> "\n" =>
+    <l:@L> "+" <n:Constant> <params:("(" <Comma<Value>> ")")?> <r:@R> <comment:LineEndOrComment> =>
         MixinCall {
             name: n,
             parameters: params.unwrap_or(vec![]),
-            location: AstLocation::new(l, r, file.clone())
+            location: AstLocation::new(l, r, file.clone()),
+            comment
         }
 };
 

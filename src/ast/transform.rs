@@ -55,7 +55,8 @@ pub struct RenderConfig {
     pub pretty: bool,
     pub indent_str: &'static str,
     pub base_path: PathBuf,
-    pub line_ending: &'static [u8]
+    pub line_ending: &'static [u8],
+    pub comments: bool
 }
 
 impl RenderConfig {
@@ -87,8 +88,8 @@ impl<'a> RenderContext<'a> {
 
     pub fn increase_indent(&self) -> Self {
         RenderContext {
-            config: self.config,
             indent_level: self.indent_level + 1,
+            .. *self
         }
     }
 }
