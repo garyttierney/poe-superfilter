@@ -1,5 +1,8 @@
 Path of Exile Superfilter
-----------
+-------------------------
+
+[![crates.io](https://img.shields.io/crates/v/poe-superfilter.svg)](https://crates.io/crates/poe-superfilter)
+[![Travis CI](https://travis-ci.org/skaufhold/poe-superfilter.svg)](https://travis-ci.org/skaufhold/poe-superfilter)
 
 A preprocessor for Path of Exile loot filters that adds variables, mixins, arithmetics and lots
 of other useful things to GGG's loot filter syntax and compiles filters
