@@ -14,6 +14,7 @@ pub enum BlockStatement {
     Condition(ConditionStatement),
     MixinCall(MixinCall),
     VarDef(VarDefinition),
+    Comment(Comment),
 }
 
 /// AST structure for a value set or other instruction statement

@@ -1,5 +1,7 @@
-# block comment 1
-# block comment 2
+# head comment
+$var = "test"
+
 Show # block inline comment
+    # in block line comment
     SetFontSize 38 # block statement comment
     ItemLevel <= 8

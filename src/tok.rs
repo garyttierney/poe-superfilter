@@ -181,11 +181,13 @@ impl<C: Iterator<Item=char>> Tokenizer<C> {
                 }
                 '#' => {
                     let comment = self.take_while(None, |c| c != '\n');
+
                     self.cursor.line += 1;
                     self.cursor.pos = 0;
                     self.token_in_current_line = false;
+
                     let length = comment.len();
-                    self.push(Tok::Comment(comment), length)
+                    self.push(Tok::Comment(comment), length);
                 },
                 _ if c.is_alphabetic() => {
                     if let Some(tmp) = self.take_identifier() {

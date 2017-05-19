@@ -44,6 +44,7 @@ pub enum BlockLevelNode {
     Mixin(Mixin),
     Import(ImportStatement),
     VarDef(VarDefinition),
+    Comment(Comment)
 }
 
 impl Debug for Filter {
@@ -112,6 +113,19 @@ impl TransformResult for Comment {
         }
         buf.write(ctx.config.line_ending)?;
         Ok(())
+    }
+}
+
+impl Transform for Comment {
+    #[allow(unused_variables)]
+    fn transform(&self, ctx: TransformContext) -> Result<Option<TransformedNode>> {
+        Ok(Some(
+            TransformedNode::Comment(self.clone())
+        ))
+    }
+
+    fn location(&self) -> AstLocation {
+        unimplemented!()
     }
 }
 

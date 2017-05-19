@@ -14,7 +14,6 @@ use ast::import::ImportStatement;
 use ast::var::{VarDefinition,VarReference};
 use ast::expression::{ExpressionValue, ExpressionNode, ExpressionOperation};
 
-#[LALR]
 grammar<'a>(file: &'a Arc<PathBuf>);
 
 extern {
@@ -52,7 +51,7 @@ extern {
 }
 
 pub Filter : Filter = {
-    <l:@L> <defs:DefinitionBlock*> <first:ContentBlock> <rest:AnyBlock*> <r:@R> => {
+    <l:@L> <defs:DefinitionBlock*> <first:InstructionBlock> <rest:AnyBlock*> <r:@R> => {
         let mut nodes = defs;
         nodes.push(first);
         nodes.extend(rest);
@@ -78,11 +77,6 @@ CommentLine : Comment = {
     <Comment> "\n" => Comment(<>)
 };
 
-DefinitionBlock : BlockLevelNode = {
-    <VarDefinition> => BlockLevelNode::VarDef(<>),
-    ImportBlock
-};
-
 ImportStmt : ImportStatement = {
     <l:@L> "Import" <path:RawStrLiteral> <r:@R> <comment:LineEndOrComment> =>
         ImportStatement {
@@ -92,25 +86,29 @@ ImportStmt : ImportStatement = {
         }
 };
 
-ImportBlock : BlockLevelNode = <ImportStmt> => BlockLevelNode::Import(<>);
-
-BlockType : BlockType = {
-    "Show" => BlockType::Show,
-    "Hide" => BlockType::Hide
+AnyBlock : BlockLevelNode = {
+    <ImportStmt> => BlockLevelNode::Import(<>),
+    InstructionBlock
 };
 
-ContentBlock : BlockLevelNode = {
-    <block_comments:CommentLine*> <l:@L> <t:BlockType> <condition:("if" <ValueExpression>)?> <inline_comment:LineEndOrComment> <stmts:Statement*> <r:@R> => BlockLevelNode::Block(
+DefinitionBlock : BlockLevelNode = {
+    <VarDefinition> => BlockLevelNode::VarDef(<>),
+    <ImportStmt> => BlockLevelNode::Import(<>),
+    <CommentLine> => BlockLevelNode::Comment(<>),
+};
+
+InstructionBlock : BlockLevelNode = {
+    <l:@L> <t:BlockType> <condition:("if" <ValueExpression>)?> <inline_comment:LineEndOrComment> <stmts:BlockStatements> <r:@R> => BlockLevelNode::Block(
         Block {
             nodes: stmts,
             variant: t,
             location: AstLocation::new(l, r, file.clone()),
             condition: condition.and_then( | inner | Some(Box::new(inner))),
-            block_comments,
+            block_comments: vec![],
             inline_comment
         }
     ),
-    <block_comments:CommentLine*> <l:@L> "Mixin" <name:Constant> <args:("(" <Comma<VarIdentifier>> ")")?> <inline_comment:LineEndOrComment> <instructions:Statement*> <r:@R> => {
+    <l:@L> "Mixin" <name:Constant> <args:("(" <Comma<VarIdentifier>> ")")?> <inline_comment:LineEndOrComment> <instructions:BlockStatements> <r:@R> => {
         let params = args
             .unwrap_or(vec![])
             .iter()
@@ -122,16 +120,16 @@ ContentBlock : BlockLevelNode = {
                 parameters: params,
                 statements: instructions,
                 location: AstLocation::new(l, r, file.clone()),
-                block_comments,
+                block_comments: vec![],
                 inline_comment
             }
         )
     }
 };
 
-AnyBlock : BlockLevelNode = {
-    ImportBlock,
-    ContentBlock
+BlockType : BlockType = {
+    "Show" => BlockType::Show,
+    "Hide" => BlockType::Hide
 };
 
 Comma<T>: Vec<T> = {
@@ -198,12 +196,25 @@ MixinCall : MixinCall = {
         }
 };
 
-Statement : stm::BlockStatement = {
+BlockStatements : Vec<stm::BlockStatement> = {
+    <s1:Statement*> <s2:InstructionStatement> => {
+        let mut statements = s1;
+        statements.push(s2);
+        statements
+    }
+};
+
+Statement : stm::BlockStatement = { InstructionStatement, CommentStatement };
+
+InstructionStatement : stm::BlockStatement = {
     <SetValueStmt> => stm::BlockStatement::SetValue(<>),
     <ConditionStmt> => stm::BlockStatement::Condition(<>),
     <MixinCall> => stm::BlockStatement::MixinCall(<>),
     <VarDefinition> => stm::BlockStatement::VarDef(<>),
 };
+
+CommentStatement : stm::BlockStatement =
+    <CommentLine> => stm::BlockStatement::Comment(<>);
 
 RawStrLiteral : String = {
     QuotedStrLiteral => String::from(<>),
