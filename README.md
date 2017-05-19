@@ -147,7 +147,7 @@ Show if $no
 
 ```
 USAGE:
-    superfilter [FLAGS] [OPTIONS] <PATH>
+    superfilter.exe [FLAGS] [OPTIONS] <PATH>
 
 FLAGS:
     -h, --help       Prints help information
@@ -155,12 +155,8 @@ FLAGS:
     -V, --version    Prints version information
 
 OPTIONS:
-    -l, --line-endings <LINE_ENDING>
-            Type of line ending used (LF OR CRLF) defaults to the platform line
-            ending [values: lf, crlf]
-    -o, --output <FILE>
-            Output file. If this option is omitted, the output will be printed
-            to the console.
+    -l, --line-endings <LINE_ENDING>    Type of line ending used (LF OR CRLF) defaults to the platform line ending [values: lf, crlf]
+    -o, --output <FILE>                 Output file. If this option is omitted, the output will be printed to the console.
 
 ARGS:
     <PATH>    Path of the input file
