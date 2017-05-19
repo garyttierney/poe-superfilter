@@ -15,7 +15,7 @@ pub enum ExpressionValue {
     Decimal(f64),
     Bool(bool),
     Var(VarReference),
-    List(Vec<ExpressionNode>)
+    List(Vec<Box<ExpressionNode>>)
 }
 
 impl fmt::Debug for ExpressionValue {

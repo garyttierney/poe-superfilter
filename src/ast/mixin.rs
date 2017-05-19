@@ -83,7 +83,7 @@ pub struct PlainParam {
 #[derive(Clone)]
 pub struct MixinCall {
     pub name: String,
-    pub parameters: Vec<ExpressionNode>,
+    pub parameters: Vec<Box<ExpressionNode>>,
     pub location: AstLocation,
     pub comment: Option<Comment>,
 }

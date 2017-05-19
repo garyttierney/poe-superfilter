@@ -98,12 +98,12 @@ DefinitionBlock : BlockLevelNode = {
 };
 
 InstructionBlock : BlockLevelNode = {
-    <l:@L> <t:BlockType> <condition:("if" <ValueExpression>)?> <inline_comment:LineEndOrComment> <stmts:BlockStatements> <r:@R> => BlockLevelNode::Block(
+    <l:@L> <t:BlockType> <condition:("if" <ExpressionRoot>)?> <inline_comment:LineEndOrComment> <stmts:BlockStatements> <r:@R> => BlockLevelNode::Block(
         Block {
             nodes: stmts,
             variant: t,
             location: AstLocation::new(l, r, file.clone()),
-            condition: condition.and_then( | inner | Some(Box::new(inner))),
+            condition: condition.and_then( |inner| Some(inner)),
             block_comments: vec![],
             inline_comment
         }
@@ -147,7 +147,7 @@ VarDefinition : VarDefinition  = {
     <l:@L> <id:VarIdentifier> "=" <v:Value> <r:@R> <comment:LineEndOrComment> =>
         VarDefinition {
             identifier: id,
-            values: Box::new(v),
+            values: v,
             location: AstLocation::new(l, r, file.clone()),
             comment
         }
@@ -166,7 +166,7 @@ SetValueStmt : stm::SetValueStatement = {
     <l:@L> <n:Constant> <val:Value> <r:@R> <comment:LineEndOrComment> =>
         stm::SetValueStatement {
             name: n,
-            values: Box::new(val),
+            values: val,
             location: AstLocation::new(l, r, file.clone()),
             comment
         }
@@ -183,7 +183,7 @@ ConditionStmt : stm::ConditionStatement = {
 };
 
 StmCondition : stm::Condition = {
-    <op:ComparisonOperator> <v:ValueExpression> => stm::Condition { value: Box::new(v), operator: op }
+    <op:ComparisonOperator> <v:ExpressionRoot> => stm::Condition { value: v, operator: op }
 };
 
 MixinCall : MixinCall = {
@@ -243,41 +243,49 @@ Bool : ExpressionValue = {
     "False" => ExpressionValue::Bool(false)
 };
 
-Value : ExpressionNode = {
-    <l:@L> <values:ValueExpression+> <r:@R> => {
+Value : Box<ExpressionNode> = {
+    <l:@L> <values:ExpressionRoot+> <r:@R> => {
         if values.len() == 1 {
             values[0].clone()
         } else {
-            ExpressionNode::Val(ExpressionValue::List(values), AstLocation::new(l, r, file.clone()))
+            Box::new(
+                ExpressionNode::Val(ExpressionValue::List(values), AstLocation::new(l, r, file.clone()))
+            )
         }
     }
 };
 
-ValueExpression : ExpressionNode = {
-    <l:ValueExpression> <op:ComparisonOperator> <r:SumExpression> =>
-        ExpressionNode::Op(Box::new(l), ExpressionOperation::from(op), Box::new(r)),
-    SumExpression
+ExprComparisonOp: ExpressionOperation = {
+    ">=" => ExpressionOperation::Gte,
+    ">" =>  ExpressionOperation::Gt,
+    "<=" => ExpressionOperation::Lte,
+    "<" =>  ExpressionOperation::Lt,
+    "=" =>  ExpressionOperation::Eql
 };
 
-SumExpression : ExpressionNode = {
-    <l:SumExpression> "+" <r:FactorExpression> =>
-        ExpressionNode::Op(Box::new(l), ExpressionOperation::Add, Box::new(r)),
-    <l:SumExpression> "-" <r:FactorExpression> =>
-        ExpressionNode::Op(Box::new(l), ExpressionOperation::Sub, Box::new(r)),
-    FactorExpression
+ExprSumOp: ExpressionOperation = {
+    "+" => ExpressionOperation::Add,
+    "-" => ExpressionOperation::Sub
 };
 
-FactorExpression : ExpressionNode = {
-    <l:FactorExpression> "*" <r:ExpressionTerm> =>
-        ExpressionNode::Op(Box::new(l), ExpressionOperation::Mul, Box::new(r)),
-    <l:FactorExpression> "/" <r:ExpressionTerm> =>
-        ExpressionNode::Op(Box::new(l), ExpressionOperation::Div, Box::new(r)),
-    ExpressionTerm
+ExprFactorOp: ExpressionOperation = {
+    "*" => ExpressionOperation::Mul,
+    "/" => ExpressionOperation::Div
 };
 
-ExpressionTerm : ExpressionNode = {
-    <l:@L> <lit:ExpressionLiteral> <r:@R> => ExpressionNode::Val(lit, AstLocation::new(l, r, file.clone())),
-    "(" <ValueExpression> ")" => <>
+Tier<Op,NextTier>: Box<ExpressionNode> = {
+    Tier<Op,NextTier> Op NextTier => Box::new(ExpressionNode::Op(<>)),
+    NextTier
+};
+
+ExpressionRoot = ComparisonTierExpression;
+ComparisonTierExpression = Tier<ExprComparisonOp, SumTierExpression>;
+SumTierExpression = Tier<ExprSumOp, FactorTierExpression>;
+FactorTierExpression = Tier<ExprFactorOp, ExpressionTerm>;
+
+ExpressionTerm : Box<ExpressionNode> = {
+    <l:@L> <lit:ExpressionLiteral> <r:@R> => Box::new(ExpressionNode::Val(lit, AstLocation::new(l, r, file.clone()))),
+    "(" <ExpressionRoot> ")" => <>
 };
 
 ExpressionLiteral : ExpressionValue = {
@@ -289,15 +297,12 @@ ExpressionLiteral : ExpressionValue = {
 
 Color: ast::color::Color = {
     <r:ExpressionTerm> <g:ExpressionTerm> <b:ExpressionTerm> <a:ExpressionTerm> => ast::color::Color {
-        r: Box::new(r),
-        g: Box::new(g),
-        b: Box::new(b),
-        a: Box::new(a)
+        r, g, b, a
     },
     <r:ExpressionTerm> <g:ExpressionTerm> <b:ExpressionTerm> <right:@R> => ast::color::Color {
-        r: Box::new(r),
-        g: Box::new(g),
-        b: Box::new(b),
+        r,
+        g,
+        b,
         a: Box::new(
             ExpressionNode::Val(ExpressionValue::Int(255), AstLocation::new(right, right, file.clone())
         ))
