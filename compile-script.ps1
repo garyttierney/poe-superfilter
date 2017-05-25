@@ -1,4 +1,4 @@
-﻿$requiredVersion = "v0.2"
+$requiredVersion = "v0.2"
 $inputFile = "examples\full_filter.sf"
 $outputFile = "examples\full_filter.filter"
 
