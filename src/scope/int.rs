@@ -42,7 +42,7 @@ impl TransformResult for i64 {
     }
 
     fn render(&self, _: RenderContext, buf: &mut Write) -> Result<()> {
-        buf.write(self.to_string().as_ref())?;
+        buf.write_all(self.to_string().as_ref())?;
         Ok(())
     }
 }

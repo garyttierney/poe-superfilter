@@ -10,9 +10,9 @@ impl TransformResult for Vec<ScopeValue> {
     }
 
     fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
-        for i in 0..(self.len() - 1) {
-            self[i].render(ctx, buf)?;
-            buf.write(b" ")?;
+        for item in self.iter().take(self.len() - 1) {
+            item.render(ctx, buf)?;
+            buf.write_all(b" ")?;
         }
         self[self.len() - 1].render(ctx, buf)
     }

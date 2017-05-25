@@ -67,8 +67,8 @@ impl<'a> Transform for SetValueStatement {
 impl TransformResult for PlainSetValueStatement {
     fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
         ctx.write_indent(buf)?;
-        buf.write(self.name.as_ref())?;
-        buf.write(b" ")?;
+        buf.write_all(self.name.as_ref())?;
+        buf.write_all(b" ")?;
         self.values.render(ctx, buf)?;
 
         self.comment.render(ctx, buf)?;
@@ -110,7 +110,7 @@ impl Transform for ConditionStatement {
                 }
             )));
         }
-        return Err("condition statement with no condition".into());
+        Err("condition statement with no condition".into())
     }
 
     fn location(&self) -> AstLocation {
@@ -121,10 +121,10 @@ impl Transform for ConditionStatement {
 impl TransformResult for PlainConditionStatement {
     fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
         ctx.write_indent(buf)?;
-        buf.write(self.name.as_ref())?;
-        buf.write(b" ")?;
+        buf.write_all(self.name.as_ref())?;
+        buf.write_all(b" ")?;
         self.condition.operator.render(ctx, buf)?;
-        buf.write(b" ")?;
+        buf.write_all(b" ")?;
         self.condition.value.render(ctx, buf)?;
 
         self.comment.render(ctx, buf)?;
@@ -133,7 +133,7 @@ impl TransformResult for PlainConditionStatement {
 }
 
 /// AST structure for a condition. This node is always embedded, so there is no
-/// corresponding variant for it in the ast::Node enum
+/// corresponding variant for it in the `ast::Node` enum
 #[derive(Debug, Clone)]
 pub struct Condition {
     pub value: Box<ExpressionNode>,
@@ -159,7 +159,7 @@ pub enum ComparisonOperator {
 impl TransformResult for ComparisonOperator {
     #[allow(unused_variables)]
     fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
-        buf.write(match *self {
+        buf.write_all(match *self {
             ComparisonOperator::Eql => "=",
             ComparisonOperator::Gt => ">",
             ComparisonOperator::Gte => ">=",

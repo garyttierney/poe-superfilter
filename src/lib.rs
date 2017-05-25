@@ -24,7 +24,7 @@ use std::sync::Arc;
 use std::cell::RefCell;
 use scope::ScopeData;
 
-#[allow(dead_code)]
+#[allow(dead_code, unknown_lints, clippy)]
 mod filter;
 
 #[allow(dead_code)]

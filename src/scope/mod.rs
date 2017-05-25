@@ -49,7 +49,7 @@ impl ScopeData {
 
     /// Resolves a variable that is available in this scope. Traverses up to parent scopes
     /// if necessary.
-    pub fn var(&self, ident: &String) -> Option<ScopeValue> {
+    pub fn var(&self, ident: &str) -> Option<ScopeValue> {
         // return from current scope if found
         if let Some(var) = self.vars.get(ident) {
             return Some(var.clone());
@@ -57,7 +57,7 @@ impl ScopeData {
 
         // bubble up to parent scope otherwise
         if let Some(v) = self.parent() {
-            return v.borrow().var(&ident).clone();
+            return v.borrow().var(ident).clone();
         } else {
             return None;
         }
@@ -68,7 +68,7 @@ impl ScopeData {
 
     /// Resolves a variable that is available in this scope. Traverses up to parent scopes
     /// if necessary.
-    pub fn mixin(&self, ident: &String) -> Option<PreparedMixin> {
+    pub fn mixin(&self, ident: &str) -> Option<PreparedMixin> {
         // return from current scope if found
         if let Some(mixin) = self.mixins.get(ident) {
             return Some(mixin.clone());
@@ -76,7 +76,7 @@ impl ScopeData {
 
         // bubble up to parent scope otherwise
         if let Some(parent) = self.parent() {
-            return parent.borrow().mixin(&ident).clone();
+            return parent.borrow().mixin(ident).clone();
         } else {
             return None;
         }
@@ -133,7 +133,7 @@ pub trait InnerScopeValue: TransformResult + Debug + Sized {
 }
 
 
-/// Holds the value of a variable that can be held in a ScopeData instance
+/// Holds the value of a variable that can be held in a `ScopeData` instance
 #[derive(Clone, Debug, InnerScopeValue, TransformResult)]
 pub enum ScopeValue {
     Int(i64),

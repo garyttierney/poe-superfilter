@@ -127,8 +127,9 @@ impl Transform for MixinCall {
 
             // create scope for this mixin call, include parameter values
             let mut mixin_inner_scope = ScopeData::new(Some(ctx.scope.clone()));
-            for i in 0..self.parameters.len() {
-                mixin_inner_scope.push_var(mixin.parameters[i].name.clone(), t_params[i].return_value())
+
+            for (i, item) in t_params.iter().enumerate().take(self.parameters.len()) {
+                mixin_inner_scope.push_var(mixin.parameters[i].name.clone(), item.return_value())
             }
 
             let inner_ctx = TransformContext {

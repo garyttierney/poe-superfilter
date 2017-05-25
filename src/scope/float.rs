@@ -47,7 +47,7 @@ impl TransformResult for f64 {
     fn render(&self, _: RenderContext, buf: &mut Write) -> Result<()> {
         // round float output since vanilla GGG filters only contain integers
         let rounded = self.round();
-        buf.write(rounded.to_string().as_ref())?;
+        buf.write_all(rounded.to_string().as_ref())?;
         Ok(())
     }
 }

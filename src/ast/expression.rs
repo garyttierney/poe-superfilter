@@ -97,8 +97,8 @@ impl ExpressionNode {
 
         match transformed_operands {
             // abort if one of the nodes returned nothing
-            (None, _) => return Err(ErrorKind::MissingValue(format!("{:?}", a), a.location()).into()),
-            (_, None) => return Err(ErrorKind::MissingValue(format!("{:?}", b), b.location()).into()),
+            (None, _) => Err(ErrorKind::MissingValue(format!("{:?}", a), a.location()).into()),
+            (_, None) => Err(ErrorKind::MissingValue(format!("{:?}", b), b.location()).into()),
             (Some(a_trans), Some(b_trans)) => {
                 // get return values from transformed nodes
                 let a_val = a_trans.return_value();
@@ -116,7 +116,7 @@ impl ExpressionNode {
                     ExpressionOperation::Gt => ScopeValue::Bool(a_val.try_gt(b_val)?),
                     ExpressionOperation::Gte => ScopeValue::Bool(a_val.try_gte(b_val)?)
                 };
-                return Ok(Some(TransformedNode::Value(result)))
+                Ok(Some(TransformedNode::Value(result)))
             }
         }
     }
@@ -171,7 +171,7 @@ impl From<ComparisonOperator> for ExpressionOperation {
     }
 }
 
-/// Implements TransformResult for any string
+/// Implements `TransformResult` for any string
 impl TransformResult for String {
     fn return_value(&self) -> ScopeValue {
         ScopeValue::String(self.clone())
@@ -179,11 +179,11 @@ impl TransformResult for String {
 
     #[allow(unused_variables)]
     fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
-        let quotes_needed = self.contains(" ");
+        let quotes_needed = self.contains(' ');
 
-        if quotes_needed { buf.write(b"\"")?; };
-        buf.write(self.as_ref())?;
-        if quotes_needed { buf.write(b"\"")?; };
+        if quotes_needed { buf.write_all(b"\"")?; };
+        buf.write_all(self.as_ref())?;
+        if quotes_needed { buf.write_all(b"\"")?; };
 
         Ok(())
     }

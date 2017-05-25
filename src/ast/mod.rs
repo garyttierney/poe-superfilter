@@ -78,9 +78,9 @@ impl Transform for Filter {
                 transformed_nodes.push(t_node);
             }
         }
-        return Ok(Some(
+        Ok(Some(
             TransformedNode::Root(transformed_nodes)
-        ));
+        ))
     }
 
     fn location(&self) -> AstLocation {
@@ -89,8 +89,8 @@ impl Transform for Filter {
 }
 
 /// Holds fully transformed nodes that can be rendered.
-/// Calls to methods of the TransformResult trait on the inner values can be performed with no
-/// explicit conversion because this struct implements Deref into &TransformResult.
+/// Calls to methods of the `TransformResult` trait on the inner values can be performed with no
+/// explicit conversion because this struct implements Deref into `&TransformResult`.
 #[derive(Debug, Clone, PartialEq, TransformResult)]
 pub enum TransformedNode {
     Root(Vec<TransformedNode>),
@@ -112,10 +112,10 @@ impl TransformResult for Comment {
     fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
         if ctx.config.comments {
             if !self.inline { ctx.write_indent(buf)?; }
-            buf.write(b"#")?;
-            buf.write(self.content.as_ref())?;
+            buf.write_all(b"#")?;
+            buf.write_all(self.content.as_ref())?;
         }
-        buf.write(ctx.config.line_ending)?;
+        buf.write_all(ctx.config.line_ending)?;
         Ok(())
     }
 }
@@ -138,15 +138,15 @@ impl TransformResult for Option<Comment> {
         match *self {
             Some(ref comment) => {
                 if ctx.config.comments {
-                    buf.write(b" ")?;
+                    buf.write_all(b" ")?;
                     comment.render(ctx, buf)
                 } else {
-                    buf.write(ctx.config.line_ending)?;
+                    buf.write_all(ctx.config.line_ending)?;
                     Ok(())
                 }
             },
             None => {
-                buf.write(ctx.config.line_ending)?;
+                buf.write_all(ctx.config.line_ending)?;
                 Ok(())
             }
         }

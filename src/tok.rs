@@ -72,14 +72,14 @@ impl Location {
 pub fn tokenize(s: &str) -> Vec<(Location, Tok, Location)> {
     let mut tokenizer = Tokenizer::new(s.chars());
     tokenizer.tokenize();
-    *tokenizer.tokens
+    tokenizer.tokens
 }
 
 struct Tokenizer<C: Iterator<Item=char>> {
     cursor: Location,
     chars: C,
     lookahead: Option<char>,
-    tokens: Box<Vec<(Location, Tok, Location)>>,
+    tokens: Vec<(Location, Tok, Location)>,
     token_in_current_line: bool
 }
 
@@ -88,7 +88,7 @@ impl<C: Iterator<Item=char>> Tokenizer<C> {
         Tokenizer {
             cursor: Location { line: 1, pos: 0 },
             token_in_current_line: false,
-            tokens: Box::new(vec![]),
+            tokens: vec![],
             lookahead: None,
             chars: chars
         }
@@ -207,7 +207,7 @@ impl<C: Iterator<Item=char>> Tokenizer<C> {
                 }
                 _ if c.is_digit(10) => {
                     let tmp = self.take_while(Some(c), |c| c.is_digit(10) || c == '.');
-                    if tmp.contains(".") {
+                    if tmp.contains('.') {
                         self.push(Tok::Float(f64::from_str(&tmp).unwrap()), tmp.len());
                     } else {
                         self.push(Tok::Num(i64::from_str(&tmp).unwrap()), tmp.len());
@@ -267,7 +267,7 @@ impl<C: Iterator<Item=char>> Tokenizer<C> {
             }
         }
 
-        return buf;
+        buf
     }
 
     /// Consumes characters, calling a closure each time until the closure returns false.
@@ -287,6 +287,6 @@ impl<C: Iterator<Item=char>> Tokenizer<C> {
             buf.push(c);
         }
 
-        return buf;
+        buf
     }
 }

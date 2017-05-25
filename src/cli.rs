@@ -14,11 +14,10 @@ use std::io;
 use std::path::Path;
 use superfilter::LINE_END;
 use superfilter::ast::transform::RenderConfig;
-use std::time::SystemTime;
 use clap::{Arg, App};
 
 pub fn main() {
-    let start_time = SystemTime::now();
+    //let start_time = SystemTime::now();
 
     let matches = App::new("PoE Superfilter Compiler")
         .version(env!("CARGO_PKG_VERSION"))
