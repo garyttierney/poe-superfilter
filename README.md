@@ -143,6 +143,65 @@ Show if $no
     SetStatement 678
 ```
 
+## Comments
+
+Depending on your usage you might want the comments to pass through to the output or not. You can change this behaviour
+using the `--comments` option. If it is given, comments are passed through to the output, otherwise they whill be discarded.
+
+There is a small caveat for comments preceding Show/Hide blocks if you want the output to be formatted correctly:
+
+```
+Show
+    # comment
+    Class Flask
+    # another comment
+
+# comments for this following block
+# more comments
+Show
+    Class Flask
+    
+---- This will actually produce the following output:
+
+Show
+    # comment
+    Class Flask
+    # another comment
+    # comments for this following block
+    # more comments
+
+Show
+    Class Flask
+```
+
+To avoid that behaviour, you can use a special syntax for "block comments":
+
+```
+Show
+    # comment
+    Class Flask
+    # another comment
+
+#! comment for this following block
+#! more comments
+Show
+    Class Flask
+
+----- Output:
+Show
+    # comment
+    Class Flask
+    # another comment
+    
+# comments for this following block
+# more comments
+Show
+    Class Flask
+```
+
+It's done this way to make the syntax less ambiguous - without the explicit block comments, there could never be a comment
+line at the end of a block, since there would be no way to differentiate it from one intended to describe the next block.
+
 # Command Line Usage
 
 ```
@@ -150,13 +209,16 @@ USAGE:
     superfilter.exe [FLAGS] [OPTIONS] <PATH>
 
 FLAGS:
-    -h, --help       Prints help information
-    -p, --pretty     Include indentation and other formatting in the output
-    -V, --version    Prints version information
+    -c, --comments    Include comments in the output
+    -h, --help        Prints help information
+    -p, --pretty      Include indentation and other formatting in the output
+    -V, --version     Prints version information
 
 OPTIONS:
-    -l, --line-endings <LINE_ENDING>    Type of line ending used (LF OR CRLF) defaults to the platform line ending [values: lf, crlf]
-    -o, --output <FILE>                 Output file. If this option is omitted, the output will be printed to the console.
+    -l, --line-endings <LINE_ENDING>    Type of line ending used (LF OR CRLF) defaults to the platform line ending
+                                        [values: lf, crlf]
+    -o, --output <FILE>                 Output file. If this option is omitted, the output will be printed to the
+                                        console.
 
 ARGS:
     <PATH>    Path of the input file
@@ -178,7 +240,8 @@ execute it to recompile your filter.
 
 # Roadmap
 
-Things to come, in no particular order:
+If you have suggestions, feel free to open an issue telling me all about it!
 
-* comment handling and Filtration support: instead of discarding all comments during parsing, add support for passing them
-  through and/or add specific support for filtration segments
+Things that are already planned, in no particular order:
+
+* improved support for boolean expressions (add and/or operations on booleans)
