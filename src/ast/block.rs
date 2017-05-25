@@ -110,16 +110,16 @@ impl Transform for Block {
 
 impl TransformResult for PlainBlock {
     fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
+        if ctx.config.pretty { buf.write(ctx.config.line_ending)?; }
+
         for comment in &self.block_comments {
             comment.render(ctx, buf)?;
         }
 
-        let variant = match self.variant {
+        buf.write(match self.variant {
             BlockType::Show => b"Show",
             BlockType::Hide => b"Hide"
-        };
-
-        buf.write(variant)?;
+        })?;
 
         self.inline_comment.render(ctx, buf)?;
 

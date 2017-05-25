@@ -32,7 +32,7 @@ fn test_compile(input_file: &str, expected_output_file: &str, comments: bool) {
         .to_owned();
 
     let render_config = RenderConfig {
-        pretty: false,
+        pretty: true,
         indent_str: "    ",
         base_path: base_path,
         line_ending: b"\n",

@@ -103,13 +103,17 @@ pub enum TransformedNode {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Comment(pub String);
+pub struct Comment {
+    pub content: String,
+    pub inline: bool
+}
 
 impl TransformResult for Comment {
     fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
         if ctx.config.comments {
+            if !self.inline { ctx.write_indent(buf)?; }
             buf.write(b"#")?;
-            buf.write(self.0.as_ref())?;
+            buf.write(self.content.as_ref())?;
         }
         buf.write(ctx.config.line_ending)?;
         Ok(())

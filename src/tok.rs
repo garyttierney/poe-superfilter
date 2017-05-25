@@ -12,6 +12,7 @@ pub enum Tok {
     Num(i64),
     Float(f64),
     Comment(String),
+    BlockComment(String),
     LParen,
     RParen,
     Minus,
@@ -180,14 +181,21 @@ impl<C: Iterator<Item=char>> Tokenizer<C> {
                     }
                 }
                 '#' => {
-                    let comment = self.take_while(None, |c| c != '\n');
+                    match self.next_char() {
+                        Some('!') => {
+                            let comment = self.take_while(None, |c| c != '\n');
+                            let length = comment.len();
+                            self.push(Tok::BlockComment(comment), length);
+                        },
+                        Some(any) => {
+                            let comment = self.take_while(Some(any), |c| c != '\n');
+                            let length = comment.len();
+                            self.push(Tok::Comment(comment), length);
+                        },
+                        None => ()
+                    };
 
-                    self.cursor.line += 1;
-                    self.cursor.pos = 0;
-                    self.token_in_current_line = false;
-
-                    let length = comment.len();
-                    self.push(Tok::Comment(comment), length);
+                    self.new_line();
                 },
                 _ if c.is_alphabetic() => {
                     if let Some(tmp) = self.take_identifier() {

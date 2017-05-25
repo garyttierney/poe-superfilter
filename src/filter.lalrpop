@@ -42,6 +42,7 @@ extern {
         "True" => Tok::True,
         "False" => Tok::False,
         Comment => Tok::Comment(<String>),
+        BlockComment => Tok::BlockComment(<String>),
         Num => Tok::Num(<i64>),
         Float => Tok::Float(<f64>),
         QuotedStrLiteral => Tok::StrLiteral(<String>),
@@ -50,7 +51,7 @@ extern {
     }
 }
 
-pub Filter : Filter = {
+pub Filter: Filter = {
     <l:@L> <defs:DefinitionBlock*> <first:InstructionBlock> <rest:AnyBlock*> <r:@R> => {
         let mut nodes = defs;
         nodes.push(first);
@@ -67,17 +68,21 @@ pub Filter : Filter = {
         },
 };
 
-LineEndOrComment : Option<Comment> = {
+LineEndOrComment: Option<Comment> = {
     <s_option:Comment?> "\n" => {
-        s_option.and_then(|comment_str| Some(Comment(comment_str)))
+        s_option.and_then(|comment_str| Some(Comment { content: comment_str, inline: true }))
     }
 };
 
-CommentLine : Comment = {
-    <Comment> "\n" => Comment(<>)
+CommentLine: Comment = {
+    <Comment> "\n" => Comment { content: <>, inline: false }
 };
 
-ImportStmt : ImportStatement = {
+BlockCommentLine: Comment = {
+    <BlockComment> "\n" => Comment { content: <>, inline: false }
+};
+
+ImportStmt: ImportStatement = {
     <l:@L> "Import" <path:RawStrLiteral> <r:@R> <comment:LineEndOrComment> =>
         ImportStatement {
             path: path,
@@ -86,29 +91,29 @@ ImportStmt : ImportStatement = {
         }
 };
 
-AnyBlock : BlockLevelNode = {
+AnyBlock: BlockLevelNode = {
     <ImportStmt> => BlockLevelNode::Import(<>),
     InstructionBlock
 };
 
-DefinitionBlock : BlockLevelNode = {
+DefinitionBlock: BlockLevelNode = {
     <VarDefinition> => BlockLevelNode::VarDef(<>),
     <ImportStmt> => BlockLevelNode::Import(<>),
     <CommentLine> => BlockLevelNode::Comment(<>),
 };
 
-InstructionBlock : BlockLevelNode = {
-    <l:@L> <t:BlockType> <condition:("if" <ExpressionRoot>)?> <inline_comment:LineEndOrComment> <stmts:BlockStatements> <r:@R> => BlockLevelNode::Block(
+InstructionBlock: BlockLevelNode = {
+     <block_comments:BlockCommentLine*> <l:@L> <t:BlockType> <condition:("if" <ExpressionRoot>)?> <inline_comment:LineEndOrComment> <stmts:BlockStatement+> <r:@R> => BlockLevelNode::Block(
         Block {
             nodes: stmts,
             variant: t,
             location: AstLocation::new(l, r, file.clone()),
             condition: condition.and_then( |inner| Some(inner)),
-            block_comments: vec![],
+            block_comments,
             inline_comment
         }
     ),
-    <l:@L> "Mixin" <name:Constant> <args:("(" <Comma<VarIdentifier>> ")")?> <inline_comment:LineEndOrComment> <instructions:BlockStatements> <r:@R> => {
+    <block_comments:BlockCommentLine*> <l:@L> "Mixin" <name:Constant> <args:("(" <Comma<VarIdentifier>> ")")?> <inline_comment:LineEndOrComment> <instructions:BlockStatement+> <r:@R> => {
         let params = args
             .unwrap_or(vec![])
             .iter()
@@ -120,14 +125,14 @@ InstructionBlock : BlockLevelNode = {
                 parameters: params,
                 statements: instructions,
                 location: AstLocation::new(l, r, file.clone()),
-                block_comments: vec![],
+                block_comments,
                 inline_comment
             }
         )
     }
 };
 
-BlockType : BlockType = {
+BlockType: BlockType = {
     "Show" => BlockType::Show,
     "Hide" => BlockType::Hide
 };
@@ -143,7 +148,7 @@ Comma<T>: Vec<T> = {
     }
 };
 
-VarDefinition : VarDefinition  = {
+VarDefinition: VarDefinition  = {
     <l:@L> <id:VarIdentifier> "=" <v:Value> <r:@R> <comment:LineEndOrComment> =>
         VarDefinition {
             identifier: id,
@@ -153,7 +158,7 @@ VarDefinition : VarDefinition  = {
         }
 };
 
-VarReference : ExpressionValue = {
+VarReference: ExpressionValue = {
     <l:@L> <ident:VarIdentifier> <r:@R> => ExpressionValue::Var(
         VarReference {
             identifier: ident,
@@ -162,7 +167,7 @@ VarReference : ExpressionValue = {
     )
 };
 
-SetValueStmt : stm::SetValueStatement = {
+SetValueStmt: stm::SetValueStatement = {
     <l:@L> <n:Constant> <val:Value> <r:@R> <comment:LineEndOrComment> =>
         stm::SetValueStatement {
             name: n,
@@ -172,7 +177,7 @@ SetValueStmt : stm::SetValueStatement = {
         }
 };
 
-ConditionStmt : stm::ConditionStatement = {
+ConditionStmt: stm::ConditionStatement = {
     <l:@L> <n: Constant> <cond: StmCondition> <r:@R> <comment:LineEndOrComment> =>
         stm::ConditionStatement {
             name: n,
@@ -182,11 +187,11 @@ ConditionStmt : stm::ConditionStatement = {
         }
 };
 
-StmCondition : stm::Condition = {
+StmCondition: stm::Condition = {
     <op:ComparisonOperator> <v:ExpressionRoot> => stm::Condition { value: v, operator: op }
 };
 
-MixinCall : MixinCall = {
+MixinCall: MixinCall = {
     <l:@L> "+" <n:Constant> <params:("(" <Comma<Value>> ")")?> <r:@R> <comment:LineEndOrComment> =>
         MixinCall {
             name: n,
@@ -196,36 +201,25 @@ MixinCall : MixinCall = {
         }
 };
 
-BlockStatements : Vec<stm::BlockStatement> = {
-    <s1:Statement*> <s2:InstructionStatement> => {
-        let mut statements = s1;
-        statements.push(s2);
-        statements
-    }
-};
-
-Statement : stm::BlockStatement = { InstructionStatement, CommentStatement };
-
-InstructionStatement : stm::BlockStatement = {
+#[inline]
+BlockStatement: stm::BlockStatement = {
     <SetValueStmt> => stm::BlockStatement::SetValue(<>),
     <ConditionStmt> => stm::BlockStatement::Condition(<>),
     <MixinCall> => stm::BlockStatement::MixinCall(<>),
     <VarDefinition> => stm::BlockStatement::VarDef(<>),
+    <CommentLine> => stm::BlockStatement::Comment(<>)
 };
 
-CommentStatement : stm::BlockStatement =
-    <CommentLine> => stm::BlockStatement::Comment(<>);
-
-RawStrLiteral : String = {
+RawStrLiteral: String = {
     QuotedStrLiteral => String::from(<>),
     Constant => String::from(<>),
 };
 
-StrLiteral : ExpressionValue = {
+StrLiteral: ExpressionValue = {
     <l:@L> <s:RawStrLiteral> <r:@R> => ExpressionValue::String(s)
 };
 
-ComparisonOperator : stm::ComparisonOperator = {
+ComparisonOperator: stm::ComparisonOperator = {
     ">=" => stm::ComparisonOperator::Gte,
     ">" =>  stm::ComparisonOperator::Gt,
     "<=" => stm::ComparisonOperator::Lte,
@@ -233,17 +227,17 @@ ComparisonOperator : stm::ComparisonOperator = {
     "=" =>  stm::ComparisonOperator::Eql
 };
 
-NumberLiteral : ExpressionValue = {
+NumberLiteral: ExpressionValue = {
     <num:Num> => ExpressionValue::Int(num),
     <num:Float> => ExpressionValue::Decimal(num),
 };
 
-Bool : ExpressionValue = {
+Bool: ExpressionValue = {
     "True" => ExpressionValue::Bool(true),
     "False" => ExpressionValue::Bool(false)
 };
 
-Value : Box<ExpressionNode> = {
+Value: Box<ExpressionNode> = {
     <l:@L> <values:ExpressionRoot+> <r:@R> => {
         if values.len() == 1 {
             values[0].clone()
@@ -283,12 +277,12 @@ ComparisonTierExpression = Tier<ExprComparisonOp, SumTierExpression>;
 SumTierExpression = Tier<ExprSumOp, FactorTierExpression>;
 FactorTierExpression = Tier<ExprFactorOp, ExpressionTerm>;
 
-ExpressionTerm : Box<ExpressionNode> = {
+ExpressionTerm: Box<ExpressionNode> = {
     <l:@L> <lit:ExpressionLiteral> <r:@R> => Box::new(ExpressionNode::Val(lit, AstLocation::new(l, r, file.clone()))),
     "(" <ExpressionRoot> ")" => <>
 };
 
-ExpressionLiteral : ExpressionValue = {
+ExpressionLiteral: ExpressionValue = {
     VarReference,
     NumberLiteral,
     StrLiteral,

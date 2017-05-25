@@ -31,6 +31,10 @@ pub fn main() {
             .help("Include indentation and other formatting in the output")
             .short("p")
             .long("pretty"))
+        .arg(Arg::with_name("comments")
+            .help("Include comments in the output")
+            .short("c")
+            .long("comments"))
         .arg(Arg::with_name("output")
             .help("Output file. If this option is omitted, the output will be printed to the console.")
             .short("o")
@@ -69,7 +73,7 @@ pub fn main() {
         indent_str: "    ",
         base_path,
         line_ending,
-        comments: false
+        comments: matches.is_present("comments")
     };
 
     let result = match matches.value_of("output") {

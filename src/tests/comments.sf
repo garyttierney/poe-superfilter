@@ -1,6 +1,8 @@
 # head comment
 $var = "test"
 
+#! test block comment
+#! another block comment line
 Show # block inline comment
     # in block line comment
     SetFontSize 38 # block statement comment

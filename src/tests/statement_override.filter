@@ -1,4 +1,5 @@
+
 Show
-SetFontSize 40
-ItemLevel <= 8
-ItemLevel >= 3
+    SetFontSize 40
+    ItemLevel <= 8
+    ItemLevel >= 3

@@ -3,9 +3,11 @@ Import "mixins.sf"
 $test = "abc"
 $test2 = 8
 
-Show
-	+FlaskMagic("Medium")
-	SetTextColor 100 100 255 255
+#! test block comment
+Show # more comments
+	+FlaskMagic("Medium") # comment
+	SetTextColor 100 100 255 255 # comment
 	SetFontSize 38 # comment
+	# line comment
 	ItemLevel <= $test2
 	ItemLevel >= 3
