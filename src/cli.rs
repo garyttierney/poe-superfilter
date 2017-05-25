@@ -81,15 +81,10 @@ pub fn main() {
         _ => superfilter::compile(&contents, input_path, &mut io::stdout(), &render_config)
     };
 
-    let compile_time = start_time.elapsed().unwrap();
+    //let compile_time = start_time.elapsed().unwrap();
 
-    match result {
-        Ok(_) => {
-            println!("Compilation successful ({}.{}s)", compile_time.as_secs(), compile_time.subsec_nanos() / 100000);
-        }
-        Err(err) => {
-            println!("Compilation failed:");
-            println!("{}", err)
-        }
+    if let Err(err) = result {
+        println!("Compilation failed:");
+        println!("{}", err)
     }
 }
