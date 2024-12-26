@@ -11,7 +11,9 @@ impl TransformResult for bool {
 }
 
 impl InnerScopeValue for bool {
-    fn type_name(&self) -> &'static str { "Bool" }
+    fn type_name(&self) -> &'static str {
+        "Bool"
+    }
 }
 
 impl TryFrom<ScopeValue> for bool {
@@ -20,7 +22,7 @@ impl TryFrom<ScopeValue> for bool {
     fn try_from(value: ScopeValue) -> Result<Self> {
         match value {
             ScopeValue::Bool(v) => Ok(v),
-            _ => Err(ErrorKind::IncompatibleTypes(format!("{:?}", value), "Bool").into())
+            _ => Err(ErrorKind::IncompatibleTypes(format!("{:?}", value), "Bool").into()),
         }
     }
 }

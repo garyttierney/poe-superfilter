@@ -5,16 +5,16 @@
 //!
 //! This crate is a CLI application that exposes the functionality of the compiler library.
 
-extern crate superfilter;
 extern crate clap;
+extern crate superfilter;
 
+use clap::Arg;
 use std::fs::File;
-use std::io::prelude::*;
 use std::io;
+use std::io::prelude::*;
 use std::path::Path;
-use superfilter::LINE_END;
 use superfilter::ast::transform::RenderConfig;
-use clap::{Arg};
+use superfilter::LINE_END;
 
 pub fn main() {
     //let start_time = SystemTime::now();
@@ -47,11 +47,14 @@ pub fn main() {
             .value_name("LINE_ENDING"))
         .get_matches();
 
-    let line_ending: &'static [u8] = match matches.get_one::<String>("line_endings").map(String::as_str) {
+    let line_ending: &'static [u8] = match matches
+        .get_one::<String>("line_endings")
+        .map(String::as_str)
+    {
         Some("crlf") => b"\r\n",
         Some("lf") => b"\n",
         None => LINE_END,
-        _ => panic!("Invalid line ending")
+        _ => panic!("Invalid line ending"),
     };
 
     let input_path = Path::new(matches.get_one::<String>("PATH").unwrap()).to_owned();
@@ -60,22 +63,24 @@ pub fn main() {
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
 
-    let base_path = input_path
-        .parent()
-        .unwrap()
-        .to_owned();
+    let base_path = input_path.parent().unwrap().to_owned();
 
     let render_config = RenderConfig {
         pretty: matches.get_flag("pretty"),
         indent_str: "    ",
         base_path,
         line_ending,
-        comments: matches.get_flag("comments")
+        comments: matches.get_flag("comments"),
     };
 
     let result = match matches.get_one::<String>("output") {
-        Some(output) => superfilter::compile(&contents, input_path, &mut File::create(output).unwrap(), &render_config),
-        _ => superfilter::compile(&contents, input_path, &mut io::stdout(), &render_config)
+        Some(output) => superfilter::compile(
+            &contents,
+            input_path,
+            &mut File::create(output).unwrap(),
+            &render_config,
+        ),
+        _ => superfilter::compile(&contents, input_path, &mut io::stdout(), &render_config),
     };
 
     //let compile_time = start_time.elapsed().unwrap();

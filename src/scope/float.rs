@@ -17,14 +17,16 @@ impl InnerScopeValue for f64 {
     fn try_cmp(&self, other: Self) -> Result<Ordering> {
         match self.partial_cmp(&other) {
             Some(ordering) => Ok(ordering),
-            None => panic!()
+            None => panic!(),
         }
     }
     fn try_eq(&self, other: Self) -> Result<bool> {
         Ok(*self == other)
     }
 
-    fn type_name(&self) -> &'static str { "Float" }
+    fn type_name(&self) -> &'static str {
+        "Float"
+    }
 }
 
 impl TryFrom<ScopeValue> for f64 {
@@ -34,7 +36,7 @@ impl TryFrom<ScopeValue> for f64 {
         match value {
             ScopeValue::Int(v) => Ok(v as f64),
             ScopeValue::Decimal(v) => Ok(v),
-            _ => Err(ErrorKind::IncompatibleTypes(format!("{:?}", value), "Float").into())
+            _ => Err(ErrorKind::IncompatibleTypes(format!("{:?}", value), "Float").into()),
         }
     }
 }

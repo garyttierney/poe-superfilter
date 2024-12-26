@@ -1,12 +1,12 @@
-use crate::ast::{TransformedNode, AstLocation};
-use crate::ast::var::VarReference;
-use crate::scope::ScopeValue;
-use crate::ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
 use crate::ast::block_statements::ComparisonOperator;
-use std::io::Write;
-use std::fmt;
+use crate::ast::transform::{RenderContext, Transform, TransformContext, TransformResult};
+use crate::ast::var::VarReference;
+use crate::ast::{AstLocation, TransformedNode};
+use crate::errors::{ErrorKind, Result};
 use crate::scope::InnerScopeValue;
-use crate::errors::{Result, ErrorKind};
+use crate::scope::ScopeValue;
+use std::fmt;
+use std::io::Write;
 
 #[derive(Clone)]
 pub enum ExpressionValue {
@@ -15,7 +15,7 @@ pub enum ExpressionValue {
     Decimal(f64),
     Bool(bool),
     Var(VarReference),
-    List(Vec<Box<ExpressionNode>>)
+    List(Vec<Box<ExpressionNode>>),
 }
 
 impl fmt::Debug for ExpressionValue {
@@ -37,8 +37,7 @@ impl fmt::Debug for ExpressionValue {
 }
 
 impl Transform for ExpressionValue {
-    fn transform(&self, ctx: TransformContext)
-                 -> Result<Option<TransformedNode>> {
+    fn transform(&self, ctx: TransformContext) -> Result<Option<TransformedNode>> {
         match *self {
             ExpressionValue::Var(ref node) => node.transform(ctx),
             ExpressionValue::List(ref list) => {
@@ -46,23 +45,21 @@ impl Transform for ExpressionValue {
                 for value in list {
                     if let Some(t_value) = value.transform(ctx.clone())? {
                         transformed_values.push(t_value.return_value());
-                    }/*else {
-                        return Err(CompileErr::MissingValue(format!("{:?}", value), self.location.clone()));
-                    }*/
+                    } /*else {
+                          return Err(CompileErr::MissingValue(format!("{:?}", value), self.location.clone()));
+                      }*/
                 }
-                Ok(Some(TransformedNode::Value(ScopeValue::List(transformed_values))))
+                Ok(Some(TransformedNode::Value(ScopeValue::List(
+                    transformed_values,
+                ))))
             }
-            ref val => {
-                Ok(Some(TransformedNode::Value(
-                    match *val {
-                        ExpressionValue::String(ref s) => ScopeValue::String(s.clone()),
-                        ExpressionValue::Int(i) => ScopeValue::Int(i),
-                        ExpressionValue::Decimal(f) => ScopeValue::Decimal(f),
-                        ExpressionValue::Bool(b) => ScopeValue::Bool(b),
-                        _ => unreachable!()
-                    }
-                )))
-            }
+            ref val => Ok(Some(TransformedNode::Value(match *val {
+                ExpressionValue::String(ref s) => ScopeValue::String(s.clone()),
+                ExpressionValue::Int(i) => ScopeValue::Int(i),
+                ExpressionValue::Decimal(f) => ScopeValue::Decimal(f),
+                ExpressionValue::Bool(b) => ScopeValue::Bool(b),
+                _ => unreachable!(),
+            }))),
         }
     }
 
@@ -74,26 +71,32 @@ impl Transform for ExpressionValue {
 #[derive(Clone)]
 pub enum ExpressionNode {
     Val(ExpressionValue, AstLocation),
-    Op(Box<ExpressionNode>, ExpressionOperation, Box<ExpressionNode>)
+    Op(
+        Box<ExpressionNode>,
+        ExpressionOperation,
+        Box<ExpressionNode>,
+    ),
 }
 
 impl fmt::Debug for ExpressionNode {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             ExpressionNode::Val(ref v, _) => write!(f, "{:?}", v),
-            ExpressionNode::Op(ref a, ref op, ref b) => write!(f, "{:?} {:?} {:?}", a, op, b)
+            ExpressionNode::Op(ref a, ref op, ref b) => write!(f, "{:?} {:?} {:?}", a, op, b),
         }
     }
 }
 
 impl ExpressionNode {
-    fn transform_op(&self, ctx: TransformContext, a: &ExpressionNode, op: &ExpressionOperation, b: &ExpressionNode)
-                    -> Result<Option<TransformedNode>> {
+    fn transform_op(
+        &self,
+        ctx: TransformContext,
+        a: &ExpressionNode,
+        op: &ExpressionOperation,
+        b: &ExpressionNode,
+    ) -> Result<Option<TransformedNode>> {
         // transform each operand
-        let transformed_operands = (
-            a.transform(ctx.clone())?,
-            b.transform(ctx.clone())?
-        );
+        let transformed_operands = (a.transform(ctx.clone())?, b.transform(ctx.clone())?);
 
         match transformed_operands {
             // abort if one of the nodes returned nothing
@@ -114,7 +117,7 @@ impl ExpressionNode {
                     ExpressionOperation::Lt => ScopeValue::Bool(a_val.try_lt(b_val)?),
                     ExpressionOperation::Lte => ScopeValue::Bool(a_val.try_lte(b_val)?),
                     ExpressionOperation::Gt => ScopeValue::Bool(a_val.try_gt(b_val)?),
-                    ExpressionOperation::Gte => ScopeValue::Bool(a_val.try_gte(b_val)?)
+                    ExpressionOperation::Gte => ScopeValue::Bool(a_val.try_gte(b_val)?),
                 };
                 Ok(Some(TransformedNode::Value(result)))
             }
@@ -123,24 +126,21 @@ impl ExpressionNode {
 }
 
 impl Transform for ExpressionNode {
-    fn transform(&self, ctx: TransformContext)
-                 -> Result<Option<TransformedNode>> {
+    fn transform(&self, ctx: TransformContext) -> Result<Option<TransformedNode>> {
         match *self {
             ExpressionNode::Val(ref value, _) => value.transform(ctx),
-            ExpressionNode::Op(ref a, ref op, ref b) => self.transform_op(ctx, a, op, b)
+            ExpressionNode::Op(ref a, ref op, ref b) => self.transform_op(ctx, a, op, b),
         }
     }
 
     fn location(&self) -> AstLocation {
         match *self {
             ExpressionNode::Val(_, ref location) => location.clone(),
-            ExpressionNode::Op(ref a, _, ref b) => {
-                AstLocation {
-                    begin: a.location().begin,
-                    end: b.location().end,
-                    file: a.location().file,
-                }
-            }
+            ExpressionNode::Op(ref a, _, ref b) => AstLocation {
+                begin: a.location().begin,
+                end: b.location().end,
+                file: a.location().file,
+            },
         }
     }
 }
@@ -156,7 +156,7 @@ pub enum ExpressionOperation {
     Lt,
     Lte,
     Gt,
-    Gte
+    Gte,
 }
 
 impl From<ComparisonOperator> for ExpressionOperation {
@@ -166,7 +166,7 @@ impl From<ComparisonOperator> for ExpressionOperation {
             ComparisonOperator::Lt => ExpressionOperation::Lt,
             ComparisonOperator::Lte => ExpressionOperation::Lte,
             ComparisonOperator::Gt => ExpressionOperation::Gt,
-            ComparisonOperator::Gte => ExpressionOperation::Gte
+            ComparisonOperator::Gte => ExpressionOperation::Gte,
         }
     }
 }
@@ -181,9 +181,13 @@ impl TransformResult for String {
     fn render(&self, ctx: RenderContext, buf: &mut dyn Write) -> Result<()> {
         let quotes_needed = self.contains(' ');
 
-        if quotes_needed { buf.write_all(b"\"")?; };
+        if quotes_needed {
+            buf.write_all(b"\"")?;
+        };
         buf.write_all(self.as_ref())?;
-        if quotes_needed { buf.write_all(b"\"")?; };
+        if quotes_needed {
+            buf.write_all(b"\"")?;
+        };
 
         Ok(())
     }

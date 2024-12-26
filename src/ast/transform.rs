@@ -1,11 +1,11 @@
-use crate::scope::{ScopeData, ScopeValue, NO_VALUE};
-use std::rc::Rc;
-use std::cell::{Ref, RefMut, RefCell};
-use std::io::Write;
-use crate::ast::{TransformedNode, AstLocation};
-use std::path::PathBuf;
-use std::fmt::Debug;
+use crate::ast::{AstLocation, TransformedNode};
 use crate::errors::Result;
+use crate::scope::{ScopeData, ScopeValue, NO_VALUE};
+use std::cell::{Ref, RefCell, RefMut};
+use std::fmt::Debug;
+use std::io::Write;
+use std::path::PathBuf;
+use std::rc::Rc;
 
 /// This trait needs to be implemented for any abstract syntax tree structure, it contains the
 /// functions to transform the structure's representation into the final structure before it gets
@@ -13,8 +13,7 @@ use crate::errors::Result;
 pub trait Transform: Debug {
     /// Perform any transformations that need to be done before rendering this structure into
     /// plain GGG loot filter syntax
-    fn transform(&self, ctx: TransformContext)
-                 -> Result<Option<TransformedNode>>;
+    fn transform(&self, ctx: TransformContext) -> Result<Option<TransformedNode>>;
 
     fn location(&self) -> AstLocation;
 }
@@ -22,7 +21,7 @@ pub trait Transform: Debug {
 #[derive(Clone)]
 pub struct TransformContext {
     pub scope: Rc<RefCell<ScopeData>>,
-    pub path: Rc<PathBuf>
+    pub path: Rc<PathBuf>,
 }
 
 impl TransformContext {
@@ -56,7 +55,7 @@ pub struct RenderConfig {
     pub indent_str: &'static str,
     pub base_path: PathBuf,
     pub line_ending: &'static [u8],
-    pub comments: bool
+    pub comments: bool,
 }
 
 impl RenderConfig {
@@ -81,7 +80,7 @@ impl<'a> RenderContext<'a> {
             for i in 0..self.indent_level {
                 written += buf.write(self.config.indent_str.as_ref())?;
             }
-            return Ok(written)
+            return Ok(written);
         }
         Ok(0)
     }
@@ -89,7 +88,7 @@ impl<'a> RenderContext<'a> {
     pub fn increase_indent(&self) -> Self {
         RenderContext {
             indent_level: self.indent_level + 1,
-            .. *self
+            ..*self
         }
     }
 }

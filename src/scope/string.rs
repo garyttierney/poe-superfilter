@@ -12,7 +12,9 @@ impl InnerScopeValue for String {
         Ok(*self == other)
     }
 
-    fn type_name(&self) -> &'static str { "String" }
+    fn type_name(&self) -> &'static str {
+        "String"
+    }
 }
 
 impl TryFrom<ScopeValue> for String {
@@ -25,7 +27,7 @@ impl TryFrom<ScopeValue> for String {
             ScopeValue::Decimal(v) => Ok(v.to_string()),
             ScopeValue::Bool(v) => Ok(v.to_string()),
             //ScopeValue::List(v) => Ok(v.to_string()),
-            _ => Err(ErrorKind::IncompatibleTypes(format!("{:?}", value), "String").into())
+            _ => Err(ErrorKind::IncompatibleTypes(format!("{:?}", value), "String").into()),
         }
     }
 }

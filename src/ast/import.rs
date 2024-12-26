@@ -1,12 +1,12 @@
-use crate::ast::{AstLocation, TransformedNode, Comment};
 use crate::ast::transform::{Transform, TransformContext};
-use crate::filter::{self, FilterParser};
+use crate::ast::{AstLocation, Comment, TransformedNode};
+use crate::errors::{Error, ErrorKind, Result, ResultExt};
+use crate::filter::FilterParser;
 use crate::tok;
-use std::io::Read;
 use std::fs;
+use std::io::Read;
 use std::rc::Rc;
 use std::sync::Arc;
-use crate::errors::{Result, ResultExt, ErrorKind, Error};
 
 #[derive(Debug, Clone)]
 pub struct ImportStatement {
@@ -26,18 +26,14 @@ impl Transform for ImportStatement {
             let tokens = Box::new(tok::tokenize(&contents));
             let parser = FilterParser::new();
             let path_buf = Arc::new(resolved_file_path.to_owned());
-            
+
             match parser.parse(&path_buf, tokens.into_iter()) {
                 Ok(ref filter) => {
-                    let transform_result = filter.transform_begin(ctx.scope.clone(),
-                                                                  Rc::new(new_base_path.to_owned()));
+                    let transform_result = filter
+                        .transform_begin(ctx.scope.clone(), Rc::new(new_base_path.to_owned()));
 
                     if let Some(TransformedNode::Root(ref nodes)) = transform_result.unwrap() {
-                        return Ok(Some(
-                            TransformedNode::ExpandedNodes(
-                                nodes.to_owned()
-                            )
-                        ));
+                        return Ok(Some(TransformedNode::ExpandedNodes(nodes.to_owned())));
                     } else {
                         return Ok(None);
                     }
@@ -45,7 +41,10 @@ impl Transform for ImportStatement {
                 Err(e) => Err(e).chain_err(|| "Imported filter failed to parse"),
             }
         } else {
-            Err(Error::from(ErrorKind::ImportError(format!("{:?}", self), self.location())))
+            Err(Error::from(ErrorKind::ImportError(
+                format!("{:?}", self),
+                self.location(),
+            )))
         }
     }
 

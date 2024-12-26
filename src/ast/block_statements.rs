@@ -1,12 +1,12 @@
-use crate::ast::{TransformedNode, AstLocation, Comment};
-use crate::ast::transform::*;
-use crate::ast::var::*;
 use crate::ast::expression::*;
 use crate::ast::mixin::*;
+use crate::ast::transform::*;
+use crate::ast::var::*;
+use crate::ast::{AstLocation, Comment, TransformedNode};
+use crate::errors::{ErrorKind, Result};
 use crate::scope::ScopeValue;
-use std::io::Write;
 use std::cmp::PartialEq;
-use crate::errors::{Result, ErrorKind};
+use std::io::Write;
 
 #[derive(Debug, Clone, Transform)]
 pub enum BlockStatement {
@@ -40,22 +40,23 @@ impl PartialEq for PlainSetValueStatement {
 }
 
 impl<'a> Transform for SetValueStatement {
-    fn transform(&self, ctx: TransformContext)
-                 -> Result<Option<TransformedNode>> {
+    fn transform(&self, ctx: TransformContext) -> Result<Option<TransformedNode>> {
         let transformed_values = self.values.transform(ctx)?;
 
         if transformed_values.is_none() {
-            return Err(
-                ErrorKind::MissingValue(format!("{:?}", self.values), self.values.location().clone()).into()
-            );
+            return Err(ErrorKind::MissingValue(
+                format!("{:?}", self.values),
+                self.values.location().clone(),
+            )
+            .into());
         }
 
         Ok(Some(TransformedNode::SetValueStmt(
             PlainSetValueStatement {
                 name: self.name.clone(),
                 values: transformed_values.unwrap().return_value(),
-                comment: self.comment.clone()
-            }
+                comment: self.comment.clone(),
+            },
         )))
     }
 
@@ -99,15 +100,17 @@ impl PartialEq for PlainConditionStatement {
 }
 
 impl Transform for ConditionStatement {
-    fn transform(&self, ctx: TransformContext)
-                 -> Result<Option<TransformedNode>> {
+    fn transform(&self, ctx: TransformContext) -> Result<Option<TransformedNode>> {
         if let Some(t_value) = self.condition.value.transform(ctx.clone())? {
             return Ok(Some(TransformedNode::ConditionStmt(
                 PlainConditionStatement {
                     name: self.name.clone(),
-                    condition: PlainCondition { value: t_value.return_value(), operator: self.condition.operator },
+                    condition: PlainCondition {
+                        value: t_value.return_value(),
+                        operator: self.condition.operator,
+                    },
                     comment: self.comment.clone(),
-                }
+                },
             )));
         }
         Err("condition statement with no condition".into())
@@ -143,7 +146,7 @@ pub struct Condition {
 #[derive(Debug, Clone)]
 pub struct PlainCondition {
     pub value: ScopeValue,
-    pub operator: ComparisonOperator
+    pub operator: ComparisonOperator,
 }
 
 /// Comparison operator AST structure
@@ -153,19 +156,22 @@ pub enum ComparisonOperator {
     Lt,
     Lte,
     Gt,
-    Gte
+    Gte,
 }
 
 impl TransformResult for ComparisonOperator {
     #[allow(unused_variables)]
     fn render(&self, ctx: RenderContext, buf: &mut dyn Write) -> Result<()> {
-        buf.write_all(match *self {
-            ComparisonOperator::Eql => "=",
-            ComparisonOperator::Gt => ">",
-            ComparisonOperator::Gte => ">=",
-            ComparisonOperator::Lt => "<",
-            ComparisonOperator::Lte => "<=",
-        }.as_ref())?;
+        buf.write_all(
+            match *self {
+                ComparisonOperator::Eql => "=",
+                ComparisonOperator::Gt => ">",
+                ComparisonOperator::Gte => ">=",
+                ComparisonOperator::Lt => "<",
+                ComparisonOperator::Lte => "<=",
+            }
+            .as_ref(),
+        )?;
         Ok(())
     }
 }

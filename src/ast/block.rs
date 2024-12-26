@@ -1,12 +1,12 @@
-use crate::ast::{TransformedNode, AstLocation, Comment};
-use crate::ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
 use crate::ast::block_statements::*;
 use crate::ast::expression::*;
+use crate::ast::transform::{RenderContext, Transform, TransformContext, TransformResult};
+use crate::ast::{AstLocation, Comment, TransformedNode};
+use crate::errors::Result;
 use crate::scope::{ScopeData, ScopeValue};
-use std::rc::Rc;
 use std::cell::RefCell;
 use std::io::Write;
-use crate::errors::Result;
+use std::rc::Rc;
 
 /// Top level statements, can be Blocks of instructions
 /// like Show/Hide/Mixin or single top-level statements,
@@ -53,8 +53,7 @@ impl NodeList for Vec<TransformedNode> {
 }
 
 impl Transform for Block {
-    fn transform(&self, ctx: TransformContext)
-                 -> Result<Option<TransformedNode>> {
+    fn transform(&self, ctx: TransformContext) -> Result<Option<TransformedNode>> {
         if let Some(ref condition) = self.condition {
             let condition_result = condition
                 .transform(ctx.clone())?
@@ -63,15 +62,13 @@ impl Transform for Block {
             if let Some(ScopeValue::Bool(b)) = condition_result {
                 if !b {
                     // Block condition returned false, return nothing
-                    return Ok(None)
+                    return Ok(None);
                 }
             }
         }
 
         let block_ctx = TransformContext {
-            scope: Rc::new(RefCell::new(
-                ScopeData::new(Some(ctx.scope.clone()))
-            )),
+            scope: Rc::new(RefCell::new(ScopeData::new(Some(ctx.scope.clone())))),
             path: ctx.path.clone(),
         };
 
@@ -93,14 +90,12 @@ impl Transform for Block {
             }
         }
 
-        Ok(Some(TransformedNode::Block(
-            PlainBlock {
-                nodes: t_statements,
-                variant: self.variant,
-                block_comments: self.block_comments.clone(),
-                inline_comment: self.inline_comment.clone()
-            }
-        )))
+        Ok(Some(TransformedNode::Block(PlainBlock {
+            nodes: t_statements,
+            variant: self.variant,
+            block_comments: self.block_comments.clone(),
+            inline_comment: self.inline_comment.clone(),
+        })))
     }
 
     fn location(&self) -> AstLocation {
@@ -110,7 +105,9 @@ impl Transform for Block {
 
 impl TransformResult for PlainBlock {
     fn render(&self, ctx: RenderContext, buf: &mut dyn Write) -> Result<()> {
-        if ctx.config.pretty { buf.write_all(ctx.config.line_ending)?; }
+        if ctx.config.pretty {
+            buf.write_all(ctx.config.line_ending)?;
+        }
 
         for comment in &self.block_comments {
             comment.render(ctx, buf)?;
@@ -118,7 +115,7 @@ impl TransformResult for PlainBlock {
 
         buf.write_all(match self.variant {
             BlockType::Show => b"Show",
-            BlockType::Hide => b"Hide"
+            BlockType::Hide => b"Hide",
         })?;
 
         self.inline_comment.render(ctx, buf)?;

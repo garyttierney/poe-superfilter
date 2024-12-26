@@ -1,27 +1,22 @@
 use crate::ast::mixin::PreparedMixin;
-use std::collections::BTreeMap;
+use crate::ast::transform::{RenderContext, TransformResult};
+use crate::errors::{Error, ErrorKind, Result};
 use std::cell::RefCell;
-use std::rc::Rc;
-use crate::ast::transform::{TransformResult, RenderContext};
-use std::io::Write;
 use std::cmp::{Ordering, PartialEq};
+use std::collections::BTreeMap;
 use std::convert::{TryFrom, TryInto};
 use std::fmt::Debug;
-use crate::errors::{Result, ErrorKind, Error};
+use std::io::Write;
+use std::rc::Rc;
 
-mod int;
-mod float;
 mod bool;
-mod no_value;
+mod float;
+mod int;
 mod list;
+mod no_value;
 mod string;
 
-pub use self::int::*;
-pub use self::float::*;
-pub use self::bool::*;
 pub use self::no_value::*;
-pub use self::list::*;
-pub use self::string::*;
 
 /// Symbol table structure that hold variables and mixins that are available in a scope
 #[derive(Debug, Clone)]
@@ -42,10 +37,14 @@ impl ScopeData {
     }
 
     /// Returns the parent scope
-    pub fn parent(&self) -> Option<Rc<RefCell<ScopeData>>> { self.parent.clone() }
+    pub fn parent(&self) -> Option<Rc<RefCell<ScopeData>>> {
+        self.parent.clone()
+    }
 
     /// Adds a variable to this scope
-    pub fn push_var(&mut self, ident: String, value: ScopeValue) { self.vars.insert(ident, value); }
+    pub fn push_var(&mut self, ident: String, value: ScopeValue) {
+        self.vars.insert(ident, value);
+    }
 
     /// Resolves a variable that is available in this scope. Traverses up to parent scopes
     /// if necessary.
@@ -64,7 +63,9 @@ impl ScopeData {
     }
 
     /// Adds a mixin to this scope
-    pub fn push_mixin(&mut self, ident: String, value: PreparedMixin) { self.mixins.insert(ident, value); }
+    pub fn push_mixin(&mut self, ident: String, value: PreparedMixin) {
+        self.mixins.insert(ident, value);
+    }
 
     /// Resolves a variable that is available in this scope. Traverses up to parent scopes
     /// if necessary.
@@ -105,7 +106,9 @@ pub trait InnerScopeValue: TransformResult + Debug + Sized {
     }
 
     fn try_eq(&self, _: Self) -> Result<bool>
-        where Self: Sized {
+    where
+        Self: Sized,
+    {
         Err(ErrorKind::UnsupportedOperation(format!("{:?}", self), "<=>").into())
     }
 
@@ -132,7 +135,6 @@ pub trait InnerScopeValue: TransformResult + Debug + Sized {
     fn type_name(&self) -> &'static str;
 }
 
-
 /// Holds the value of a variable that can be held in a `ScopeData` instance
 #[derive(Clone, Debug, InnerScopeValue, TransformResult)]
 pub enum ScopeValue {
@@ -141,7 +143,7 @@ pub enum ScopeValue {
     Bool(bool),
     String(String),
     List(Vec<ScopeValue>),
-    None(&'static NoValue)
+    None(&'static NoValue),
 }
 
 impl PartialEq for ScopeValue {

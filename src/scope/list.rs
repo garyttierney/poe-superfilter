@@ -1,7 +1,9 @@
 use super::*;
 
 impl InnerScopeValue for Vec<ScopeValue> {
-    fn type_name(&self) -> &'static str { "List" }
+    fn type_name(&self) -> &'static str {
+        "List"
+    }
 }
 
 impl TransformResult for Vec<ScopeValue> {
@@ -24,7 +26,7 @@ impl TryFrom<ScopeValue> for Vec<ScopeValue> {
     fn try_from(value: ScopeValue) -> Result<Self> {
         match value {
             ScopeValue::List(list) => Ok(list),
-            _ => Err(ErrorKind::IncompatibleTypes(format!("{:?}", value), "List").into())
+            _ => Err(ErrorKind::IncompatibleTypes(format!("{:?}", value), "List").into()),
         }
     }
 }

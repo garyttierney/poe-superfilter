@@ -21,7 +21,9 @@ impl InnerScopeValue for i64 {
         Ok(*self == other)
     }
 
-    fn type_name(&self) -> &'static str { "Int" }
+    fn type_name(&self) -> &'static str {
+        "Int"
+    }
 }
 
 impl TryFrom<ScopeValue> for i64 {
@@ -31,7 +33,7 @@ impl TryFrom<ScopeValue> for i64 {
         match value {
             ScopeValue::Int(v) => Ok(v),
             ScopeValue::Decimal(v) => Ok(v.round() as i64),
-            _ => Err(ErrorKind::IncompatibleTypes(format!("{:?}", value), "Int").into())
+            _ => Err(ErrorKind::IncompatibleTypes(format!("{:?}", value), "Int").into()),
         }
     }
 }

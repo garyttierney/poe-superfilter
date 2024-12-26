@@ -1,10 +1,10 @@
 use regex::Regex;
-use std::str::FromStr;
-use std::fmt::Display;
 use std::fmt;
+use std::fmt::Display;
+use std::str::FromStr;
 use std::sync::OnceLock;
 
-/// All tokens that can occur in superfilter syntax 
+/// All tokens that can occur in superfilter syntax
 #[derive(Clone, Debug, PartialEq)]
 pub enum Tok {
     StrLiteral(String),
@@ -33,7 +33,7 @@ pub enum Tok {
     Import,
     If,
     True,
-    False
+    False,
 }
 
 impl Display for Tok {
@@ -45,7 +45,7 @@ impl Display for Tok {
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct Location {
     pub line: usize,
-    pub pos: usize
+    pub pos: usize,
 }
 
 impl Display for Location {
@@ -64,7 +64,7 @@ impl Location {
     fn add(&self, lines: usize, chars: usize) -> Location {
         Location {
             line: self.line.saturating_add(lines),
-            pos: self.pos.saturating_add(chars)
+            pos: self.pos.saturating_add(chars),
         }
     }
 }
@@ -76,22 +76,22 @@ pub fn tokenize(s: &str) -> Vec<(Location, Tok, Location)> {
     tokenizer.tokens
 }
 
-struct Tokenizer<C: Iterator<Item=char>> {
+struct Tokenizer<C: Iterator<Item = char>> {
     cursor: Location,
     chars: C,
     lookahead: Option<char>,
     tokens: Vec<(Location, Tok, Location)>,
-    token_in_current_line: bool
+    token_in_current_line: bool,
 }
 
-impl<C: Iterator<Item=char>> Tokenizer<C> {
+impl<C: Iterator<Item = char>> Tokenizer<C> {
     fn new(chars: C) -> Tokenizer<C> {
         Tokenizer {
             cursor: Location { line: 1, pos: 0 },
             token_in_current_line: false,
             tokens: vec![],
             lookahead: None,
-            chars: chars
+            chars: chars,
         }
     }
 
@@ -109,7 +109,7 @@ impl<C: Iterator<Item=char>> Tokenizer<C> {
         let last = self.tokens.last().cloned();
         match last {
             Some((_, Tok::NewLine, _)) => {}
-            _ => self.push(Tok::NewLine, 1)
+            _ => self.push(Tok::NewLine, 1),
         }
     }
 
@@ -135,7 +135,8 @@ impl<C: Iterator<Item=char>> Tokenizer<C> {
 
     fn push(&mut self, token: Tok, length: usize) {
         self.token_in_current_line = true;
-        self.tokens.push((self.cursor, token, self.cursor.add(0, length)));
+        self.tokens
+            .push((self.cursor, token, self.cursor.add(0, length)));
     }
 
     fn next_and_push(&mut self, token: Tok, length: usize) {
@@ -152,15 +153,13 @@ impl<C: Iterator<Item=char>> Tokenizer<C> {
                     let next = self.next_char();
                     match next {
                         Some('=') => self.next_and_push(Tok::Gte, 2),
-                        _ => self.push(Tok::Gt, 1)
+                        _ => self.push(Tok::Gt, 1),
                     }
                 }
-                '<' => {
-                    match self.next_char() {
-                        Some('=') => self.next_and_push(Tok::Lte, 2),
-                        _ => self.push(Tok::Lt, 1)
-                    }
-                }
+                '<' => match self.next_char() {
+                    Some('=') => self.next_and_push(Tok::Lte, 2),
+                    _ => self.push(Tok::Lt, 1),
+                },
                 '=' => self.next_and_push(Tok::Eql, 1),
                 '(' => self.next_and_push(Tok::LParen, 1),
                 ')' => self.next_and_push(Tok::RParen, 1),
@@ -187,17 +186,17 @@ impl<C: Iterator<Item=char>> Tokenizer<C> {
                             let comment = self.take_while(None, |c| c != '\n');
                             let length = comment.len();
                             self.push(Tok::BlockComment(comment), length);
-                        },
+                        }
                         Some(any) => {
                             let comment = self.take_while(Some(any), |c| c != '\n');
                             let length = comment.len();
                             self.push(Tok::Comment(comment), length);
-                        },
-                        None => ()
+                        }
+                        None => (),
                     };
 
                     self.new_line();
-                },
+                }
                 _ if c.is_alphabetic() => {
                     if let Some(tmp) = self.take_identifier() {
                         let length = tmp.len();
@@ -232,15 +231,13 @@ impl<C: Iterator<Item=char>> Tokenizer<C> {
             "if" => Tok::If,
             "True" => Tok::True,
             "False" => Tok::False,
-            _ => Tok::Constant(id)
+            _ => Tok::Constant(id),
         }
     }
 
     fn take_identifier(&mut self) -> Option<String> {
-        static IDENT_CHAR_RX: OnceLock<Regex> = OnceLock::new();        
-        let ident_regex = IDENT_CHAR_RX.get_or_init(|| {
-            Regex::new("[A-Za-z0-9_]").unwrap()
-        });
+        static IDENT_CHAR_RX: OnceLock<Regex> = OnceLock::new();
+        let ident_regex = IDENT_CHAR_RX.get_or_init(|| Regex::new("[A-Za-z0-9_]").unwrap());
         if let Some(c0) = self.lookahead {
             if !ident_regex.is_match(&c0.to_string()) {
                 return None;
@@ -276,10 +273,13 @@ impl<C: Iterator<Item=char>> Tokenizer<C> {
     /// Returns a String with all characters consumed up to that point.
     /// Taken from https://github.com/nikomatsakis/lalrpop/blob/master/lalrpop-test/src/util/tok.rs
     fn take_while<F>(&mut self, c0: Option<char>, f: F) -> String
-        where F: Fn(char) -> bool
+    where
+        F: Fn(char) -> bool,
     {
         let mut buf = String::new();
-        if let Some(c) = c0 { buf.push(c) }
+        if let Some(c) = c0 {
+            buf.push(c)
+        }
 
         while let Some(c) = self.next_char() {
             if !f(c) {

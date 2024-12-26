@@ -1,33 +1,32 @@
 //! Abstract syntax tree structures
 
-
-pub mod transform;
-pub mod mixin;
-pub mod block_statements;
-pub mod var;
-pub mod color;
 pub mod block;
-pub mod import;
+pub mod block_statements;
+pub mod color;
 pub mod expression;
+pub mod import;
+pub mod mixin;
+pub mod transform;
+pub mod var;
 
-use crate::ast::block_statements::*;
-use crate::ast::mixin::*;
-use crate::ast::var::*;
-use crate::ast::import::*;
-use crate::ast::transform::*;
 use crate::ast::block::*;
-use crate::scope::*;
+use crate::ast::block_statements::*;
+use crate::ast::import::*;
+use crate::ast::mixin::*;
+use crate::ast::transform::*;
+use crate::ast::var::*;
 use crate::errors::Result;
+use crate::scope::*;
 
+use std::cell::RefCell;
 use std::fmt::Debug;
+use std::io::Write;
 use std::rc::Rc;
 use std::sync::Arc;
-use std::cell::RefCell;
-use std::io::Write;
 
 use std::fmt;
-use std::fmt::Formatter;
 use std::fmt::Error as FmtError;
+use std::fmt::Formatter;
 
 use crate::tok::Location as TokenLocation;
 use std::path::PathBuf;
@@ -35,7 +34,7 @@ use std::path::PathBuf;
 #[derive(Clone)]
 pub struct Filter {
     pub nodes: Vec<BlockLevelNode>,
-    pub location: AstLocation
+    pub location: AstLocation,
 }
 
 #[derive(Debug, Clone, Transform)]
@@ -44,7 +43,7 @@ pub enum BlockLevelNode {
     Mixin(Mixin),
     Import(ImportStatement),
     VarDef(VarDefinition),
-    Comment(Comment)
+    Comment(Comment),
 }
 
 impl Debug for Filter {
@@ -55,13 +54,14 @@ impl Debug for Filter {
 }
 
 impl Filter {
-    pub fn transform_begin(&self,
-                           root_scope: Rc<RefCell<ScopeData>>,
-                           base_path: Rc<PathBuf>)
-                           -> Result<Option<TransformedNode>> {
+    pub fn transform_begin(
+        &self,
+        root_scope: Rc<RefCell<ScopeData>>,
+        base_path: Rc<PathBuf>,
+    ) -> Result<Option<TransformedNode>> {
         let root_ctx = TransformContext {
             scope: root_scope,
-            path: base_path
+            path: base_path,
         };
 
         self.transform(root_ctx)
@@ -69,8 +69,7 @@ impl Filter {
 }
 
 impl Transform for Filter {
-    fn transform(&self, ctx: TransformContext)
-                 -> Result<Option<TransformedNode>> {
+    fn transform(&self, ctx: TransformContext) -> Result<Option<TransformedNode>> {
         let mut transformed_nodes: Vec<TransformedNode> = Vec::with_capacity(self.nodes.len());
 
         for node in &self.nodes {
@@ -78,9 +77,7 @@ impl Transform for Filter {
                 transformed_nodes.push(t_node);
             }
         }
-        Ok(Some(
-            TransformedNode::Root(transformed_nodes)
-        ))
+        Ok(Some(TransformedNode::Root(transformed_nodes)))
     }
 
     fn location(&self) -> AstLocation {
@@ -99,19 +96,21 @@ pub enum TransformedNode {
     ConditionStmt(PlainConditionStatement),
     Value(ScopeValue),
     ExpandedNodes(Vec<TransformedNode>),
-    Comment(Comment)
+    Comment(Comment),
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Comment {
     pub content: String,
-    pub inline: bool
+    pub inline: bool,
 }
 
 impl TransformResult for Comment {
     fn render(&self, ctx: RenderContext, buf: &mut dyn Write) -> Result<()> {
         if ctx.config.comments {
-            if !self.inline { ctx.write_indent(buf)?; }
+            if !self.inline {
+                ctx.write_indent(buf)?;
+            }
             buf.write_all(b"#")?;
             buf.write_all(self.content.as_ref())?;
         }
@@ -123,9 +122,7 @@ impl TransformResult for Comment {
 impl Transform for Comment {
     #[allow(unused_variables)]
     fn transform(&self, ctx: TransformContext) -> Result<Option<TransformedNode>> {
-        Ok(Some(
-            TransformedNode::Comment(self.clone())
-        ))
+        Ok(Some(TransformedNode::Comment(self.clone())))
     }
 
     fn location(&self) -> AstLocation {
@@ -144,7 +141,7 @@ impl TransformResult for Option<Comment> {
                     buf.write_all(ctx.config.line_ending)?;
                     Ok(())
                 }
-            },
+            }
             None => {
                 buf.write_all(ctx.config.line_ending)?;
                 Ok(())
@@ -167,18 +164,25 @@ impl TransformResult for Vec<TransformedNode> {
 pub struct AstLocation {
     pub begin: TokenLocation,
     pub end: TokenLocation,
-    pub file: Arc<PathBuf>
+    pub file: Arc<PathBuf>,
 }
 
 impl AstLocation {
-    pub fn new(begin: TokenLocation, end: TokenLocation, file: Arc<PathBuf>)
-               -> AstLocation {
-        AstLocation { begin, end, file: file.clone() }
+    pub fn new(begin: TokenLocation, end: TokenLocation, file: Arc<PathBuf>) -> AstLocation {
+        AstLocation {
+            begin,
+            end,
+            file: file.clone(),
+        }
     }
 }
 
 impl fmt::Display for AstLocation {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        write!(f, "{:?}: {}:{} - {}:{}", self.file, self.begin.line, self.begin.pos, self.end.line, self.end.pos)
+        write!(
+            f,
+            "{:?}: {}:{} - {}:{}",
+            self.file, self.begin.line, self.begin.pos, self.end.line, self.end.pos
+        )
     }
 }

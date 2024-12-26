@@ -1,8 +1,8 @@
-use std::path::Path;
-use std::io::Read;
-use std::fs::File;
 use super::ast::transform::RenderConfig;
 use std::env;
+use std::fs::File;
+use std::io::Read;
+use std::path::Path;
 use std::sync::Once;
 
 static START: Once = Once::new();
@@ -26,20 +26,23 @@ fn test_compile(input_file: &str, expected_output_file: &str, comments: bool) {
 
     let mut result_vec = Vec::<u8>::new();
 
-    let base_path = Path::new(&input_file)
-        .parent()
-        .unwrap()
-        .to_owned();
+    let base_path = Path::new(&input_file).parent().unwrap().to_owned();
 
     let render_config = RenderConfig {
         pretty: true,
         indent_str: "    ",
         base_path: base_path,
         line_ending: b"\n",
-        comments: comments
+        comments: comments,
     };
 
-    super::compile(&sf_file, Path::new(input_file).to_owned(), &mut result_vec, &render_config).unwrap();
+    super::compile(
+        &sf_file,
+        Path::new(input_file).to_owned(),
+        &mut result_vec,
+        &render_config,
+    )
+    .unwrap();
 
     let result_str = String::from_utf8(result_vec).unwrap();
     assert_eq!(expected_result, result_str)

@@ -12,15 +12,19 @@ extern crate error_chain;
 use filter::FilterParser;
 use lalrpop_util::lalrpop_mod;
 
-use crate::ast::transform::{RenderContext, RenderConfig, TransformResult};
-use std::path::PathBuf;
+use crate::ast::transform::{RenderConfig, RenderContext, TransformResult};
+use crate::scope::ScopeData;
+use std::cell::RefCell;
 use std::io::Write;
+use std::path::PathBuf;
 use std::rc::Rc;
 use std::sync::Arc;
-use std::cell::RefCell;
-use crate::scope::ScopeData;
 
-lalrpop_mod!(#[allow(unused)] #[allow(clippy::all)] filter);
+lalrpop_mod!(
+    #[allow(unused)]
+    #[allow(clippy::all)]
+    filter
+);
 
 #[allow(dead_code)]
 pub mod ast;
@@ -45,8 +49,12 @@ pub const LINE_END: &'static [u8] = b"\r\n";
 pub const LINE_END: &'static [u8] = b"\n";
 
 /// Compiles a complete filter into vanilla loot filter syntax
-pub fn compile(contents: &str, file: PathBuf, out_buf: &mut dyn Write, render_config: &RenderConfig)
-               -> Result<()> {
+pub fn compile(
+    contents: &str,
+    file: PathBuf,
+    out_buf: &mut dyn Write,
+    render_config: &RenderConfig,
+) -> Result<()> {
     let tokens = Box::new(tok::tokenize(contents));
     let root_scope = Rc::new(RefCell::new(ScopeData::new(None)));
 
@@ -59,9 +67,9 @@ pub fn compile(contents: &str, file: PathBuf, out_buf: &mut dyn Write, render_co
 
     match parser.parse(&Arc::new(file), tokens.into_iter()) {
         Ok(ref filter) => {
-            let transformed_tree = filter.transform_begin(root_scope,
-                                   Rc::new(render_config.base_path.clone()))?
-                                   .expect("Expected a transform result");
+            let transformed_tree = filter
+                .transform_begin(root_scope, Rc::new(render_config.base_path.clone()))?
+                .expect("Expected a transform result");
             transformed_tree.render(render_ctx, out_buf)
         }
         Err(err) => Err(err).chain_err(|| "Parse Error"),
