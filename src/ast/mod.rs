@@ -97,6 +97,22 @@ pub enum TransformedNode {
     Value(ScopeValue),
     ExpandedNodes(Vec<TransformedNode>),
     Comment(Comment),
+    Continue(PlainContinueStatement),
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct PlainContinueStatement {
+    pub comment: Option<Comment>,
+}
+
+impl TransformResult for PlainContinueStatement {
+    fn render(&self, ctx: RenderContext, buf: &mut dyn Write) -> Result<()> {
+        ctx.write_indent(buf)?;
+        buf.write_all(b"Continue")?;
+        self.comment.render(ctx, buf)?;
+
+        Ok(())
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]

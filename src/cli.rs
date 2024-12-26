@@ -89,6 +89,6 @@ pub fn main() {
 
     if let Err(err) = result {
         println!("Compilation failed:");
-        println!("{}", err)
+        println!("{:#?}", err)
     }
 }

@@ -9,5 +9,7 @@ Show # more comments
 	SetTextColor 100 100 255 255 # comment
 	SetFontSize 38 # comment
 	# line comment
-	ItemLevel <= $test2
 	ItemLevel >= 3
+	Continue
+
+	

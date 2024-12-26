@@ -33,6 +33,7 @@ extern {
         "Hide" => Tok::Hide,
         "Mixin" => Tok::Mixin,
         "Import" => Tok::Import,
+        "Continue" => Tok::Continue,
         ">=" => Tok::Gte,
         ">" => Tok::Gt,
         "<=" => Tok::Lte,
@@ -201,13 +202,21 @@ MixinCall: MixinCall = {
         }
 };
 
+ContinueStmt: stm::ContinueStatement = {
+    <l:@L> "Continue" <r:@R> <comment:LineEndOrComment> => stm::ContinueStatement {
+        location: AstLocation::new(l, r, file.clone()),
+        comment
+    }
+}
+
 #[inline]
 BlockStatement: stm::BlockStatement = {
     <SetValueStmt> => stm::BlockStatement::SetValue(<>),
     <ConditionStmt> => stm::BlockStatement::Condition(<>),
     <MixinCall> => stm::BlockStatement::MixinCall(<>),
     <VarDefinition> => stm::BlockStatement::VarDef(<>),
-    <CommentLine> => stm::BlockStatement::Comment(<>)
+    <CommentLine> => stm::BlockStatement::Comment(<>),
+    <ContinueStmt> => stm::BlockStatement::Continue(<>),
 };
 
 RawStrLiteral: String = {

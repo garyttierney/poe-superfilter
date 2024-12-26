@@ -8,6 +8,8 @@ use crate::scope::ScopeValue;
 use std::cmp::PartialEq;
 use std::io::Write;
 
+use super::PlainContinueStatement;
+
 #[derive(Debug, Clone, Transform)]
 pub enum BlockStatement {
     SetValue(SetValueStatement),
@@ -15,6 +17,25 @@ pub enum BlockStatement {
     MixinCall(MixinCall),
     VarDef(VarDefinition),
     Comment(Comment),
+    Continue(ContinueStatement),
+}
+
+#[derive(Debug, Clone)]
+pub struct ContinueStatement {
+    pub location: AstLocation,
+    pub comment: Option<Comment>,
+}
+
+impl<'a> Transform for ContinueStatement {
+    fn transform(&self, ctx: TransformContext) -> Result<Option<TransformedNode>> {
+        Ok(Some(TransformedNode::Continue(PlainContinueStatement {
+            comment: self.comment.clone(),
+        })))
+    }
+
+    fn location(&self) -> AstLocation {
+        self.location.clone()
+    }
 }
 
 /// AST structure for a value set or other instruction statement

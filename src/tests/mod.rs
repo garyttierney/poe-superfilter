@@ -82,3 +82,8 @@ fn conditional_blocks() {
 fn comments() {
     test_compile("comments.sf", "comments.filter", true)
 }
+
+#[test]
+fn continue_stmt() {
+    test_compile("continue.sf", "continue.filter", true);
+}

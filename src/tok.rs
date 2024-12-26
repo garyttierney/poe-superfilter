@@ -34,6 +34,7 @@ pub enum Tok {
     If,
     True,
     False,
+    Continue,
 }
 
 impl Display for Tok {
@@ -231,6 +232,7 @@ impl<C: Iterator<Item = char>> Tokenizer<C> {
             "if" => Tok::If,
             "True" => Tok::True,
             "False" => Tok::False,
+            "Continue" => Tok::Continue,
             _ => Tok::Constant(id),
         }
     }
