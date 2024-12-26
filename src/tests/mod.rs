@@ -3,9 +3,9 @@ use std::io::Read;
 use std::fs::File;
 use super::ast::transform::RenderConfig;
 use std::env;
-use std::sync::{Once, ONCE_INIT};
+use std::sync::Once;
 
-static START: Once = ONCE_INIT;
+static START: Once = Once::new();
 
 fn load_example(path: &str) -> String {
     let mut file = File::open(path).unwrap();

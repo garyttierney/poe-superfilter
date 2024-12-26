@@ -3,23 +3,27 @@
 #![recursion_limit="128"]
 
 extern crate proc_macro;
+extern crate proc_macro2;
 extern crate syn;
 #[macro_use] extern crate quote;
 
+use quote::ToTokens;
 use syn::{DeriveInput, Variant};
-use proc_macro::TokenStream;
+use proc_macro2::TokenStream;
 
-fn impl_match_variants<F>(ast: &DeriveInput, gen_code: F) -> quote::Tokens
-    where F: Fn(&Variant) -> quote::Tokens {
-    if let &syn::Body::Enum(ref variants) = &ast.body {
+fn impl_match_variants<F>(ast: &DeriveInput, gen_code: F) -> TokenStream
+    where F: Fn(&Variant) -> TokenStream {
+    if let &syn::Data::Enum(ref variants) = &ast.data {
         let name = &ast.ident;
-        let mut impl_variants = quote::Tokens::new();
-        for v in variants {
+        let mut impl_variants = TokenStream::new();
+        for v in &variants.variants {
             let v_ident = &v.ident;
             let code = gen_code(&v);
-            impl_variants.append(quote! {
+            let variant = quote! {
                 #name::#v_ident #code,
-            });
+            };
+
+            variant.to_tokens(&mut impl_variants);
         }
 
         impl_variants
@@ -30,21 +34,18 @@ fn impl_match_variants<F>(ast: &DeriveInput, gen_code: F) -> quote::Tokens
 
 /// Macro for custom derive of the Transform Trait
 #[proc_macro_derive(Transform)]
-pub fn inner_transform(input: TokenStream) -> TokenStream {
-    // Construct a string representation of the type definition
-    let s = input.to_string();
-
+pub fn inner_transform(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     // Parse the string representation
-    let ast = syn::parse_macro_input(&s).unwrap();
+    let ast = syn::parse_macro_input!(input);
 
     // Build the impl
     let gen = impl_transform(&ast);
 
     // Return the generated impl
-    gen.parse().unwrap()
+    proc_macro::TokenStream::from(gen)
 }
 
-fn impl_transform(ast: &DeriveInput) -> quote::Tokens {
+fn impl_transform(ast: &DeriveInput) -> TokenStream {
     let name = &ast.ident;
     let transform_variants = impl_match_variants(&ast, |_| {
         quote! { (ref n) => { n.transform(ctx) } }
@@ -74,21 +75,18 @@ fn impl_transform(ast: &DeriveInput) -> quote::Tokens {
 
 /// Macro for custom derive of the TransformResult Trait
 #[proc_macro_derive(TransformResult)]
-pub fn inner_transform_result(input: TokenStream) -> TokenStream {
-    // Construct a string representation of the type definition
-    let s = input.to_string();
-
+pub fn inner_transform_result(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     // Parse the string representation
-    let ast = syn::parse_macro_input(&s).unwrap();
+    let ast = syn::parse_macro_input!(input);
 
     // Build the impl
     let gen = impl_transform_result(&ast);
 
     // Return the generated impl
-    gen.parse().unwrap()
+    proc_macro::TokenStream::from(gen)
 }
 
-fn impl_transform_result(ast: &DeriveInput) -> quote::Tokens {
+fn impl_transform_result(ast: &DeriveInput) -> TokenStream {
     let name = &ast.ident;
     let return_variants = impl_match_variants(&ast, |_| {
         quote! { (ref n) => { n.return_value() } }
@@ -107,7 +105,7 @@ fn impl_transform_result(ast: &DeriveInput) -> quote::Tokens {
             }
 
             /// Renders the output for this node into a writable stream.
-            fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
+            fn render(&self, ctx: RenderContext, buf: &mut dyn Write) -> Result<()> {
                 match *self {
                     #render_variants
                 }
@@ -118,21 +116,18 @@ fn impl_transform_result(ast: &DeriveInput) -> quote::Tokens {
 
 /// Macro for custom derive of the TransformResult Trait
 #[proc_macro_derive(InnerScopeValue)]
-pub fn inner_scope_value(input: TokenStream) -> TokenStream {
-    // Construct a string representation of the type definition
-    let s = input.to_string();
-
+pub fn inner_scope_value(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     // Parse the string representation
-    let ast = syn::parse_macro_input(&s).unwrap();
+    let ast = syn::parse_macro_input!(input);
 
     // Build the impl
     let gen = impl_inner_scope_value(&ast);
 
     // Return the generated impl
-    gen.parse().unwrap()
+    proc_macro::TokenStream::from(gen)
 }
 
-fn impl_inner_scope_value(ast: &DeriveInput) -> quote::Tokens {
+fn impl_inner_scope_value(ast: &DeriveInput) -> TokenStream {
     let name = &ast.ident;
     let add_variants = impl_match_variants(&ast, |_| {
         quote! { (v) => { v.try_add(other.try_into()?) } }

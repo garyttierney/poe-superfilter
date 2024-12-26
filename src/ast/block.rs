@@ -1,12 +1,12 @@
-use ast::{TransformedNode, AstLocation, Comment};
-use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
-use ast::block_statements::*;
-use ast::expression::*;
-use scope::{ScopeData, ScopeValue};
+use crate::ast::{TransformedNode, AstLocation, Comment};
+use crate::ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
+use crate::ast::block_statements::*;
+use crate::ast::expression::*;
+use crate::scope::{ScopeData, ScopeValue};
 use std::rc::Rc;
 use std::cell::RefCell;
 use std::io::Write;
-use errors::Result;
+use crate::errors::Result;
 
 /// Top level statements, can be Blocks of instructions
 /// like Show/Hide/Mixin or single top-level statements,
@@ -109,7 +109,7 @@ impl Transform for Block {
 }
 
 impl TransformResult for PlainBlock {
-    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
+    fn render(&self, ctx: RenderContext, buf: &mut dyn Write) -> Result<()> {
         if ctx.config.pretty { buf.write_all(ctx.config.line_ending)?; }
 
         for comment in &self.block_comments {

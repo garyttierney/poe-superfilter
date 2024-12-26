@@ -2,6 +2,7 @@ use regex::Regex;
 use std::str::FromStr;
 use std::fmt::Display;
 use std::fmt;
+use std::sync::OnceLock;
 
 /// All tokens that can occur in superfilter syntax 
 #[derive(Clone, Debug, PartialEq)]
@@ -206,7 +207,7 @@ impl<C: Iterator<Item=char>> Tokenizer<C> {
                     return;
                 }
                 _ if c.is_digit(10) => {
-                    let tmp = self.take_while(Some(c), |c| c.is_digit(10) || c == '.');
+                    let tmp = self.take_while(Some(c), |c| c.is_ascii_digit() || c == '.');
                     if tmp.contains('.') {
                         self.push(Tok::Float(f64::from_str(&tmp).unwrap()), tmp.len());
                     } else {
@@ -236,14 +237,15 @@ impl<C: Iterator<Item=char>> Tokenizer<C> {
     }
 
     fn take_identifier(&mut self) -> Option<String> {
-        lazy_static! {
-            static ref IDENT_CHAR_RX : Regex = Regex::new("[A-Za-z0-9_]").unwrap();
-        }
+        static IDENT_CHAR_RX: OnceLock<Regex> = OnceLock::new();        
+        let ident_regex = IDENT_CHAR_RX.get_or_init(|| {
+            Regex::new("[A-Za-z0-9_]").unwrap()
+        });
         if let Some(c0) = self.lookahead {
-            if !IDENT_CHAR_RX.is_match(&c0.to_string()) {
+            if !ident_regex.is_match(&c0.to_string()) {
                 return None;
             }
-            return Some(self.take_while(Some(c0), |c| IDENT_CHAR_RX.is_match(&c.to_string())));
+            return Some(self.take_while(Some(c0), |c| ident_regex.is_match(&c.to_string())));
         }
         None
     }

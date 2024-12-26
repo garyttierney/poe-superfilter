@@ -1,6 +1,6 @@
 use super::ast::AstLocation;
-use tok::Tok;
-use tok::Location as TokenLocation;
+use crate::tok::Tok;
+use crate::tok::Location as TokenLocation;
 
 error_chain! {
     types {

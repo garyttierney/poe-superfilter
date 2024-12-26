@@ -14,49 +14,47 @@ use std::io;
 use std::path::Path;
 use superfilter::LINE_END;
 use superfilter::ast::transform::RenderConfig;
-use clap::{Arg, App};
+use clap::{Arg};
 
 pub fn main() {
     //let start_time = SystemTime::now();
 
-    let matches = App::new("PoE Superfilter Compiler")
+    let matches = clap::Command::new("PoE Superfilter Compiler")
         .version(env!("CARGO_PKG_VERSION"))
         .author("Stefan Kaufhold <cere@fastmail.fm>")
-        .arg(Arg::with_name("PATH")
+        .arg(Arg::new("PATH")
             .help("Path of the input file")
             .required(true)
             .index(1))
-        .arg(Arg::with_name("pretty")
+        .arg(Arg::new("pretty")
             .help("Include indentation and other formatting in the output")
-            .short("p")
+            .short('p')
             .long("pretty"))
-        .arg(Arg::with_name("comments")
+        .arg(Arg::new("comments")
             .help("Include comments in the output")
-            .short("c")
+            .short('c')
             .long("comments"))
-        .arg(Arg::with_name("output")
+        .arg(Arg::new("output")
             .help("Output file. If this option is omitted, the output will be printed to the console.")
-            .short("o")
+            .short('o')
             .long("output")
-            .takes_value(true)
             .value_name("FILE"))
-        .arg(Arg::with_name("line_endings")
+        .arg(Arg::new("line_endings")
             .help("Type of line ending used (LF OR CRLF) defaults to the platform line ending")
-            .short("l")
+            .short('l')
             .long("line-endings")
-            .possible_values(&["lf", "crlf"])
-            .takes_value(true)
+            .default_values(["lf", "crlf"])
             .value_name("LINE_ENDING"))
         .get_matches();
 
-    let line_ending: &'static [u8] = match matches.value_of("line_endings") {
+    let line_ending: &'static [u8] = match matches.get_one::<String>("line_endings").map(String::as_str) {
         Some("crlf") => b"\r\n",
         Some("lf") => b"\n",
         None => LINE_END,
         _ => panic!("Invalid line ending")
     };
 
-    let input_path = Path::new(matches.value_of("PATH").unwrap()).to_owned();
+    let input_path = Path::new(matches.get_one::<String>("PATH").unwrap()).to_owned();
 
     let mut file = File::open(&input_path).unwrap();
     let mut contents = String::new();
@@ -68,14 +66,14 @@ pub fn main() {
         .to_owned();
 
     let render_config = RenderConfig {
-        pretty: matches.is_present("pretty"),
+        pretty: matches.get_flag("pretty"),
         indent_str: "    ",
         base_path,
         line_ending,
-        comments: matches.is_present("comments")
+        comments: matches.get_flag("comments")
     };
 
-    let result = match matches.value_of("output") {
+    let result = match matches.get_one::<String>("output") {
         Some(output) => superfilter::compile(&contents, input_path, &mut File::create(output).unwrap(), &render_config),
         _ => superfilter::compile(&contents, input_path, &mut io::stdout(), &render_config)
     };

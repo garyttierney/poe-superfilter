@@ -1,7 +1,7 @@
-use ast::{TransformedNode, AstLocation};
-use ast::transform::{Transform, TransformContext};
-use ast::expression::*;
-use errors::Result;
+use crate::ast::{TransformedNode, AstLocation};
+use crate::ast::transform::{Transform, TransformContext};
+use crate::ast::expression::*;
+use crate::errors::Result;
 
 #[derive(Debug, Clone)]
 pub struct Color {

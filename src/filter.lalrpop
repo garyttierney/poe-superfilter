@@ -1,5 +1,5 @@
 
-use ast;
+use crate::ast;
 
 use std::sync::Arc;
 use std::path::PathBuf;
@@ -8,8 +8,8 @@ use ast::block_statements as stm;
 use ast::{Filter, Comment, AstLocation};
 use ast::block::{Block, BlockType};
 use ast::mixin::*;
-use tok::Location as TokenLocation;
-use tok::Tok;
+use crate::tok::Location as TokenLocation;
+use crate::tok::Tok;
 use ast::import::ImportStatement;
 use ast::var::{VarDefinition,VarReference};
 use ast::expression::{ExpressionValue, ExpressionNode, ExpressionOperation};

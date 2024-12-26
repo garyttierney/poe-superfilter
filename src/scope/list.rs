@@ -9,7 +9,7 @@ impl TransformResult for Vec<ScopeValue> {
         ScopeValue::List(self.clone())
     }
 
-    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
+    fn render(&self, ctx: RenderContext, buf: &mut dyn Write) -> Result<()> {
         for item in self.iter().take(self.len() - 1) {
             item.render(ctx, buf)?;
             buf.write_all(b" ")?;

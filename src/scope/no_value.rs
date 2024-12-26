@@ -17,7 +17,7 @@ impl InnerScopeValue for &'static NoValue {
 }
 
 impl TransformResult for &'static NoValue {
-    fn render(&self, _: RenderContext, _: &mut Write) -> Result<()> {
+    fn render(&self, _: RenderContext, _: &mut dyn Write) -> Result<()> {
         Ok(())
     }
 }

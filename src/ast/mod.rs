@@ -10,14 +10,14 @@ pub mod block;
 pub mod import;
 pub mod expression;
 
-use ast::block_statements::*;
-use ast::mixin::*;
-use ast::var::*;
-use ast::import::*;
-use ast::transform::*;
-use ast::block::*;
-use scope::*;
-use errors::Result;
+use crate::ast::block_statements::*;
+use crate::ast::mixin::*;
+use crate::ast::var::*;
+use crate::ast::import::*;
+use crate::ast::transform::*;
+use crate::ast::block::*;
+use crate::scope::*;
+use crate::errors::Result;
 
 use std::fmt::Debug;
 use std::rc::Rc;
@@ -29,7 +29,7 @@ use std::fmt;
 use std::fmt::Formatter;
 use std::fmt::Error as FmtError;
 
-use tok::Location as TokenLocation;
+use crate::tok::Location as TokenLocation;
 use std::path::PathBuf;
 
 #[derive(Clone)]
@@ -109,7 +109,7 @@ pub struct Comment {
 }
 
 impl TransformResult for Comment {
-    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
+    fn render(&self, ctx: RenderContext, buf: &mut dyn Write) -> Result<()> {
         if ctx.config.comments {
             if !self.inline { ctx.write_indent(buf)?; }
             buf.write_all(b"#")?;
@@ -134,7 +134,7 @@ impl Transform for Comment {
 }
 
 impl TransformResult for Option<Comment> {
-    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
+    fn render(&self, ctx: RenderContext, buf: &mut dyn Write) -> Result<()> {
         match *self {
             Some(ref comment) => {
                 if ctx.config.comments {
@@ -155,7 +155,7 @@ impl TransformResult for Option<Comment> {
 
 /// Implements rendering for lists of nodes by rendering each item in the list
 impl TransformResult for Vec<TransformedNode> {
-    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
+    fn render(&self, ctx: RenderContext, buf: &mut dyn Write) -> Result<()> {
         for node in self {
             node.render(ctx, buf)?;
         }

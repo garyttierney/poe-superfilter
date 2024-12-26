@@ -1,11 +1,11 @@
-use scope::{ScopeData, ScopeValue, NO_VALUE};
+use crate::scope::{ScopeData, ScopeValue, NO_VALUE};
 use std::rc::Rc;
 use std::cell::{Ref, RefMut, RefCell};
 use std::io::Write;
-use ast::{TransformedNode, AstLocation};
+use crate::ast::{TransformedNode, AstLocation};
 use std::path::PathBuf;
 use std::fmt::Debug;
-use errors::Result;
+use crate::errors::Result;
 
 /// This trait needs to be implemented for any abstract syntax tree structure, it contains the
 /// functions to transform the structure's representation into the final structure before it gets
@@ -46,7 +46,7 @@ pub trait TransformResult {
     }
 
     /// Renders the output for this node into a writable stream.
-    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()>;
+    fn render(&self, ctx: RenderContext, buf: &mut dyn Write) -> Result<()>;
 }
 
 /// Holds configuration values for the render output
@@ -73,7 +73,7 @@ pub struct RenderContext<'a> {
 }
 
 impl<'a> RenderContext<'a> {
-    pub fn write_indent(&self, buf: &mut Write) -> ::std::io::Result<usize> {
+    pub fn write_indent(&self, buf: &mut dyn Write) -> ::std::io::Result<usize> {
         if self.config.indent() {
             let mut written = 0;
 

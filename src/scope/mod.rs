@@ -1,13 +1,13 @@
-use ast::mixin::PreparedMixin;
+use crate::ast::mixin::PreparedMixin;
 use std::collections::BTreeMap;
 use std::cell::RefCell;
 use std::rc::Rc;
-use ast::transform::{TransformResult, RenderContext};
+use crate::ast::transform::{TransformResult, RenderContext};
 use std::io::Write;
 use std::cmp::{Ordering, PartialEq};
 use std::convert::{TryFrom, TryInto};
 use std::fmt::Debug;
-use errors::{Result, ErrorKind, Error};
+use crate::errors::{Result, ErrorKind, Error};
 
 mod int;
 mod float;
@@ -146,9 +146,6 @@ pub enum ScopeValue {
 
 impl PartialEq for ScopeValue {
     fn eq(&self, other: &ScopeValue) -> bool {
-        match self.try_eq(other.clone()) {
-            Ok(result) => result,
-            Err(_) => false
-        }
+        self.try_eq(other.clone()).unwrap_or(false)
     }
 }

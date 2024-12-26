@@ -1,12 +1,12 @@
-use ast::{AstLocation, TransformedNode, Comment};
-use ast::transform::{Transform, TransformContext};
-use filter;
-use tok;
+use crate::ast::{AstLocation, TransformedNode, Comment};
+use crate::ast::transform::{Transform, TransformContext};
+use crate::filter::{self, FilterParser};
+use crate::tok;
 use std::io::Read;
 use std::fs;
 use std::rc::Rc;
 use std::sync::Arc;
-use errors::{Result, ResultExt, ErrorKind, Error};
+use crate::errors::{Result, ResultExt, ErrorKind, Error};
 
 #[derive(Debug, Clone)]
 pub struct ImportStatement {
@@ -24,7 +24,10 @@ impl Transform for ImportStatement {
             file.read_to_string(&mut contents)?;
 
             let tokens = Box::new(tok::tokenize(&contents));
-            match filter::parse_Filter(&Arc::new(resolved_file_path.to_owned()), tokens.into_iter()) {
+            let parser = FilterParser::new();
+            let path_buf = Arc::new(resolved_file_path.to_owned());
+            
+            match parser.parse(&path_buf, tokens.into_iter()) {
                 Ok(ref filter) => {
                     let transform_result = filter.transform_begin(ctx.scope.clone(),
                                                                   Rc::new(new_base_path.to_owned()));

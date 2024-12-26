@@ -3,29 +3,24 @@
 //! written in the extended syntax down to a pure loot filter that can be used
 //! in the game.
 
-#![feature(try_from)]
 #![recursion_limit = "1024"]
 
-#[macro_use]
-extern crate lazy_static;
 #[macro_use]
 extern crate superfilter_macro;
 #[macro_use]
 extern crate error_chain;
+use filter::FilterParser;
+use lalrpop_util::lalrpop_mod;
 
-extern crate regex;
-extern crate lalrpop_util;
-
-use ast::transform::{RenderContext, RenderConfig, TransformResult};
+use crate::ast::transform::{RenderContext, RenderConfig, TransformResult};
 use std::path::PathBuf;
 use std::io::Write;
 use std::rc::Rc;
 use std::sync::Arc;
 use std::cell::RefCell;
-use scope::ScopeData;
+use crate::scope::ScopeData;
 
-#[allow(dead_code, unknown_lints, clippy)]
-mod filter;
+lalrpop_mod!(#[allow(unused)] #[allow(clippy::all)] filter);
 
 #[allow(dead_code)]
 pub mod ast;
@@ -42,7 +37,7 @@ mod scope;
 #[allow(dead_code)]
 mod errors;
 
-use errors::{Result, ResultExt};
+use crate::errors::{Result, ResultExt};
 
 #[cfg(windows)]
 pub const LINE_END: &'static [u8] = b"\r\n";
@@ -50,7 +45,7 @@ pub const LINE_END: &'static [u8] = b"\r\n";
 pub const LINE_END: &'static [u8] = b"\n";
 
 /// Compiles a complete filter into vanilla loot filter syntax
-pub fn compile(contents: &str, file: PathBuf, out_buf: &mut Write, render_config: &RenderConfig)
+pub fn compile(contents: &str, file: PathBuf, out_buf: &mut dyn Write, render_config: &RenderConfig)
                -> Result<()> {
     let tokens = Box::new(tok::tokenize(contents));
     let root_scope = Rc::new(RefCell::new(ScopeData::new(None)));
@@ -60,7 +55,9 @@ pub fn compile(contents: &str, file: PathBuf, out_buf: &mut Write, render_config
         indent_level: 0,
     };
 
-    match filter::parse_Filter(&Arc::new(file), tokens.into_iter()) {
+    let parser = FilterParser::new();
+
+    match parser.parse(&Arc::new(file), tokens.into_iter()) {
         Ok(ref filter) => {
             let transformed_tree = filter.transform_begin(root_scope,
                                    Rc::new(render_config.base_path.clone()))?

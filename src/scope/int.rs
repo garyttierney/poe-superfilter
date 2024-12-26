@@ -41,7 +41,7 @@ impl TransformResult for i64 {
         ScopeValue::Int(*self)
     }
 
-    fn render(&self, _: RenderContext, buf: &mut Write) -> Result<()> {
+    fn render(&self, _: RenderContext, buf: &mut dyn Write) -> Result<()> {
         buf.write_all(self.to_string().as_ref())?;
         Ok(())
     }

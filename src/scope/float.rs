@@ -44,7 +44,7 @@ impl TransformResult for f64 {
         ScopeValue::Decimal(*self)
     }
 
-    fn render(&self, _: RenderContext, buf: &mut Write) -> Result<()> {
+    fn render(&self, _: RenderContext, buf: &mut dyn Write) -> Result<()> {
         // round float output since vanilla GGG filters only contain integers
         let rounded = self.round();
         buf.write_all(rounded.to_string().as_ref())?;

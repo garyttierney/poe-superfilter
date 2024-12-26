@@ -1,12 +1,12 @@
-use ast::{TransformedNode, AstLocation, Comment};
-use ast::transform::{Transform, TransformContext, TransformResult};
-use ast::block_statements::*;
-use ast::expression::*;
-use scope::{ScopeData, ScopeValue};
+use crate::ast::{TransformedNode, AstLocation, Comment};
+use crate::ast::transform::{Transform, TransformContext, TransformResult};
+use crate::ast::block_statements::*;
+use crate::ast::expression::*;
+use crate::scope::{ScopeData, ScopeValue};
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::fmt;
-use errors::{Result, ErrorKind};
+use crate::errors::{Result, ErrorKind};
 
 /// Name and parameter specs for a mixin
 #[derive(Debug, Clone)]

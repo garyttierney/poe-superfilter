@@ -1,12 +1,12 @@
-use ast::{TransformedNode, AstLocation};
-use ast::var::VarReference;
-use scope::ScopeValue;
-use ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
-use ast::block_statements::ComparisonOperator;
+use crate::ast::{TransformedNode, AstLocation};
+use crate::ast::var::VarReference;
+use crate::scope::ScopeValue;
+use crate::ast::transform::{Transform, TransformResult, TransformContext, RenderContext};
+use crate::ast::block_statements::ComparisonOperator;
 use std::io::Write;
 use std::fmt;
-use scope::InnerScopeValue;
-use errors::{Result, ErrorKind};
+use crate::scope::InnerScopeValue;
+use crate::errors::{Result, ErrorKind};
 
 #[derive(Clone)]
 pub enum ExpressionValue {
@@ -178,7 +178,7 @@ impl TransformResult for String {
     }
 
     #[allow(unused_variables)]
-    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
+    fn render(&self, ctx: RenderContext, buf: &mut dyn Write) -> Result<()> {
         let quotes_needed = self.contains(' ');
 
         if quotes_needed { buf.write_all(b"\"")?; };

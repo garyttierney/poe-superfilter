@@ -1,12 +1,12 @@
-use ast::{TransformedNode, AstLocation, Comment};
-use ast::transform::*;
-use ast::var::*;
-use ast::expression::*;
-use ast::mixin::*;
-use scope::ScopeValue;
+use crate::ast::{TransformedNode, AstLocation, Comment};
+use crate::ast::transform::*;
+use crate::ast::var::*;
+use crate::ast::expression::*;
+use crate::ast::mixin::*;
+use crate::scope::ScopeValue;
 use std::io::Write;
 use std::cmp::PartialEq;
-use errors::{Result, ErrorKind};
+use crate::errors::{Result, ErrorKind};
 
 #[derive(Debug, Clone, Transform)]
 pub enum BlockStatement {
@@ -65,7 +65,7 @@ impl<'a> Transform for SetValueStatement {
 }
 
 impl TransformResult for PlainSetValueStatement {
-    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
+    fn render(&self, ctx: RenderContext, buf: &mut dyn Write) -> Result<()> {
         ctx.write_indent(buf)?;
         buf.write_all(self.name.as_ref())?;
         buf.write_all(b" ")?;
@@ -119,7 +119,7 @@ impl Transform for ConditionStatement {
 }
 
 impl TransformResult for PlainConditionStatement {
-    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
+    fn render(&self, ctx: RenderContext, buf: &mut dyn Write) -> Result<()> {
         ctx.write_indent(buf)?;
         buf.write_all(self.name.as_ref())?;
         buf.write_all(b" ")?;
@@ -158,7 +158,7 @@ pub enum ComparisonOperator {
 
 impl TransformResult for ComparisonOperator {
     #[allow(unused_variables)]
-    fn render(&self, ctx: RenderContext, buf: &mut Write) -> Result<()> {
+    fn render(&self, ctx: RenderContext, buf: &mut dyn Write) -> Result<()> {
         buf.write_all(match *self {
             ComparisonOperator::Eql => "=",
             ComparisonOperator::Gt => ">",

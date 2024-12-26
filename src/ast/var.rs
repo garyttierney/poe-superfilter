@@ -1,8 +1,8 @@
-use ast::{TransformedNode, AstLocation, Comment};
-use ast::transform::{Transform, TransformContext, TransformResult};
-use ast::expression::*;
+use crate::ast::{TransformedNode, AstLocation, Comment};
+use crate::ast::transform::{Transform, TransformContext, TransformResult};
+use crate::ast::expression::*;
 use std::fmt;
-use errors::{Result, ErrorKind};
+use crate::errors::{Result, ErrorKind};
 
 /// AST Structure that represents a reference to a variable
 #[derive(Clone)]
