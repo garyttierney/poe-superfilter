@@ -8,7 +8,7 @@
 extern crate clap;
 extern crate superfilter;
 
-use clap::Arg;
+use clap::{Arg, ArgAction};
 use std::fs::File;
 use std::io;
 use std::io::prelude::*;
@@ -29,11 +29,13 @@ pub fn main() {
         .arg(Arg::new("pretty")
             .help("Include indentation and other formatting in the output")
             .short('p')
-            .long("pretty"))
+            .long("pretty")
+            .action(ArgAction::SetTrue))
         .arg(Arg::new("comments")
             .help("Include comments in the output")
             .short('c')
-            .long("comments"))
+            .long("comments")
+            .action(ArgAction::SetTrue))
         .arg(Arg::new("output")
             .help("Output file. If this option is omitted, the output will be printed to the console.")
             .short('o')
