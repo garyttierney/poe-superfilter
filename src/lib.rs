@@ -30,7 +30,7 @@ lalrpop_mod!(
 pub mod ast;
 
 #[allow(dead_code)]
-mod tok;
+pub mod tok;
 
 #[cfg(test)]
 mod tests;
@@ -41,7 +41,7 @@ mod scope;
 #[allow(dead_code)]
 mod errors;
 
-use crate::errors::{Result, ResultExt};
+pub use crate::errors::{Error, Result, ResultExt};
 
 #[cfg(windows)]
 pub const LINE_END: &'static [u8] = b"\r\n";

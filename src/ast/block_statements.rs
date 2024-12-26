@@ -27,7 +27,7 @@ pub struct ContinueStatement {
 }
 
 impl<'a> Transform for ContinueStatement {
-    fn transform(&self, ctx: TransformContext) -> Result<Option<TransformedNode>> {
+    fn transform(&self, _ctx: TransformContext) -> Result<Option<TransformedNode>> {
         Ok(Some(TransformedNode::Continue(PlainContinueStatement {
             comment: self.comment.clone(),
         })))

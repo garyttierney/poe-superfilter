@@ -9,15 +9,31 @@ extern crate clap;
 extern crate superfilter;
 
 use clap::{Arg, ArgAction};
+use miette::{miette, LabeledSpan, Severity, SourceOffset};
 use std::fs::File;
 use std::io;
 use std::io::prelude::*;
 use std::path::Path;
 use superfilter::ast::transform::RenderConfig;
-use superfilter::LINE_END;
+use superfilter::{Error, LINE_END};
+
+use superfilter::tok::Location as TokenLocation;
+use superfilter::tok::Tok;
 
 pub fn main() {
     //let start_time = SystemTime::now();
+    miette::set_hook(Box::new(|_| {
+        Box::new(
+            miette::MietteHandlerOpts::new()
+                .terminal_links(true)
+                .unicode(false)
+                .context_lines(3)
+                .tab_width(4)
+                .break_words(true)
+                .build(),
+        )
+    }))
+    .expect("failed to install miette");
 
     let matches = clap::Command::new("PoE Superfilter Compiler")
         .version(env!("CARGO_PKG_VERSION"))
@@ -87,8 +103,37 @@ pub fn main() {
 
     //let compile_time = start_time.elapsed().unwrap();
 
-    if let Err(err) = result {
+    if let Err(Error(_, state)) = result {
+        let parse_error = state.next_error.and_then(|err| {
+            err.downcast::<lalrpop_util::ParseError<TokenLocation, Tok, char>>()
+                .ok()
+        });
+
+        let Some(error) = parse_error else { return };
+
+        match error.as_ref() {
+            lalrpop_util::ParseError::UnrecognizedToken {
+                token: (l, tok, _),
+                expected,
+            } => {
+                let start = SourceOffset::from_location(&contents, l.line, l.pos);
+                let unrecognized = LabeledSpan::at(start, format!("{} wasn't expected here", tok));
+
+                let report = miette!(
+                    labels = vec![unrecognized],
+                    help = format!("expected one of: {}", expected.join(", ")),
+                    severity = Severity::Error,
+                    "Unexpected token"
+                );
+                let report = report.with_source_code(contents);
+
+                println!("{:?}", report);
+            }
+            _ => {
+                println!("parse error");
+            }
+        }
+
         println!("Compilation failed:");
-        println!("{:#?}", err)
     }
 }
